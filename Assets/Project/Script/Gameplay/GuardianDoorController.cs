@@ -178,10 +178,10 @@ public class GuardianDoorController : MonoBehaviour
     }
 
     // ──────────────────────────────────────────────
-    //  Detección del jugador
+    //  Detección del jugador (llamado por TriggerZoneRelay)
     // ──────────────────────────────────────────────
 
-    private void OnTriggerEnter(Collider other)
+    public void OnJugadorEntro(Collider other)
     {
         if (!other.CompareTag(TagJugador)) return;
 
@@ -189,5 +189,10 @@ public class GuardianDoorController : MonoBehaviour
         {
             Debug.Log("La puerta está sellada por el guardián.");
         }
+    }
+
+    public void OnJugadorSalio(Collider other)
+    {
+        if (!other.CompareTag(TagJugador)) return;
     }
 }
