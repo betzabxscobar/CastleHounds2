@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Este script va en la escena "_Demo Scene" (la arena de batalla).
+/// Este script va en la escena "_DemoScene" (la arena de batalla).
 /// Dispara el inicio de pelea automaticamente al cargar esa escena.
 /// </summary>
 public class ArenaSceneInit : MonoBehaviour
