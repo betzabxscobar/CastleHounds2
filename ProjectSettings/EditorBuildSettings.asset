@@ -8,5 +8,17 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Project/Scenes/Gampley/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Project/Scenes/Menus/Frontend/MenuPrincipal.unity
+    guid: 8ab40f89db6ff70438a14ada59d602c1
+  - enabled: 1
+    path: Assets/Project/Scenes/Menus/Frontend/Opciones.unity
+    guid: 96b8fe1f0ba2156449fa276a89d003c4
+  - enabled: 1
+    path: Assets/Project/Scenes/Menus/Frontend/SeleccionAvatar.unity
+    guid: 3146c9def07349b49a0cf69e22d338eb
+  - enabled: 1
+    path: Assets/Project/Scenes/Menus/Frontend/Creditos.unity
+    guid: 313560d0e7600f44c8479591cb71a44c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
