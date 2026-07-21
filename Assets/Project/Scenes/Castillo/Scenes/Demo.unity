@@ -3578,35 +3578,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 638850000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 274ae784e85b1f045877ef63dc4a983b, type: 3}
+  m_Script: {fileID: 11500000, guid: 39b834ff26974e539c79f4aee3f59ad4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::IntroCinematicController
-  camaraVistaCastillo: {fileID: 133196293}
-  camaraFinalPerro: {fileID: 0}
-  centroOrbitaCastillo: {fileID: 990148087}
-  duracionOrbitaCastillo: 8
-  radioOrbitaCastillo: 24
-  alturaOrbitaCastillo: 10
-  vueltasOrbitaCastillo: 1
-  anguloInicialOrbita: -35
-  objetivoPuertaFinal: {fileID: 0}
-  segundosVistaFinalPerro: 2.5
-  distanciaDetrasPerro: 6
-  alturaCamaraFinal: 2.4
-  alturaMiradaPerro: 1.1
-  desplazamientoLateralFinal: 0
-  mezclaMiradaPuertaFinal: 0.35
-  scriptsControlJugador: []
-  perroRigidbody: {fileID: 0}
-  perro: {fileID: 900001001}
-  puntoInicioPerro: {fileID: 1562728228}
-  puntoEntradaPerro: {fileID: 1730537376}
-  moverPerroAutomaticamente: 1
-  segundosMovimientoPerro: 3
-  perroAnimator: {fileID: 1606083790}
-  parametroAnimacionCaminar: IsWalking
-  prioridadActiva: 20
-  prioridadInactiva: 0
+  m_EditorClassIdentifier: Assembly-CSharp::CinematicIntroController
+  timelineDirector: {fileID: 0}
+  cinemachineBrain: {fileID: 0}
+  dog: {fileID: 900001001}
+  dogAnimator: {fileID: 1606083790}
+  dogControlScripts: []
+  inputObjectsToDisable: []
+  castleCamera: {fileID: 133196293}
+  entranceCamera: {fileID: 0}
+  dogPresentationCamera: {fileID: 0}
+  explorationCamera: {fileID: 1521958990}
+  castleOrbit: {fileID: 0}
+  dogAutoMover: {fileID: 0}
+  dogStartPoint: {fileID: 1562728228}
+  dogCameraPoint: {fileID: 0}
+  dogLookPoint: {fileID: 0}
+  finalCameraDistance: 3.2
+  finalCameraHeight: 1.15
+  finalLookHeight: 0.55
+  playOnStart: 1
+  castleShotDuration: 5
+  entranceShotDuration: 2.5
+  dogShotDuration: 3
+  finalBlendDuration: 1.5
+  defaultBlendDuration: 1.5
+  allowSkip: 1
+  moveDogToStartOnIntro: 1
+  skipInputDelay: 0.35
+  legacySkipKey: 27
+  inactivePriority: 0
+  activePriority: 20
 --- !u!4 &638850002
 Transform:
   m_ObjectHideFlags: 0
