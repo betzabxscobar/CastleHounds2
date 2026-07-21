@@ -3742,7 +3742,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48aa9d9ec41f8e840880e776be3cbd49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
-  target: {fileID: 0}
+  target: {fileID: 567831225}
   offset: {x: 0, y: 1, z: -4}
   positionSmooth: 5
   rotationSmooth: 5
