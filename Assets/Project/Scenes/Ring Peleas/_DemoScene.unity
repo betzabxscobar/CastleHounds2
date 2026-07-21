@@ -694,7 +694,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa62f41339e78a041bab90e0cfa6ba67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRespawn
-  spawnPosition: {x: -0.93, y: 5.53, z: -3.58}
+  spawnPosition: {x: -0.93, y: 5.53, z: -1.758}
   spawnRotation: {x: 0, y: 0, z: 0}
 --- !u!1001 &8068386605638467341
 PrefabInstance:
