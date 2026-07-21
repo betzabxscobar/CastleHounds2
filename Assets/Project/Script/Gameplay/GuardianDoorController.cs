@@ -3,8 +3,11 @@ using UnityEngine;
 public class GuardianDoorController : MonoBehaviour
 {
     [SerializeField] private Collider bloqueoCollider;
+    [SerializeField] private Collider zonaDeteccion;
 
     private bool _estaBloqueada = true;
+
+    private const string TagJugador = "Player";
 
     private void Awake()
     {
@@ -37,4 +40,14 @@ public class GuardianDoorController : MonoBehaviour
     }
 
     public bool EstaBloqueada => _estaBloqueada;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.CompareTag(TagJugador)) return;
+
+        if (_estaBloqueada)
+        {
+            Debug.Log("La puerta está sellada por el guardián.");
+        }
+    }
 }
