@@ -5575,8 +5575,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   walkSpeed: 4
   runSpeed: 7
-  acceleration: 7
-  rotationSpeed: 150
+  acceleration: 5
+  rotationSpeed: 90
   cameraTransform: {fileID: 623750310}
   animator: {fileID: 1606083790}
   groundCheck: {fileID: 694628089}
@@ -9791,7 +9791,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ef65bab4c2a43979368d2a9c44f7961, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::CameraScrollZoom
-  zoomStep: 1
+  zoomStep: 2.25
   minDistance: 1.5
   maxDistance: 6
   smoothTime: 0.15
@@ -10197,9 +10197,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1616403366}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -2.69, y: 0.05, z: -6.9198}
-  m_LocalScale: {x: -0.6, y: -0.4267, z: -1}
+  m_LocalRotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
+  m_LocalPosition: {x: -2.69, y: 0.08, z: -7.22}
+  m_LocalScale: {x: -0.6, y: -0.5, z: -1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
