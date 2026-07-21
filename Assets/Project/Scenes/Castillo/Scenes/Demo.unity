@@ -630,6 +630,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8107190456209775893, guid: 57ef16ee7712da6409e8836bf6001e3c, type: 3}
   m_PrefabInstance: {fileID: 84021162}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &105957355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1521958989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ef65bab4c2a43979368d2a9c44f7961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraScrollZoom
+  zoomStep: 2.25
+  minDistance: 1.5
+  maxDistance: 6
+  smoothTime: 0.15
 --- !u!1001 &115671782
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5097,7 +5113,7 @@ GameObject:
   - component: {fileID: 900001011}
   m_Layer: 0
   m_Name: Player_Dog_Model
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5204,7 +5220,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6876439029949063675, guid: 63efcfc35129a5e44bd32639b2259dcb, type: 3}
       propertyPath: m_Controller
-      value:
+      value: 
       objectReference: {fileID: 9100000, guid: 574737dadadf621449cc99ce12405a19, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5234,12 +5250,9 @@ MonoBehaviour:
   rotationSpeed: 90
   cameraTransform: {fileID: 623750310}
   animator: {fileID: 1606083790}
-  groundCheck: {fileID: 694628089}
-  groundDistance: 0.3
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
   gravity: -20
+  terminalVelocity: 25
+  maxFallBelowStart: 15
 --- !u!143 &900001007
 CharacterController:
   m_ObjectHideFlags: 0
@@ -5265,6 +5278,74 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.3, z: -2.6}
+--- !u!114 &900001008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900001000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 142f282956992d74d8bf575fc342d728, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DogHealth
+  maxHealth: 100
+  combatGameManager: {fileID: 910000002}
+--- !u!114 &900001009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900001000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec13f2c117f6ae8449542c2c040997f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BasicAttack
+  damage: 10
+  attackCooldown: 1
+  combatGameManager: {fileID: 910000002}
+  combatAnimation: {fileID: 900001011}
+--- !u!114 &900001010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900001000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7eb87791cff623949abf75eb58d7adc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MouseBasicAttack
+  dogAttack: {fileID: 900001009}
+  enemyTarget: {fileID: 900002008}
+--- !u!114 &900001011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900001000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a41c80f4a5dd4e5ebc3a73654b538228, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatAnimation
+  visualTransform: {fileID: 900001005}
+  animator: {fileID: 1606083790}
+  attackStateName: Run
+  idleStateName: Idle
+  hitStateName: 
+  defeatStateName: 
+  anticipationDuration: 0.1
+  lungeDuration: 0.18
+  recoveryDuration: 0.18
+  attackDistance: 0.45
+  anticipationDistance: 0.08
+  hitDuration: 0.16
 --- !u!1 &900002000
 GameObject:
   m_ObjectHideFlags: 0
@@ -5278,6 +5359,8 @@ GameObject:
   - component: {fileID: 900002003}
   - component: {fileID: 900002008}
   - component: {fileID: 900002009}
+  - component: {fileID: 900002020}
+  - component: {fileID: 900002021}
   m_Layer: 0
   m_Name: Enemy_Wolf_Model
   m_TagString: Untagged
@@ -5460,6 +5543,46 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2a9979b14acae404f8d4cd863daf1b34, type: 3}
   m_PrefabInstance: {fileID: 900002004}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &900002008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900002000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee7dad5007065e4e8b7cd296d63bcc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 100
+  combatGameManager: {fileID: 910000002}
+  destroyWhenDefeated: 0
+  destroyDelay: 0
+--- !u!114 &900002009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900002000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a41c80f4a5dd4e5ebc3a73654b538228, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatAnimation
+  visualTransform: {fileID: 900002005}
+  animator: {fileID: 0}
+  attackStateName: AttackR
+  idleStateName: Idle_New
+  hitStateName: GetHit_2
+  defeatStateName: dead
+  anticipationDuration: 0.1
+  lungeDuration: 0.18
+  recoveryDuration: 0.18
+  attackDistance: 0.45
+  anticipationDistance: 0.08
+  hitDuration: 0.16
 --- !u!1 &900003000
 GameObject:
   m_ObjectHideFlags: 0
@@ -5933,6 +6056,72 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5785242846073902511, guid: 8c2cabd72c2871e4fa25d9761a86fef5, type: 3}
   m_PrefabInstance: {fileID: 909782931}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &910000000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910000001}
+  - component: {fileID: 910000002}
+  - component: {fileID: 910000003}
+  m_Layer: 0
+  m_Name: CombatManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910000001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000000}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f118db2e1ae78a4287f35f5b8dd59f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatGameManager
+--- !u!114 &910000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a7e8121bf6e3c544b22145678e3af41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatHealthHUD
+  dogHealth: {fileID: 900001008}
+  enemyHealth: {fileID: 900002008}
+  combatGameManager: {fileID: 910000002}
+  barWidth: 120
+  barHeight: 16
+  heightAboveCharacter: 0.15
+  dogColor: {r: 0.15, g: 0.75, b: 0.25, a: 1}
+  enemyColor: {r: 0.85, g: 0.15, b: 0.15, a: 1}
+  backgroundColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.9}
 --- !u!1001 &911527186
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9310,6 +9499,7 @@ GameObject:
   - component: {fileID: 1521958991}
   - component: {fileID: 1521958990}
   - component: {fileID: 105957355}
+  - component: {fileID: 1521958992}
   m_Layer: 0
   m_Name: CamaraExploracion
   m_TagString: Untagged
@@ -9360,22 +9550,6 @@ MonoBehaviour:
       BarrelClipping: 0.25
       Anamorphism: 0
   BlendHint: 0
---- !u!114 &105957355
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1521958989}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ef65bab4c2a43979368d2a9c44f7961, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::CameraScrollZoom
-  zoomStep: 2.25
-  minDistance: 1.5
-  maxDistance: 6
-  smoothTime: 0.15
 --- !u!4 &1521958991
 Transform:
   m_ObjectHideFlags: 0
@@ -9384,13 +9558,39 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1521958989}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.15643448, y: 0, z: 0, w: 0.98768836}
-  m_LocalPosition: {x: 0, y: 4, z: -8}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.1, y: 0.030000001, z: -6.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1521958992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1521958989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 625c14eee3ad46c99df7c7c891ef668a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineThirdPersonFollow
+  Damping: {x: 0.1, y: 0.5, z: 0.3}
+  ShoulderOffset: {x: 0.5, y: -0.4, z: 0}
+  VerticalArmLength: 0.4
+  CameraSide: 1
+  CameraDistance: 2
+  AvoidObstacles:
+    Enabled: 0
+    CollisionFilter:
+      serializedVersion: 2
+      m_Bits: 1
+    IgnoreTag: 
+    CameraRadius: 0.2
+    DampingIntoCollision: 0
+    DampingFromCollision: 0.5
 --- !u!1 &1561126606
 GameObject:
   m_ObjectHideFlags: 0
@@ -13361,115 +13561,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57ef16ee7712da6409e8836bf6001e3c, type: 3}
---- !u!114 &900001008
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 900001000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 142f282956992d74d8bf575fc342d728, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DogHealth
-  maxHealth: 100
-  combatGameManager: {fileID: 910000002}
---- !u!114 &900001009
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 900001000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec13f2c117f6ae8449542c2c040997f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BasicAttack
-  damage: 10
-  attackCooldown: 1
-  combatGameManager: {fileID: 910000002}
-  combatAnimation: {fileID: 900001011}
---- !u!114 &900001010
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 900001000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7eb87791cff623949abf75eb58d7adc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MouseBasicAttack
-  dogAttack: {fileID: 900001009}
-  enemyTarget: {fileID: 900002008}
---- !u!114 &900001011
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 900001000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a41c80f4a5dd4e5ebc3a73654b538228, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CombatAnimation
-  visualTransform: {fileID: 900001005}
-  animator: {fileID: 1606083790}
-  attackStateName: Run
-  idleStateName: Idle
-  hitStateName: 
-  defeatStateName: 
-  anticipationDuration: 0.1
-  lungeDuration: 0.18
-  recoveryDuration: 0.18
-  attackDistance: 0.45
-  anticipationDistance: 0.08
-  hitDuration: 0.16
---- !u!114 &900002008
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 900002000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ee7dad5007065e4e8b7cd296d63bcc3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  maxHealth: 100
-  combatGameManager: {fileID: 910000002}
-  destroyWhenDefeated: 0
-  destroyDelay: 0
---- !u!114 &900002009
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 900002000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a41c80f4a5dd4e5ebc3a73654b538228, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CombatAnimation
-  visualTransform: {fileID: 900002005}
-  animator: {fileID: 0}
-  attackStateName: AttackR
-  idleStateName: Idle_New
-  hitStateName: GetHit_2
-  defeatStateName: dead
-  anticipationDuration: 0.1
-  lungeDuration: 0.18
-  recoveryDuration: 0.18
-  attackDistance: 0.45
-  anticipationDistance: 0.08
-  hitDuration: 0.16
---- !u!1 &910000000
+--- !u!1 &17007972
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -13477,64 +13569,302 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 910000001}
-  - component: {fileID: 910000002}
-  - component: {fileID: 910000003}
+  - component: {fileID: 17007973}
+  - component: {fileID: 17007975}
+  - component: {fileID: 17007974}
   m_Layer: 0
-  m_Name: CombatManager
+  m_Name: Trigger_EntradaCastillo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &910000001
+--- !u!4 &17007973
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000000}
+  m_GameObject: {fileID: 17007972}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -3.04, y: 2.04, z: -4.49}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &910000002
+--- !u!114 &17007974
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000000}
+  m_GameObject: {fileID: 17007972}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f118db2e1ae78a4287f35f5b8dd59f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CombatGameManager
---- !u!114 &910000003
+  m_Script: {fileID: 11500000, guid: 2879b8c2b8d1d844fa45100798fd0834, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ZoneTrigger
+  tipo: 0
+  playerTag: Player
+  soloUnaVez: 1
+  mensaje: Entra
+  doorId:
+  zoneId:
+  onTriggerEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  nombreEscena:
+--- !u!65 &17007975
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 17007972}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 6, y: 4, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &88300100
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 88300101}
+  - component: {fileID: 88300103}
+  - component: {fileID: 88300102}
+  m_Layer: 0
+  m_Name: Trigger_CargaArena
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &88300101
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 88300100}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -3.04, y: 2.04, z: -4.49}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &88300102
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000000}
+  m_GameObject: {fileID: 88300100}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a7e8121bf6e3c544b22145678e3af41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CombatHealthHUD
-  dogHealth: {fileID: 900001008}
-  enemyHealth: {fileID: 900002008}
+  m_Script: {fileID: 11500000, guid: 2879b8c2b8d1d844fa45100798fd0834, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ZoneTrigger
+  tipo: 5
+  playerTag: Player
+  soloUnaVez: 1
+  mensaje:
+  doorId:
+  zoneId:
+  onTriggerEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  nombreEscena: _DemoScene
+--- !u!65 &88300103
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 88300100}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 6, y: 4, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1206570913
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1206570916}
+  - component: {fileID: 1206570915}
+  - component: {fileID: 1206570914}
+  m_Layer: 0
+  m_Name: Trigger_InicioPelea
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1206570914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206570913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2879b8c2b8d1d844fa45100798fd0834, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ZoneTrigger
+  tipo: 0
+  playerTag: Player
+  soloUnaVez: 1
+  mensaje: Entra
+  doorId:
+  zoneId:
+  onTriggerEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  nombreEscena:
+--- !u!65 &1206570915
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206570913}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 6, y: 4, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1206570916
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206570913}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -3.04, y: 2.04, z: -4.49}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &788705596
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 788705598}
+  - component: {fileID: 788705597}
+  m_Layer: 0
+  m_Name: DebugListener_TEMP
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &788705597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788705596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f2569397df8f204d8531c39847cb39c, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::DebugListenerTemporal
+--- !u!4 &788705598
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788705596}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.28398, y: 0.03, z: -5.07827}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &900002020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900002000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec13f2c117f6ae8449542c2c040997f0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::BasicAttack
+  damage: 10
+  attackCooldown: 1
   combatGameManager: {fileID: 910000002}
-  barWidth: 120
-  barHeight: 16
-  heightAboveCharacter: 0.15
-  dogColor: {r: 0.15, g: 0.75, b: 0.25, a: 1}
-  enemyColor: {r: 0.85, g: 0.15, b: 0.15, a: 1}
-  backgroundColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.9}
+  combatAnimation: {fileID: 900002009}
+--- !u!114 &900002021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900002000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e239e1f9310748c381f43c88206f9c0b, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAutoAttack
+  attack: {fileID: 900002020}
+  dogTarget: {fileID: 900001008}
+  dogTransform: {fileID: 900001001}
+  attackRange: 2.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -13574,3 +13904,7 @@ SceneRoots:
   - {fileID: 1774671801}
   - {fileID: 397549873}
   - {fileID: 910000001}
+  - {fileID: 17007973}
+  - {fileID: 88300101}
+  - {fileID: 1206570916}
+  - {fileID: 788705598}

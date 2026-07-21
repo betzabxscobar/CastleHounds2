@@ -58,6 +58,8 @@ public sealed class EnemyHealth : MonoBehaviour
             Debug.LogError("EnemyHealth no tiene una referencia a CombatGameManager.", this);
         }
 
+        GameEvents.RaiseEnemyDefeated();
+
         if (destroyWhenDefeated)
         {
             Destroy(gameObject, destroyDelay);

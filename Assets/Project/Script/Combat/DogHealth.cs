@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Administra la vida del perro y comunica su derrota al combate.
@@ -7,6 +8,8 @@ public sealed class DogHealth : MonoBehaviour
 {
     [SerializeField, Min(1f)] private float maxHealth = 100f;
     [SerializeField] private CombatGameManager combatGameManager;
+    [SerializeField] private string nombreEscenaDerrota = "Perdiste";
+    [SerializeField, Min(0f)] private float retrasoDerrota = 1.5f;
 
     public float CurrentHealth { get; private set; }
     public float MaxHealth => maxHealth;
@@ -65,6 +68,20 @@ public sealed class DogHealth : MonoBehaviour
         {
             Debug.LogError("DogHealth no tiene una referencia a CombatGameManager.", this);
         }
+
+        if (retrasoDerrota <= 0f)
+        {
+            CargarEscenaDerrota();
+        }
+        else
+        {
+            Invoke(nameof(CargarEscenaDerrota), retrasoDerrota);
+        }
+    }
+
+    private void CargarEscenaDerrota()
+    {
+        SceneManager.LoadScene(nombreEscenaDerrota);
     }
 
     private void OnValidate()

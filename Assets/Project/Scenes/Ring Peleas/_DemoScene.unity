@@ -131,6 +131,10 @@ GameObject:
   - component: {fileID: 31427770}
   - component: {fileID: 31427769}
   - component: {fileID: 31427768}
+  - component: {fileID: 900500101}
+  - component: {fileID: 900500102}
+  - component: {fileID: 900500103}
+  - component: {fileID: 900500104}
   m_Layer: 0
   m_Name: Player_Dog_Model
   m_TagString: Player
@@ -480,6 +484,10 @@ GameObject:
   - component: {fileID: 900002002}
   - component: {fileID: 900002003}
   - component: {fileID: 810000005}
+  - component: {fileID: 900500111}
+  - component: {fileID: 900500112}
+  - component: {fileID: 900500113}
+  - component: {fileID: 900500114}
   m_Layer: 0
   m_Name: Enemy_Wolf_Model
   m_TagString: Untagged
@@ -1221,6 +1229,391 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a769d0345654f345be733003b50a3e2, type: 3}
+--- !u!114 &900500101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 31427767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 142f282956992d74d8bf575fc342d728, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::DogHealth
+  maxHealth: 100
+  combatGameManager: {fileID: 910100002}
+--- !u!114 &900500102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 31427767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec13f2c117f6ae8449542c2c040997f0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::BasicAttack
+  damage: 10
+  attackCooldown: 1
+  combatGameManager: {fileID: 910100002}
+  combatAnimation: {fileID: 900500104}
+--- !u!114 &900500103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 31427767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7eb87791cff623949abf75eb58d7adc5, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::MouseBasicAttack
+  dogAttack: {fileID: 900500102}
+  enemyTarget: {fileID: 900500111}
+--- !u!114 &900500104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 31427767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a41c80f4a5dd4e5ebc3a73654b538228, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::CombatAnimation
+  visualTransform: {fileID: 1314059456}
+  animator: {fileID: 1314059455}
+  attackStateName: Run
+  idleStateName: Idle
+  hitStateName:
+  defeatStateName:
+  anticipationDuration: 0.1
+  lungeDuration: 0.18
+  recoveryDuration: 0.18
+  attackDistance: 0.45
+  anticipationDistance: 0.08
+  hitDuration: 0.16
+--- !u!114 &900500111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900002000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee7dad5007065e4e8b7cd296d63bcc3, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 100
+  combatGameManager: {fileID: 910100002}
+  destroyWhenDefeated: 0
+  destroyDelay: 0
+--- !u!114 &900500112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900002000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a41c80f4a5dd4e5ebc3a73654b538228, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::CombatAnimation
+  visualTransform: {fileID: 900002005}
+  animator: {fileID: 0}
+  attackStateName: AttackR
+  idleStateName: Idle_New
+  hitStateName: GetHit_2
+  defeatStateName: dead
+  anticipationDuration: 0.1
+  lungeDuration: 0.18
+  recoveryDuration: 0.18
+  attackDistance: 0.45
+  anticipationDistance: 0.08
+  hitDuration: 0.16
+--- !u!1 &910100000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910100001}
+  - component: {fileID: 910100002}
+  - component: {fileID: 910100003}
+  m_Layer: 0
+  m_Name: CombatManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910100001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910100000}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910100002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f118db2e1ae78a4287f35f5b8dd59f6, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::CombatGameManager
+--- !u!114 &910100003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a7e8121bf6e3c544b22145678e3af41, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::CombatHealthHUD
+  dogHealth: {fileID: 900500101}
+  enemyHealth: {fileID: 900500111}
+  combatGameManager: {fileID: 910100002}
+  barWidth: 120
+  barHeight: 16
+  heightAboveCharacter: 0.15
+  dogColor: {r: 0.15, g: 0.75, b: 0.25, a: 1}
+  enemyColor: {r: 0.85, g: 0.15, b: 0.15, a: 1}
+  backgroundColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.9}
+--- !u!1 &900500200
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 900500201}
+  - component: {fileID: 900500202}
+  m_Layer: 0
+  m_Name: Portal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &900500201
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900500200}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.48, y: 0.5, z: -6.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 900500211}
+  - {fileID: 900500221}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &900500202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900500200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4dc818686ce4624eac5789c51c9b055, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PuertaBloqueada
+  doorId: portal_arena
+  animator: {fileID: 0}
+  triggerAnimacionAbrir: Abrir
+  colliderBloqueo: {fileID: 900500222}
+--- !u!1 &900500210
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 900500211}
+  - component: {fileID: 900500212}
+  - component: {fileID: 900500213}
+  m_Layer: 0
+  m_Name: Portal_Trigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &900500211
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900500210}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 900500201}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &900500212
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900500210}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 3, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &900500213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900500210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2879b8c2b8d1d844fa45100798fd0834, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ZoneTrigger
+  tipo: 5
+  playerTag: Player
+  soloUnaVez: 1
+  mensaje:
+  doorId:
+  zoneId:
+  onTriggerEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  nombreEscena: Ganaste
+--- !u!1 &900500220
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 900500221}
+  - component: {fileID: 900500222}
+  m_Layer: 0
+  m_Name: Portal_Bloqueo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &900500221
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900500220}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 900500201}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &900500222
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900500220}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.2, y: 3, z: 0.3}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &900500113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900002000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec13f2c117f6ae8449542c2c040997f0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::BasicAttack
+  damage: 10
+  attackCooldown: 1
+  combatGameManager: {fileID: 910100002}
+  combatAnimation: {fileID: 900500112}
+--- !u!114 &900500114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900002000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e239e1f9310748c381f43c88206f9c0b, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAutoAttack
+  attack: {fileID: 900500113}
+  dogTarget: {fileID: 900500101}
+  dogTransform: {fileID: 31427771}
+  attackRange: 2.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1235,3 +1628,5 @@ SceneRoots:
   - {fileID: 810000002}
   - {fileID: 810000007}
   - {fileID: 810000010}
+  - {fileID: 910100001}
+  - {fileID: 900500201}

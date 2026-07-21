@@ -5,12 +5,15 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Project/Scenes/Gampley/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
     path: Assets/Project/Scenes/Menus/Frontend/MenuPrincipal.unity
     guid: 8ab40f89db6ff70438a14ada59d602c1
+  - enabled: 1
+    path: Assets/Project/Scenes/Intro_Cinematica/Historia.unity
+    guid: af6718e27c6d75848bb169690f0f5ba8
   - enabled: 1
     path: Assets/Project/Scenes/Menus/Frontend/Opciones.unity
     guid: 96b8fe1f0ba2156449fa276a89d003c4
@@ -29,5 +32,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Project/Scenes/Menus/Frontend/Ganaste.unity
     guid: 9c3b85e4a30ec134e952477a538fcf2d
+  - enabled: 1
+    path: Assets/Project/Scenes/Menus/Frontend/Perdiste.unity
+    guid: c159e89f6871aae44aa0745d3abbbc47
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
