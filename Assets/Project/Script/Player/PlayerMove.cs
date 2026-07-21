@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float groundDistance = 0.3f;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float gravity = -20f;
+    [SerializeField] private float terminalVelocity = 25f;
 
 
     private CharacterController controller;
@@ -109,7 +110,7 @@ public class PlayerController : MonoBehaviour
         // GRAVEDAD
         // =========================
 
-        bool grounded = Physics.CheckSphere(
+        bool grounded = groundCheck != null && Physics.CheckSphere(
             groundCheck.position,
             groundDistance,
             groundLayer
@@ -123,6 +124,7 @@ public class PlayerController : MonoBehaviour
 
 
         verticalVelocity += gravity * Time.deltaTime;
+        verticalVelocity = Mathf.Max(verticalVelocity, -terminalVelocity);
 
 
 
