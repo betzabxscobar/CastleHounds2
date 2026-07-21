@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Collider))]
 public class ZoneTrigger : MonoBehaviour
@@ -10,7 +11,8 @@ public class ZoneTrigger : MonoBehaviour
         InicioPelea,
         AbrirPuerta,
         MostrarMensaje,
-        CambioDeZona
+        CambioDeZona,
+        CargarEscena
     }
 
     [SerializeField] private TipoTrigger tipo;
@@ -20,6 +22,10 @@ public class ZoneTrigger : MonoBehaviour
     [SerializeField] private string doorId;
     [SerializeField] private string zoneId;
     [SerializeField] private UnityEvent onTriggerEnter;
+
+    [Header("Solo si tipo = CargarEscena")]
+    [Tooltip("Debe coincidir exactamente con el nombre del archivo de escena y estar agregada en Build Settings.")]
+    [SerializeField] private string nombreEscena;
 
     private Collider _collider;
     private bool _yaActivado;
@@ -52,6 +58,16 @@ public class ZoneTrigger : MonoBehaviour
                 break;
             case TipoTrigger.CambioDeZona:
                 GameEvents.RaiseZoneChanged(zoneId);
+                break;
+            case TipoTrigger.CargarEscena:
+                if (string.IsNullOrEmpty(nombreEscena))
+                {
+                    Debug.LogWarning($"[ZoneTrigger] {gameObject.name}: tipo CargarEscena pero nombreEscena esta vacio.");
+                }
+                else
+                {
+                    SceneManager.LoadScene(nombreEscena);
+                }
                 break;
         }
 

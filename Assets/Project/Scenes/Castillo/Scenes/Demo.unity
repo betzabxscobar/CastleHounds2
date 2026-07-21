@@ -7609,7 +7609,7 @@ GameObject:
   - component: {fileID: 1206570915}
   - component: {fileID: 1206570914}
   m_Layer: 0
-  m_Name: Trigger_EntradaCastillo (1)
+  m_Name: Trigger_InicioPelea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
