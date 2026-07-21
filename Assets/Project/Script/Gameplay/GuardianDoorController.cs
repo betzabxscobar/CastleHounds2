@@ -73,8 +73,6 @@ public class GuardianDoorController : MonoBehaviour
         {
             bloqueoCollider.enabled = false;
         }
-
-        _abriendo = true;
     }
 
     private void OnTriggerEnter(Collider other)
