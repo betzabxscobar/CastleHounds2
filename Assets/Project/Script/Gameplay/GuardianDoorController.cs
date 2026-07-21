@@ -2,8 +2,15 @@ using UnityEngine;
 
 public class GuardianDoorController : MonoBehaviour
 {
+    [Header("Colisiones")]
     [SerializeField] private Collider bloqueoCollider;
     [SerializeField] private Collider zonaDeteccion;
+
+    [Header("Puerta")]
+    [SerializeField] private Transform objetoVisual;
+    [SerializeField] private bool bloqueadoInicial = true;
+
+    [Header("Apertura")]
     [SerializeField] private float anguloApertura = 90f;
     [SerializeField] private float velocidadApertura = 2f;
 
@@ -21,24 +28,36 @@ public class GuardianDoorController : MonoBehaviour
             bloqueoCollider = GetComponent<Collider>();
         }
 
-        _rotacionInicial = transform.rotation;
+        if (objetoVisual == null)
+        {
+            objetoVisual = transform;
+        }
+
+        _rotacionInicial = objetoVisual.rotation;
         _rotacionFinal = _rotacionInicial * Quaternion.Euler(0, anguloApertura, 0);
 
-        BloquearPuerta();
+        if (bloqueadoInicial)
+        {
+            BloquearPuerta();
+        }
+        else
+        {
+            AbrirPuerta();
+        }
     }
 
     private void Update()
     {
         if (!_abriendo) return;
 
-        transform.rotation = Quaternion.RotateTowards(
-            transform.rotation,
+        objetoVisual.rotation = Quaternion.RotateTowards(
+            objetoVisual.rotation,
             _rotacionFinal,
             velocidadApertura * Time.deltaTime * 90f);
 
-        if (Quaternion.Angle(transform.rotation, _rotacionFinal) < 0.5f)
+        if (Quaternion.Angle(objetoVisual.rotation, _rotacionFinal) < 0.5f)
         {
-            transform.rotation = _rotacionFinal;
+            objetoVisual.rotation = _rotacionFinal;
             _abriendo = false;
         }
     }
@@ -74,7 +93,7 @@ public class GuardianDoorController : MonoBehaviour
             bloqueoCollider.enabled = false;
         }
 
-        _rotacionInicial = transform.rotation;
+        _rotacionInicial = objetoVisual.rotation;
         _rotacionFinal = _rotacionInicial * Quaternion.Euler(0, anguloApertura, 0);
         _abriendo = true;
     }
