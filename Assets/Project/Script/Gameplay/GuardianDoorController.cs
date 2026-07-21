@@ -73,6 +73,10 @@ public class GuardianDoorController : MonoBehaviour
         {
             bloqueoCollider.enabled = false;
         }
+
+        _rotacionInicial = transform.rotation;
+        _rotacionFinal = _rotacionInicial * Quaternion.Euler(0, anguloApertura, 0);
+        _abriendo = true;
     }
 
     private void OnTriggerEnter(Collider other)
