@@ -3483,7 +3483,7 @@ MonoBehaviour:
   groundDistance: 0.3
   groundLayer:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 9
   gravity: -20
 --- !u!114 &567831227
 MonoBehaviour:
