@@ -38,13 +38,26 @@ public class PlayerRespawn : MonoBehaviour
         controller.enabled = false;
 
 
-        transform.position = spawnPosition;
+        transform.position = FindGroundedPosition(spawnPosition);
         transform.eulerAngles = spawnRotation;
 
 
         controller.enabled = true;
 
 
-        Debug.Log("Jugador reapareció en: " + spawnPosition);
+        Debug.Log("Jugador reapareció en: " + transform.position);
+    }
+
+
+    private static Vector3 FindGroundedPosition(Vector3 desiredPosition)
+    {
+        Vector3 rayOrigin = desiredPosition + Vector3.up * 50f;
+
+        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, 200f))
+        {
+            return hit.point + Vector3.up * 0.05f;
+        }
+
+        return desiredPosition;
     }
 }
