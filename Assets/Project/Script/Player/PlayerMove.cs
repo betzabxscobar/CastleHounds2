@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 lastGroundedPosition;
     private bool hasSafetyPosition;
+    private bool hasSpeedParam;
 
 
 
@@ -45,6 +46,18 @@ public class PlayerController : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         respawn = GetComponent<PlayerRespawn>();
+
+        if (animator != null)
+        {
+            foreach (var param in animator.parameters)
+            {
+                if (param.type == AnimatorControllerParameterType.Float && param.name == "Speed")
+                {
+                    hasSpeedParam = true;
+                    break;
+                }
+            }
+        }
 
         controls = new PlayerControls();
 
@@ -113,7 +126,7 @@ public class PlayerController : MonoBehaviour
         // ANIMACIONES
         // =========================
 
-        if (animator != null)
+        if (animator != null && hasSpeedParam)
         {
             float animSpeed = moveInput.magnitude * (sprinting ? 2f : 1f);
             animator.SetFloat("Speed", animSpeed);

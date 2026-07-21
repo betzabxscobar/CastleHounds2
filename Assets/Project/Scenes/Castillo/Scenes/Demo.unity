@@ -782,6 +782,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 6, y: 4, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &105957355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1521958989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ef65bab4c2a43979368d2a9c44f7961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraScrollZoom
+  zoomStep: 2.25
+  minDistance: 1.5
+  maxDistance: 6
+  smoothTime: 0.15
 --- !u!1001 &115671782
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5442,7 +5458,7 @@ GameObject:
   - component: {fileID: 900001002}
   m_Layer: 0
   m_Name: Player_Dog_Model
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5463,6 +5479,7 @@ Transform:
   - {fileID: 900001005}
   - {fileID: 494856948}
   - {fileID: 694628089}
+  - {fileID: 577407379}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &900001002
@@ -5547,9 +5564,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ares_Visual
       objectReference: {fileID: 0}
+    - target: {fileID: 850212266740439641, guid: 63efcfc35129a5e44bd32639b2259dcb, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 6876439029949063675, guid: 63efcfc35129a5e44bd32639b2259dcb, type: 3}
       propertyPath: m_Controller
-      value:
+      value: 
       objectReference: {fileID: 9100000, guid: 574737dadadf621449cc99ce12405a19, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5579,12 +5600,9 @@ MonoBehaviour:
   rotationSpeed: 90
   cameraTransform: {fileID: 623750310}
   animator: {fileID: 1606083790}
-  groundCheck: {fileID: 694628089}
-  groundDistance: 0.3
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
   gravity: -20
+  terminalVelocity: 25
+  maxFallBelowStart: 15
 --- !u!143 &900001007
 CharacterController:
   m_ObjectHideFlags: 0
@@ -9729,6 +9747,7 @@ GameObject:
   - component: {fileID: 1521958991}
   - component: {fileID: 1521958990}
   - component: {fileID: 105957355}
+  - component: {fileID: 1521958992}
   m_Layer: 0
   m_Name: CamaraExploracion
   m_TagString: Untagged
@@ -9779,22 +9798,6 @@ MonoBehaviour:
       BarrelClipping: 0.25
       Anamorphism: 0
   BlendHint: 0
---- !u!114 &105957355
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1521958989}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ef65bab4c2a43979368d2a9c44f7961, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::CameraScrollZoom
-  zoomStep: 2.25
-  minDistance: 1.5
-  maxDistance: 6
-  smoothTime: 0.15
 --- !u!4 &1521958991
 Transform:
   m_ObjectHideFlags: 0
@@ -9803,13 +9806,39 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1521958989}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.15643448, y: 0, z: 0, w: 0.98768836}
-  m_LocalPosition: {x: 0, y: 4, z: -8}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.1, y: 0.030000001, z: -6.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1521958992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1521958989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 625c14eee3ad46c99df7c7c891ef668a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineThirdPersonFollow
+  Damping: {x: 0.1, y: 0.5, z: 0.3}
+  ShoulderOffset: {x: 0.5, y: -0.4, z: 0}
+  VerticalArmLength: 0.4
+  CameraSide: 1
+  CameraDistance: 2
+  AvoidObstacles:
+    Enabled: 0
+    CollisionFilter:
+      serializedVersion: 2
+      m_Bits: 1
+    IgnoreTag: 
+    CameraRadius: 0.2
+    DampingIntoCollision: 0
+    DampingFromCollision: 0.5
 --- !u!1 &1561126606
 GameObject:
   m_ObjectHideFlags: 0
@@ -13893,3 +13922,4 @@ SceneRoots:
   - {fileID: 638850002}
   - {fileID: 1774671801}
   - {fileID: 397549873}
+  - {fileID: 900002001}
