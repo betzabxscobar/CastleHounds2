@@ -14,6 +14,18 @@ public class FadeInPanel : MonoBehaviour
 
     void Start()
     {
+        if (panel == null)
+        {
+            panel = GetComponent<Image>();
+        }
+
+        if (panel == null)
+        {
+            Debug.LogWarning("FadeInPanel necesita una referencia Image en el mismo objeto o en el campo panel.", this);
+            enabled = false;
+            return;
+        }
+
         Color c = panel.color;
         c.a = 0;
         panel.color = c;
