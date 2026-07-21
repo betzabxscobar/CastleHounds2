@@ -11,6 +11,9 @@ public class GuardianDoorController : MonoBehaviour
     [SerializeField] private Collider bloqueoCollider;
     [SerializeField] private Collider zonaDeteccion;
 
+    [Header("HUD")]
+    [SerializeField] private MessageHUD messageHUD;
+
     [Header("Puerta Simple")]
     [SerializeField] private Transform objetoVisual;
     [SerializeField] private bool bloqueadoInicial = true;
@@ -187,7 +190,10 @@ public class GuardianDoorController : MonoBehaviour
 
         if (_estaBloqueada)
         {
-            Debug.Log("La puerta está sellada por el guardián.");
+            if (messageHUD != null)
+            {
+                messageHUD.ShowMessage("La puerta está sellada por el guardián.");
+            }
         }
     }
 
