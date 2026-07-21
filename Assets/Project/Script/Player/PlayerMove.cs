@@ -19,9 +19,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator animator;
 
     [Header("Gravedad")]
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private float groundDistance = 0.3f;
-    [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float gravity = -20f;
     [SerializeField] private float terminalVelocity = 25f;
 
@@ -110,11 +107,7 @@ public class PlayerController : MonoBehaviour
         // GRAVEDAD
         // =========================
 
-        bool grounded = groundCheck != null && Physics.CheckSphere(
-            groundCheck.position,
-            groundDistance,
-            groundLayer
-        );
+        bool grounded = controller.isGrounded;
 
 
         if (grounded && verticalVelocity < 0)
