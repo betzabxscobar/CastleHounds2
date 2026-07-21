@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// Controla una puerta bloqueada por un guardián.
+/// La puerta inicia bloqueada y puede desbloquearse mediante UnlockDoor().
+/// </summary>
 public class GuardianDoorController : MonoBehaviour
 {
     [Header("Colisiones")]
@@ -62,28 +66,45 @@ public class GuardianDoorController : MonoBehaviour
         }
     }
 
+    // ──────────────────────────────────────────────
+    //  Métodos públicos
+    // ──────────────────────────────────────────────
+
+    /// <summary>
+    /// Desactiva el collider de bloqueo sin animación.
+    /// </summary>
     public void AbrirPuerta()
     {
         _estaBloqueada = false;
-        
+
         if (bloqueoCollider != null)
         {
             bloqueoCollider.enabled = false;
         }
     }
 
+    /// <summary>
+    /// Activa el collider de bloqueo.
+    /// </summary>
     public void BloquearPuerta()
     {
         _estaBloqueada = true;
-        
+
         if (bloqueoCollider != null)
         {
             bloqueoCollider.enabled = true;
         }
     }
 
+    /// <summary>
+    /// Estado actual de la puerta. true = bloqueada.
+    /// </summary>
     public bool EstaBloqueada => _estaBloqueada;
 
+    /// <summary>
+    /// Desbloquea la puerta y ejecuta la animación de apertura.
+    /// Debe ser llamado por un sistema externo cuando la pelea contra el guardián termine.
+    /// </summary>
     public void UnlockDoor()
     {
         _estaBloqueada = false;
@@ -97,6 +118,10 @@ public class GuardianDoorController : MonoBehaviour
         _rotacionFinal = _rotacionInicial * Quaternion.Euler(0, anguloApertura, 0);
         _abriendo = true;
     }
+
+    // ──────────────────────────────────────────────
+    //  Detección del jugador
+    // ──────────────────────────────────────────────
 
     private void OnTriggerEnter(Collider other)
     {
