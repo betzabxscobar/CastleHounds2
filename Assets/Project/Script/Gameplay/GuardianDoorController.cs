@@ -41,6 +41,16 @@ public class GuardianDoorController : MonoBehaviour
 
     public bool EstaBloqueada => _estaBloqueada;
 
+    public void UnlockDoor()
+    {
+        _estaBloqueada = false;
+
+        if (bloqueoCollider != null)
+        {
+            bloqueoCollider.enabled = true;
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag(TagJugador)) return;
