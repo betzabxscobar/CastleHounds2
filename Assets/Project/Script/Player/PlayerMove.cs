@@ -107,7 +107,8 @@ public class PlayerController : MonoBehaviour
         // GRAVEDAD
         // =========================
 
-        bool grounded = controller.isGrounded;
+        Vector3 feetPosition = transform.position + controller.center - Vector3.up * (controller.height * 0.5f);
+        bool grounded = controller.isGrounded || Physics.CheckSphere(feetPosition, 0.15f, ~0, QueryTriggerInteraction.Ignore);
 
 
         if (grounded && verticalVelocity < 0)
