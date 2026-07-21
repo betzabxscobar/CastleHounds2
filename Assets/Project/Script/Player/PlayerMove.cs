@@ -5,12 +5,12 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movimiento")]
-    [SerializeField] private float walkSpeed = 5f;
-    [SerializeField] private float runSpeed = 8f;
-    [SerializeField] private float acceleration = 12f;
+    [SerializeField] private float walkSpeed = 4f;
+    [SerializeField] private float runSpeed = 7f;
+    [SerializeField] private float acceleration = 7f;
 
     [Header("Rotación")]
-    [SerializeField] private float rotationSpeed = 360f;
+    [SerializeField] private float rotationSpeed = 140f;
 
     [Header("Cámara")]
     [SerializeField] private Transform cameraTransform;
@@ -96,10 +96,8 @@ public class PlayerController : MonoBehaviour
 
         if (animator != null)
         {
-            animator.SetFloat("Horizontal", horizontal);
-            animator.SetFloat("Vertical", vertical);
-
-            animator.SetBool("Running", sprinting);
+            float animSpeed = moveInput.magnitude * (sprinting ? 2f : 1f);
+            animator.SetFloat("Speed", animSpeed);
         }
 
 
