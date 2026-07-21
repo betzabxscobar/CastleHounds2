@@ -49,7 +49,7 @@ public class AvatarSelector : MonoBehaviour
         PlayerPrefs.SetInt("AvatarSeleccionado", avatarActual);
         PlayerPrefs.Save();
 
-        SceneManager.LoadScene("Demo");
+        SceneManager.LoadScene("Historia");
     }
 
     private void MostrarAvatar()
