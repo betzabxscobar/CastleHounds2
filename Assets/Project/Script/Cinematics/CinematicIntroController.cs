@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
 
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -58,6 +59,7 @@ public sealed class CinematicIntroController : MonoBehaviour
     [Header("Opciones")]
     [SerializeField] private bool allowSkip = true;
     [SerializeField] private bool moveDogToStartOnIntro = true;
+    [SerializeField] private float skipInputDelay = 0.35f;
     [SerializeField] private KeyCode legacySkipKey = KeyCode.Escape;
     [SerializeField] private int inactivePriority = 0;
     [SerializeField] private int activePriority = 20;
@@ -65,8 +67,26 @@ public sealed class CinematicIntroController : MonoBehaviour
     private Coroutine introRoutine;
     private bool introRunning;
     private bool introFinished;
+    private float introStartRealtime;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void RegisterSceneLoadedHandler()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void EnsureIntroExistsAfterInitialSceneLoad()
+    {
+        CreateIntroIfMissing();
+    }
+
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        CreateIntroIfMissing();
+    }
+
     private static void CreateIntroIfMissing()
     {
         if (FindAnyObjectByType<CinematicIntroController>() != null)
@@ -122,6 +142,8 @@ public sealed class CinematicIntroController : MonoBehaviour
             return;
         }
 
+        Time.timeScale = 1f;
+        introStartRealtime = Time.realtimeSinceStartup;
         ResolveSceneReferences();
         introRoutine = StartCoroutine(PlayIntroRoutine());
     }
@@ -634,6 +656,11 @@ public sealed class CinematicIntroController : MonoBehaviour
 
     private bool SkipPressed()
     {
+        if (Time.realtimeSinceStartup - introStartRealtime < skipInputDelay)
+        {
+            return false;
+        }
+
 #if ENABLE_INPUT_SYSTEM
         Keyboard keyboard = Keyboard.current;
         if (keyboard != null && (keyboard.escapeKey.wasPressedThisFrame || keyboard.spaceKey.wasPressedThisFrame))
@@ -659,6 +686,7 @@ public sealed class CinematicIntroController : MonoBehaviour
         finalCameraDistance = Mathf.Max(0.5f, finalCameraDistance);
         finalCameraHeight = Mathf.Max(0.1f, finalCameraHeight);
         finalLookHeight = Mathf.Max(0f, finalLookHeight);
+        skipInputDelay = Mathf.Max(0f, skipInputDelay);
         activePriority = Mathf.Max(inactivePriority + 1, activePriority);
     }
 }
