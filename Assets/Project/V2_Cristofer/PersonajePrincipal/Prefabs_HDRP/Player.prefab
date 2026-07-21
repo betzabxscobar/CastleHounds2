@@ -1988,7 +1988,7 @@ Transform:
   m_GameObject: {fileID: 8613658063394902791}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.237, y: -6.968, z: -0.004}
+  m_LocalPosition: {x: 0, y: -0.55, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2182,7 +2182,7 @@ CharacterController:
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 1.18, y: -6.5, z: -0.15}
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!114 &7612073769460531422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2192,15 +2192,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 9047806679320051262}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58cf17933043169458ba62b6f8c6d3d4, type: 3}
-  m_Name: 
+  m_Script: {fileID: 11500000, guid: 1130bbc6128a5db47ab0169b77c1336f, type: 3}
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  walkSpeed: 5
-  runSpeed: 8
-  acceleration: 12
-  rotationSpeed: 180
+  walkSpeed: 4
+  runSpeed: 7
+  acceleration: 6
+  rotationSpeed: 90
   cameraTransform: {fileID: 209783733793469776}
   animator: {fileID: 6322964579588117583}
+  groundCheck: {fileID: 6169180908542241295}
+  groundDistance: 0.3
+  groundLayer: 1
+  gravity: -20
 --- !u!114 &7421160932990858497
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2210,8 +2214,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 9047806679320051262}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8cf6e83370864f449700d5376c3a715, type: 3}
-  m_Name: 
+  m_Script: {fileID: 11500000, guid: fa62f41339e78a041bab90e0cfa6ba67, type: 3}
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRespawn
   spawnPosition: {x: -4.02, y: 6.98, z: -11.18}
   spawnRotation: {x: 0, y: 0, z: 0}
