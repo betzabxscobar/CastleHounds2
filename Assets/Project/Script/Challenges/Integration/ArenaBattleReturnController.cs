@@ -8,6 +8,10 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
     private const string PreviousVictorySceneName = "Ganaste";
     private const string BattleWolfName = "Enemy_Wolf_Model";
     private const string PlayerName = "Player_Dog_Model";
+    private const string PortalName = "Portal";
+    private const string PortalTriggerName = "Portal_Trigger";
+    private const string PortalBlockerName = "Portal_Bloqueo";
+    private const string PortalDoorId = "portal_arena";
 
     private static readonly Vector3 ReturnPosition = new Vector3(-0.105f, 0f, 0.7049999f);
     private static bool pendingReturnTeleport;
@@ -20,6 +24,9 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
 
         ZoneTrigger.OnBeforeSceneLoadRequested -= HandleBeforeSceneLoadRequested;
         ZoneTrigger.OnBeforeSceneLoadRequested += HandleBeforeSceneLoadRequested;
+
+        GameEvents.OnEnemyDefeatedWithRole -= HandleEnemyDefeatedWithRole;
+        GameEvents.OnEnemyDefeatedWithRole += HandleEnemyDefeatedWithRole;
 
         HandleSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
     }
@@ -47,11 +54,22 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
         }
     }
 
+    private static void HandleEnemyDefeatedWithRole(EnemyHealth enemyHealth, EnemyRole role)
+    {
+        if (SceneManager.GetActiveScene().name != BattleSceneName || role != EnemyRole.RegularEnemy)
+        {
+            return;
+        }
+
+        UnlockPortalExit();
+    }
+
     private static void ConfigureBattleSceneReturn()
     {
         DisableVictorySceneLoaders();
         ConfigureBattleWolfAsRegularEnemy();
         RedirectVictoryExitTriggersToDemo();
+        ConfigurePortalExitTrigger();
     }
 
     private static void DisableVictorySceneLoaders()
@@ -107,6 +125,64 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
         }
     }
 
+    private static void ConfigurePortalExitTrigger()
+    {
+        GameObject portalTriggerObject = FindSceneGameObject(PortalTriggerName);
+        if (portalTriggerObject == null)
+        {
+            GameObject portal = FindSceneGameObject(PortalName);
+            if (portal == null)
+            {
+                Debug.LogWarning($"ArenaBattleReturnController: no se encontro {PortalName} en {BattleSceneName}.");
+                return;
+            }
+
+            portalTriggerObject = new GameObject(PortalTriggerName);
+            portalTriggerObject.transform.SetParent(portal.transform, false);
+            portalTriggerObject.transform.localPosition = Vector3.zero;
+            portalTriggerObject.transform.localRotation = Quaternion.identity;
+            portalTriggerObject.transform.localScale = Vector3.one;
+        }
+
+        ActivateHierarchy(portalTriggerObject.transform);
+
+        BoxCollider triggerCollider = portalTriggerObject.GetComponent<BoxCollider>();
+        if (triggerCollider == null)
+        {
+            triggerCollider = portalTriggerObject.AddComponent<BoxCollider>();
+            triggerCollider.size = new Vector3(2f, 3f, 2f);
+        }
+
+        triggerCollider.isTrigger = true;
+        triggerCollider.enabled = true;
+
+        ZoneTrigger zoneTrigger = portalTriggerObject.GetComponent<ZoneTrigger>();
+        if (zoneTrigger == null)
+        {
+            zoneTrigger = portalTriggerObject.AddComponent<ZoneTrigger>();
+        }
+
+        zoneTrigger.ConfigureSceneLoadTarget(ReturnSceneName);
+    }
+
+    private static void UnlockPortalExit()
+    {
+        GameEvents.RaiseDoorShouldOpen(PortalDoorId);
+        ConfigurePortalExitTrigger();
+
+        GameObject blocker = FindSceneGameObject(PortalBlockerName);
+        if (blocker == null)
+        {
+            return;
+        }
+
+        Collider blockerCollider = blocker.GetComponent<Collider>();
+        if (blockerCollider != null)
+        {
+            blockerCollider.enabled = false;
+        }
+    }
+
     private static void TeleportPlayerToReturnPosition()
     {
         GameObject player = GameObject.Find(PlayerName);
@@ -147,5 +223,28 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
         }
 
         Debug.Log($"ArenaBattleReturnController: jugador teletransportado a {ReturnPosition} al volver de {BattleSceneName}.");
+    }
+
+    private static GameObject FindSceneGameObject(string objectName)
+    {
+        foreach (GameObject sceneObject in Resources.FindObjectsOfTypeAll<GameObject>())
+        {
+            if (sceneObject.name == objectName && sceneObject.scene.IsValid() && sceneObject.scene.name == SceneManager.GetActiveScene().name)
+            {
+                return sceneObject;
+            }
+        }
+
+        return null;
+    }
+
+    private static void ActivateHierarchy(Transform target)
+    {
+        if (target.parent != null)
+        {
+            ActivateHierarchy(target.parent);
+        }
+
+        target.gameObject.SetActive(true);
     }
 }

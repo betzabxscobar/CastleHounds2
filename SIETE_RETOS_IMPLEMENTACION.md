@@ -81,7 +81,7 @@ El progreso se puede reiniciar manualmente con la llamada anterior. El flujo act
 
 `SevenChallengesSceneBootstrap` desactiva `Enemy_Wolf_Model` en `Demo`. El lobo debe estar activo en `_DemoScene`, que es la escena cargada por el trigger final del castillo.
 
-Al cargar `_DemoScene`, `ArenaBattleReturnController` marca ese lobo como `RegularEnemy`, desactiva los cargadores directos a `Ganaste` y redirige el trigger de salida hacia `Demo`.
+Al cargar `_DemoScene`, `ArenaBattleReturnController` marca ese lobo como `RegularEnemy`, desactiva los cargadores directos a `Ganaste` y configura `Portal_Trigger`, hijo de `Portal`, como salida hacia `Demo`.
 
 ## Configuracion del jefe final
 
@@ -89,7 +89,7 @@ El jefe final debe tener `EnemyHealth` con rol `FinalBoss` o un `EnemyRoleMarker
 
 ## Retorno desde la batalla
 
-El trigger de salida de `_DemoScene` vuelve a `Demo` y teletransporta al jugador a:
+El trigger `Portal/Portal_Trigger` de `_DemoScene` se habilita al derrotar al lobo, vuelve a `Demo` y teletransporta al jugador a:
 
 ```text
 x = -0.105
