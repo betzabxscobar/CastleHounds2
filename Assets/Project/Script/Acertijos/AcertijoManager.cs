@@ -21,6 +21,12 @@ public class AcertijoManager : MonoBehaviour
     public Button botonContinuar;
     public Button botonSalir;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip sonidoSeleccion;
+    public AudioClip sonidoCorrecto;
+    public AudioClip sonidoIncorrecto;
+
     [Header("Preguntas")]
     public List<Pregunta> preguntas = new List<Pregunta>();
 
@@ -72,14 +78,14 @@ public class AcertijoManager : MonoBehaviour
         respuestaSeleccionada = -1;
 
         textoIndicaciones.text = "";
-
-        textoProgreso.text =
-            $"Pregunta {preguntaActual + 1}/{preguntas.Count}";
+        textoProgreso.text = $"Pregunta {preguntaActual + 1}/{preguntas.Count}";
     }
 
     void SeleccionarRespuesta(int indice)
     {
         respuestaSeleccionada = indice;
+
+        Reproducir(sonidoSeleccion);
 
         for (int i = 0; i < botonesRespuesta.Length; i++)
         {
@@ -107,12 +113,18 @@ public class AcertijoManager : MonoBehaviour
         if (respuestaSeleccionada == pregunta.respuestaCorrecta)
         {
             respuestasCorrectas++;
+
             textoIndicaciones.text = "¡Respuesta correcta!";
+
+            Reproducir(sonidoCorrecto);
         }
         else
         {
             respuestasIncorrectas++;
+
             textoIndicaciones.text = "Respuesta incorrecta.";
+
+            Reproducir(sonidoIncorrecto);
         }
 
         preguntaActual++;
@@ -166,5 +178,13 @@ public class AcertijoManager : MonoBehaviour
     void CerrarJuego()
     {
         Destroy(transform.root.gameObject);
+    }
+
+    void Reproducir(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
     }
 }
