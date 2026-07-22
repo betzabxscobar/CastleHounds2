@@ -14,6 +14,8 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
     private const string ChallengesCanvasName = "ChallengesCanvas";
     private const string RuneMemoryPanelName = "RuneMemoryPanel";
     private const string RuneMemoryPanelResourcePath = "Challenges/Challenge01/RuneMemoryPanel";
+    private const string ChestCombinationPanelName = "ChestCombinationPanel";
+    private const string ChestCombinationPanelResourcePath = "Challenges/Challenge02/ChestCombinationPanel";
 
     private static readonly (string HouseName, string ChallengeId, System.Type BridgeType)[] HouseBindings =
     {
@@ -126,6 +128,10 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
             {
                 ConfigureRuneMemoryGame(runeMemoryGame, uiRoot);
             }
+            else if (bridge is ChestCombinationGameController chestCombinationGame)
+            {
+                ConfigureChestCombinationGame(chestCombinationGame, uiRoot);
+            }
             else
             {
                 challengeBridges.Add(bridge);
@@ -176,6 +182,14 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
         if (wolf == null)
         {
             return;
+        }
+
+        EnemyHealth wolfHealth = wolf.GetComponent<EnemyHealth>();
+        GameObject player = GameObject.Find("Player_Dog_Model");
+        MouseBasicAttack mouseAttack = player != null ? player.GetComponent<MouseBasicAttack>() : null;
+        if (mouseAttack != null)
+        {
+            mouseAttack.ClearEnemyTargetIfMatches(wolfHealth);
         }
 
         wolf.SetActive(false);
@@ -359,6 +373,78 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
         if (panel.AmbientClip == null || panel.HighlightClip == null || panel.CorrectClip == null || panel.ErrorClip == null || panel.VictoryClip == null)
         {
             Debug.LogError("SevenChallengesSceneBootstrap: RuneMemoryPanel no tiene todos los AudioClip serializados.");
+        }
+    }
+
+    private static void ConfigureChestCombinationGame(ChestCombinationGameController gameController, Transform uiRoot)
+    {
+        if (uiRoot == null)
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: falta uiRoot para Cofre con combinacion.");
+            return;
+        }
+
+        ChestCombinationPanel panel = FindOrCreateChestCombinationPanel(uiRoot);
+        if (panel == null)
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: no se pudo cargar ChestCombinationPanel desde Resources. El reto 2 no se iniciara para evitar bloquear al jugador.");
+            return;
+        }
+
+        AudioSource sfxSource = panel.SfxSource != null ? panel.SfxSource : panel.gameObject.AddComponent<AudioSource>();
+        ConfigureUiAudioSource(sfxSource, false);
+
+        AudioSource ambienceSource = panel.AmbienceSource != null ? panel.AmbienceSource : panel.gameObject.AddComponent<AudioSource>();
+        ConfigureUiAudioSource(ambienceSource, true);
+        ValidateChestCombinationPanelAssets(panel);
+
+        gameController.ConfigureRuntime(
+            panel,
+            sfxSource,
+            ambienceSource,
+            panel.AmbienceClip,
+            panel.NumberPressClip,
+            panel.CorrectClip,
+            panel.IncorrectClip,
+            panel.ChestOpeningClip,
+            panel.VictoryClip);
+    }
+
+    private static ChestCombinationPanel FindOrCreateChestCombinationPanel(Transform uiRoot)
+    {
+        Transform existingPanel = uiRoot.Find(ChestCombinationPanelName);
+        if (existingPanel != null)
+        {
+            return existingPanel.GetComponent<ChestCombinationPanel>();
+        }
+
+        GameObject panelPrefab = Resources.Load<GameObject>(ChestCombinationPanelResourcePath);
+        if (panelPrefab == null)
+        {
+            Debug.LogError($"SevenChallengesSceneBootstrap: Resources.Load fallo para '{ChestCombinationPanelResourcePath}'.");
+            return null;
+        }
+
+        GameObject panelObject = Object.Instantiate(panelPrefab, uiRoot);
+        panelObject.name = ChestCombinationPanelName;
+        return panelObject.GetComponent<ChestCombinationPanel>();
+    }
+
+    private static void ValidateChestCombinationPanelAssets(ChestCombinationPanel panel)
+    {
+        if (panel.SfxSource == null)
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: ChestCombinationPanel no tiene SfxSource serializado.");
+        }
+
+        if (panel.AmbienceSource == null)
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: ChestCombinationPanel no tiene AmbienceSource serializado.");
+        }
+
+        if (panel.AmbienceClip == null || panel.NumberPressClip == null || panel.CorrectClip == null || panel.IncorrectClip == null || panel.ChestOpeningClip == null || panel.VictoryClip == null)
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: ChestCombinationPanel no tiene todos los AudioClip serializados.");
         }
     }
 

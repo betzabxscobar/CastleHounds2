@@ -21,6 +21,11 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
     private static ArenaBattleReturnController runner;
     private static bool pendingReturnTeleport;
 
+    // El portal de salida solo se activa cuando el enemigo de la arena muere.
+    // Mientras esto sea false, el collider del trigger queda desactivado y
+    // entrar a la zona del portal no hace nada.
+    private static bool portalUnlocked;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void RegisterSceneHandlers()
     {
@@ -109,6 +114,10 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
 
     private static void ConfigureBattleSceneReturn()
     {
+        // Cada vez que se (re)carga la arena, el portal arranca bloqueado:
+        // solo se desbloquea al morir el enemigo.
+        portalUnlocked = false;
+
         DisableVictorySceneLoaders();
         ConfigureBattleWolfAsRegularEnemy();
         RedirectVictoryExitTriggersToDemo();
@@ -197,7 +206,6 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
         }
 
         triggerCollider.isTrigger = true;
-        triggerCollider.enabled = true;
 
         ZoneTrigger zoneTrigger = portalTriggerObject.GetComponent<ZoneTrigger>();
         if (zoneTrigger == null)
@@ -207,11 +215,18 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
 
         zoneTrigger.ConfigureSceneLoadTarget(ReturnSceneName);
 
-        Debug.Log($"ArenaBattleReturnController: {PortalTriggerName} configurado -> destino={ReturnSceneName}, colliderEnabled={triggerCollider.enabled}, activo={portalTriggerObject.activeInHierarchy}.");
+        // ConfigureSceneLoadTarget reactiva el collider; se fuerza aqui al final
+        // para que el portal solo quede activo cuando el enemigo ya murio.
+        triggerCollider.enabled = portalUnlocked;
+
+        Debug.Log($"ArenaBattleReturnController: {PortalTriggerName} configurado -> destino={ReturnSceneName}, desbloqueado={portalUnlocked}, colliderEnabled={triggerCollider.enabled}, activo={portalTriggerObject.activeInHierarchy}.");
     }
 
     private static void UnlockPortalExit()
     {
+        // A partir de aqui el portal queda habilitado (enemigo derrotado).
+        portalUnlocked = true;
+
         GameEvents.RaiseDoorShouldOpen(PortalDoorId);
         ConfigurePortalExitTrigger();
 

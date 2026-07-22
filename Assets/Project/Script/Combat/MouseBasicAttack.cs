@@ -8,9 +8,9 @@ public sealed class MouseBasicAttack : MonoBehaviour
 {
     [SerializeField] private BasicAttack dogAttack;
     [SerializeField] private EnemyHealth enemyTarget;
-    [SerializeField, Min(0f)] private float attackRange = 2f;
 
     private bool missingReferencesReported;
+    private bool invalidTargetReported;
 
     private void Update()
     {
@@ -36,13 +36,45 @@ public sealed class MouseBasicAttack : MonoBehaviour
             return;
         }
 
-        float distance = Vector3.Distance(transform.position, enemyTarget.transform.position);
-        if (distance > attackRange)
+        if (!CanUseTarget(enemyTarget))
         {
-            Debug.Log($"{name}: {enemyTarget.name} esta demasiado lejos para atacar (distancia {distance:F1}, rango {attackRange}).", this);
+            enemyTarget = null;
             return;
         }
 
+        invalidTargetReported = false;
         dogAttack.AttackEnemy(enemyTarget);
+    }
+
+    public void ClearEnemyTargetIfMatches(EnemyHealth target)
+    {
+        if (target != null && enemyTarget == target)
+        {
+            enemyTarget = null;
+            invalidTargetReported = false;
+        }
+    }
+
+    private bool CanUseTarget(EnemyHealth target)
+    {
+        if (target == null || target.IsDefeated)
+        {
+            return false;
+        }
+
+        if (!target.gameObject.activeInHierarchy || !target.enabled)
+        {
+            if (!invalidTargetReported)
+            {
+                Debug.LogWarning(
+                    "MouseBasicAttack ignora el ataque porque el enemigo objetivo esta inactivo.",
+                    this);
+                invalidTargetReported = true;
+            }
+
+            return false;
+        }
+
+        return true;
     }
 }
