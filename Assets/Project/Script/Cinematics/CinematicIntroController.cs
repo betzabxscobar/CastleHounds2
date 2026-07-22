@@ -148,6 +148,15 @@ public sealed class CinematicIntroController : MonoBehaviour
         introRoutine = StartCoroutine(PlayIntroRoutine());
     }
 
+    private void OnDestroy()
+    {
+        if (introRunning && !introFinished)
+        {
+            Debug.LogWarning("CinematicIntroController destruido con la cinematica en curso. Restaurando control del perro como fail-safe.");
+            FinishIntro(true);
+        }
+    }
+
     public void SkipIntro()
     {
         if (introFinished)
@@ -250,6 +259,8 @@ public sealed class CinematicIntroController : MonoBehaviour
 
     private void FinishIntro(bool skipped)
     {
+        Debug.Log("Inicio de FinishIntro");
+
         introRunning = false;
         introFinished = true;
         introRoutine = null;
@@ -267,12 +278,22 @@ public sealed class CinematicIntroController : MonoBehaviour
         PositionExplorationCameraBehindDog();
         ActivateCamera(explorationCamera);
         DisableCinematicCameras();
+
+        Debug.Log("Antes de LockDogControl(false)");
         LockDogControl(false);
+        Debug.Log("Despues de LockDogControl(false)");
+
+        PlayerController playerController = dog != null ? dog.GetComponentInChildren<PlayerController>(true) : null;
+        CharacterController characterController = dog != null ? dog.GetComponentInChildren<CharacterController>(true) : null;
+        Debug.Log($"Estado de PlayerController: {(playerController != null ? playerController.enabled.ToString() : "no encontrado")}");
+        Debug.Log($"Estado de CharacterController: {(characterController != null ? characterController.enabled.ToString() : "no encontrado")}");
 
         if (skipped)
         {
             Debug.Log("Cinematica inicial saltada. Control del perro restaurado.");
         }
+
+        Debug.Log("Cinematica finalizada. Control del perro restaurado.");
     }
 
     private void PrepareCameras()
@@ -356,6 +377,7 @@ public sealed class CinematicIntroController : MonoBehaviour
 
     private void LockDogControl(bool locked)
     {
+        bool hasValidControlScript = false;
         if (dogControlScripts != null)
         {
             foreach (MonoBehaviour controlScript in dogControlScripts)
@@ -363,7 +385,17 @@ public sealed class CinematicIntroController : MonoBehaviour
                 if (controlScript != null)
                 {
                     controlScript.enabled = !locked;
+                    hasValidControlScript = true;
                 }
+            }
+        }
+
+        if (!hasValidControlScript && !locked && dog != null)
+        {
+            PlayerController fallbackController = dog.GetComponentInChildren<PlayerController>(true);
+            if (fallbackController != null)
+            {
+                fallbackController.enabled = true;
             }
         }
 
