@@ -15,12 +15,26 @@ public sealed class RuneMemoryPanel : MonoBehaviour
     [SerializeField] private Button retryButton;
     [SerializeField] private Button exitButton;
     [SerializeField] private RuneMemoryButton[] runeButtons;
+    [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioSource ambientSource;
+    [SerializeField] private AudioClip ambientClip;
+    [SerializeField] private AudioClip highlightClip;
+    [SerializeField] private AudioClip correctClip;
+    [SerializeField] private AudioClip errorClip;
+    [SerializeField] private AudioClip victoryClip;
 
     private Action startHandler;
     private Action retryHandler;
     private Action exitHandler;
 
     public RuneMemoryButton[] RuneButtons => runeButtons;
+    public AudioSource SfxSource => sfxSource;
+    public AudioSource AmbientSource => ambientSource;
+    public AudioClip AmbientClip => ambientClip;
+    public AudioClip HighlightClip => highlightClip;
+    public AudioClip CorrectClip => correctClip;
+    public AudioClip ErrorClip => errorClip;
+    public AudioClip VictoryClip => victoryClip;
 
     public static RuneMemoryPanel CreateDefault(
         Transform parent,
@@ -41,6 +55,10 @@ public sealed class RuneMemoryPanel : MonoBehaviour
         panelRect.offsetMax = Vector2.zero;
 
         CanvasGroup canvasGroup = panelObject.AddComponent<CanvasGroup>();
+        AudioSource sfxSource = panelObject.AddComponent<AudioSource>();
+        AudioSource ambientSource = panelObject.AddComponent<AudioSource>();
+        ConfigureAudioSource(sfxSource, false);
+        ConfigureAudioSource(ambientSource, true);
 
         GameObject overlayObject = CreateUIObject("BackgroundOverlay", panelObject.transform);
         RectTransform overlayRect = overlayObject.GetComponent<RectTransform>();
@@ -90,6 +108,7 @@ public sealed class RuneMemoryPanel : MonoBehaviour
 
         RuneMemoryPanel panel = panelObject.AddComponent<RuneMemoryPanel>();
         panel.Configure(panelObject, canvasGroup, title, instruction, round, status, start, retry, exit, createdRuneButtons);
+        panel.ConfigureAudioReferences(sfxSource, ambientSource, null, null, null, null, null);
         panel.Hide();
         return panel;
     }
@@ -142,6 +161,27 @@ public sealed class RuneMemoryPanel : MonoBehaviour
         RegisterButtonListeners();
         SetTitle("MEMORIA DE RUNAS");
         SetInstruction("Observa la secuencia y repetela.");
+    }
+
+    public void ConfigureAudioReferences(
+        AudioSource configuredSfxSource,
+        AudioSource configuredAmbientSource,
+        AudioClip configuredAmbientClip,
+        AudioClip configuredHighlightClip,
+        AudioClip configuredCorrectClip,
+        AudioClip configuredErrorClip,
+        AudioClip configuredVictoryClip)
+    {
+        sfxSource = configuredSfxSource;
+        ambientSource = configuredAmbientSource;
+        ambientClip = configuredAmbientClip;
+        highlightClip = configuredHighlightClip;
+        correctClip = configuredCorrectClip;
+        errorClip = configuredErrorClip;
+        victoryClip = configuredVictoryClip;
+
+        ConfigureAudioSource(sfxSource, false);
+        ConfigureAudioSource(ambientSource, true);
     }
 
     public void SetCallbacks(Action onStart, Action onRetry, Action onExit)
@@ -412,5 +452,17 @@ public sealed class RuneMemoryPanel : MonoBehaviour
         TMP_Text text = CreateText(buttonObject.transform, "Text", label, Vector2.zero, new Vector2(190f, 46f), 22f);
         text.color = new Color(0.12f, 0.08f, 0.03f, 1f);
         return button;
+    }
+
+    private static void ConfigureAudioSource(AudioSource audioSource, bool loop)
+    {
+        if (audioSource == null)
+        {
+            return;
+        }
+
+        audioSource.playOnAwake = false;
+        audioSource.loop = loop;
+        audioSource.spatialBlend = 0f;
     }
 }

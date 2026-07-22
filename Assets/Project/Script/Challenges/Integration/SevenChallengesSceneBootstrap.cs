@@ -6,10 +6,6 @@ using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
 {
     private const string DemoSceneName = "Demo";
@@ -17,21 +13,7 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
     private const string FinalBattleSceneName = "_DemoScene";
     private const string ChallengesCanvasName = "ChallengesCanvas";
     private const string RuneMemoryPanelName = "RuneMemoryPanel";
-
-    private const string RuneMemoryPanelPrefabPath = "Assets/Project/Script/Challenges/Games/Challenge01/Prefabs/RuneMemoryPanel.prefab";
-    private const string RuneSwordSpritePath = "Assets/Project/Script/Challenges/Games/Challenge01/Art/Runes/espada.png";
-    private const string RuneShieldSpritePath = "Assets/Project/Script/Challenges/Games/Challenge01/Art/Runes/escudo.png";
-    private const string RuneWolfSpritePath = "Assets/Project/Script/Challenges/Games/Challenge01/Art/Runes/lobo.png";
-    private const string RuneCrownSpritePath = "Assets/Project/Script/Challenges/Games/Challenge01/Art/Runes/corona.png";
-    private const string RuneFrameSpritePath = "Assets/Project/Script/Challenges/Games/Challenge01/Art/UI/marco.png";
-    private const string RuneStartSpritePath = "Assets/Project/Script/Challenges/Games/Challenge01/Art/UI/comenzar.png";
-    private const string RuneRetrySpritePath = "Assets/Project/Script/Challenges/Games/Challenge01/Art/UI/reintentar.png";
-    private const string RuneExitSpritePath = "Assets/Project/Script/Challenges/Games/Challenge01/Art/UI/salir.png";
-    private const string RuneAmbientAudioPath = "Assets/Project/Script/Challenges/Games/Challenge01/Audio/ambiente.mp3";
-    private const string RuneHighlightAudioPath = "Assets/Project/Script/Challenges/Games/Challenge01/Audio/iluminar.mp3";
-    private const string RuneCorrectAudioPath = "Assets/Project/Script/Challenges/Games/Challenge01/Audio/correcta.mp3";
-    private const string RuneErrorAudioPath = "Assets/Project/Script/Challenges/Games/Challenge01/Audio/error.mp3";
-    private const string RuneVictoryAudioPath = "Assets/Project/Script/Challenges/Games/Challenge01/Audio/victoria.mp3";
+    private const string RuneMemoryPanelResourcePath = "Challenges/Challenge01/RuneMemoryPanel";
 
     private static readonly (string HouseName, string ChallengeId, System.Type BridgeType)[] HouseBindings =
     {
@@ -307,27 +289,27 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
         RuneMemoryPanel panel = FindOrCreateRuneMemoryPanel(uiRoot);
         if (panel == null)
         {
-            Debug.LogError("SevenChallengesSceneBootstrap: no se pudo crear RuneMemoryPanel.");
+            Debug.LogError("SevenChallengesSceneBootstrap: no se pudo cargar RuneMemoryPanel desde Resources. El reto 1 no se iniciara para evitar bloquear al jugador.");
             return;
         }
 
-        AudioSource[] audioSources = panel.GetComponents<AudioSource>();
-        AudioSource sfxSource = audioSources.Length > 0 ? audioSources[0] : panel.gameObject.AddComponent<AudioSource>();
+        AudioSource sfxSource = panel.SfxSource != null ? panel.SfxSource : panel.gameObject.AddComponent<AudioSource>();
         ConfigureUiAudioSource(sfxSource, false);
 
-        AudioSource ambientSource = audioSources.Length > 1 ? audioSources[1] : panel.gameObject.AddComponent<AudioSource>();
+        AudioSource ambientSource = panel.AmbientSource != null ? panel.AmbientSource : panel.gameObject.AddComponent<AudioSource>();
         ConfigureUiAudioSource(ambientSource, true);
+        ValidateRuneMemoryPanelAssets(panel);
 
         gameController.ConfigureRuntime(
             panel,
             panel.RuneButtons,
             sfxSource,
             ambientSource,
-            LoadAsset<AudioClip>(RuneAmbientAudioPath),
-            LoadAsset<AudioClip>(RuneHighlightAudioPath),
-            LoadAsset<AudioClip>(RuneCorrectAudioPath),
-            LoadAsset<AudioClip>(RuneErrorAudioPath),
-            LoadAsset<AudioClip>(RuneVictoryAudioPath));
+            panel.AmbientClip,
+            panel.HighlightClip,
+            panel.CorrectClip,
+            panel.ErrorClip,
+            panel.VictoryClip);
     }
 
     private static RuneMemoryPanel FindOrCreateRuneMemoryPanel(Transform uiRoot)
@@ -338,24 +320,16 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
             return existingPanel.GetComponent<RuneMemoryPanel>();
         }
 
-        GameObject panelPrefab = LoadAsset<GameObject>(RuneMemoryPanelPrefabPath, false);
-        if (panelPrefab != null)
+        GameObject panelPrefab = Resources.Load<GameObject>(RuneMemoryPanelResourcePath);
+        if (panelPrefab == null)
         {
-            GameObject panelObject = Object.Instantiate(panelPrefab, uiRoot);
-            panelObject.name = RuneMemoryPanelName;
-            return panelObject.GetComponent<RuneMemoryPanel>();
+            Debug.LogError($"SevenChallengesSceneBootstrap: Resources.Load fallo para '{RuneMemoryPanelResourcePath}'.");
+            return null;
         }
 
-        return RuneMemoryPanel.CreateDefault(
-            uiRoot,
-            LoadAsset<Sprite>(RuneSwordSpritePath),
-            LoadAsset<Sprite>(RuneShieldSpritePath),
-            LoadAsset<Sprite>(RuneWolfSpritePath),
-            LoadAsset<Sprite>(RuneCrownSpritePath),
-            LoadAsset<Sprite>(RuneFrameSpritePath),
-            LoadAsset<Sprite>(RuneStartSpritePath),
-            LoadAsset<Sprite>(RuneRetrySpritePath),
-            LoadAsset<Sprite>(RuneExitSpritePath));
+        GameObject panelObject = Object.Instantiate(panelPrefab, uiRoot);
+        panelObject.name = RuneMemoryPanelName;
+        return panelObject.GetComponent<RuneMemoryPanel>();
     }
 
     private static void ConfigureUiAudioSource(AudioSource audioSource, bool loop)
@@ -365,20 +339,27 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
         audioSource.spatialBlend = 0f;
     }
 
-    private static T LoadAsset<T>(string assetPath, bool logMissing = true) where T : Object
+    private static void ValidateRuneMemoryPanelAssets(RuneMemoryPanel panel)
     {
-#if UNITY_EDITOR
-        T asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
-        if (asset == null && logMissing)
+        if (panel.RuneButtons == null || panel.RuneButtons.Length < 4)
         {
-            Debug.LogError($"SevenChallengesSceneBootstrap: no se pudo cargar asset '{assetPath}'.");
+            Debug.LogError("SevenChallengesSceneBootstrap: RuneMemoryPanel no tiene las cuatro runas serializadas.");
         }
 
-        return asset;
-#else
-        Debug.LogError($"SevenChallengesSceneBootstrap: carga runtime no configurada para '{assetPath}'.");
-        return null;
-#endif
+        if (panel.SfxSource == null)
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: RuneMemoryPanel no tiene SfxSource serializado.");
+        }
+
+        if (panel.AmbientSource == null)
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: RuneMemoryPanel no tiene AmbientSource serializado.");
+        }
+
+        if (panel.AmbientClip == null || panel.HighlightClip == null || panel.CorrectClip == null || panel.ErrorClip == null || panel.VictoryClip == null)
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: RuneMemoryPanel no tiene todos los AudioClip serializados.");
+        }
     }
 
     private static void ConfigureTestPanel(List<MonoBehaviour> challengeBridges)

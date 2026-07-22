@@ -33,7 +33,8 @@ Al abrirse, el panel muestra las runas, el boton `COMENZAR`, el boton `SALIR` y 
 - Runas: `Art/Runes/espada.png`, `escudo.png`, `lobo.png`, `corona.png`.
 - UI: `Art/UI/marco.png`, `comenzar.png`, `reintentar.png`, `salir.png`.
 - Audio: `Audio/ambiente.mp3`, `iluminar.mp3`, `correcta.mp3`, `error.mp3`, `victoria.mp3`.
-- Prefab: `Prefabs/RuneMemoryPanel.prefab`.
+- Prefab runtime: `Assets/Resources/Challenges/Challenge01/RuneMemoryPanel.prefab`.
+- Prefab fuente anterior: `Prefabs/RuneMemoryPanel.prefab`.
 
 ## Configuracion de sprites
 
@@ -45,7 +46,7 @@ El bootstrap configura dos `AudioSource` locales sobre `RuneMemoryPanel`: uno pa
 
 ## Integracion
 
-`SevenChallengesSceneBootstrap` asegura un unico `ChallengesCanvas`, un `EventSystem` con `InputSystemUIInputModule`, instancia `RuneMemoryPanel.prefab` y llama a `RuneMemoryGameController.ConfigureRuntime(...)` para conectar panel, botones y clips.
+`SevenChallengesSceneBootstrap` asegura un unico `ChallengesCanvas`, un `EventSystem` con `InputSystemUIInputModule`, instancia `RuneMemoryPanel.prefab` con `Resources.Load<GameObject>("Challenges/Challenge01/RuneMemoryPanel")` y llama a `RuneMemoryGameController.ConfigureRuntime(...)` para conectar panel, botones y clips.
 
 El reto 1 ya no se agrega al `ChallengeTestPanel`; las casas 2 a 7 siguen usando el panel temporal.
 
@@ -67,12 +68,13 @@ Para agregar mas runas se debe ampliar el arreglo `runeButtons`, crear botones a
 
 - Unity batch compile con codigo de salida 0.
 - Busqueda de errores `error CS` sin resultados.
-- Creacion del prefab con Unity mediante `PrefabUtility.SaveAsPrefabAsset`.
+- Creacion del prefab runtime bajo `Assets/Resources/Challenges/Challenge01/`.
+- Busqueda de `UnityEditor`, `AssetDatabase`, `PrefabUtility` y `LoadAssetAtPath` confirma que el bootstrap ya no depende de esas APIs en runtime.
 - `git status --ignored=matching` confirma que `/Juego_1/` esta ignorado.
 
 ## Problemas conocidos
 
-La carga del prefab y assets por ruta usa `AssetDatabase` dentro del editor. Para un build fuera del editor conviene mover el prefab a una ruta `Resources` o serializar referencias en escena/prefab de forma permanente.
+El prefab runtime debe mantener serializados los sprites, `AudioSource` y `AudioClip`. Si se regenera el panel, verificar esas referencias antes de probar en build.
 
 ## Commits
 
@@ -81,3 +83,4 @@ La carga del prefab y assets por ruta usa `AssetDatabase` dentro del editor. Par
 - `feat: add rune memory game core logic`
 - `feat: add rune memory game ui prefab`
 - `feat: integrate rune memory game with first house`
+- `fix: load rune memory prefab in runtime builds`
