@@ -24,6 +24,11 @@ public sealed class BasicAttack : MonoBehaviour
             return;
         }
 
+        if (target.IsDead)
+        {
+            return;
+        }
+
         combatGameManager.BeginCombat();
         target.TakeDamage(damage);
         PlayCombatAnimations(target.GetComponent<CombatAnimation>(), target.IsDead);
@@ -33,6 +38,11 @@ public sealed class BasicAttack : MonoBehaviour
     public void AttackEnemy(EnemyHealth target)
     {
         if (!CanStartAttack(target, "enemigo"))
+        {
+            return;
+        }
+
+        if (target.IsDefeated)
         {
             return;
         }

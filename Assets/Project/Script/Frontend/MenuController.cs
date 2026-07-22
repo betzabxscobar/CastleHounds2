@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour
 {
+    private bool cargandoEscena;
+
     private void Click()
     {
         if (AudioManager.Instance != null)
@@ -13,6 +15,8 @@ public class MenuController : MonoBehaviour
 
     public void Jugar()
     {
+        if (cargandoEscena) return;
+        cargandoEscena = true;
         Debug.Log("PRESIONASTE JUGAR");
         Click();
         SceneManager.LoadScene("SeleccionAvatar");
@@ -20,6 +24,8 @@ public class MenuController : MonoBehaviour
 
     public void IrOpciones()
     {
+        if (cargandoEscena) return;
+        cargandoEscena = true;
         Debug.Log("PRESIONASTE OPCIONES");
         Click();
         SceneManager.LoadScene("Opciones");
@@ -27,6 +33,8 @@ public class MenuController : MonoBehaviour
 
     public void IrCreditos()
     {
+        if (cargandoEscena) return;
+        cargandoEscena = true;
         Debug.Log("PRESIONASTE CREDITOS");
         Click();
         SceneManager.LoadScene("Creditos");
@@ -34,12 +42,16 @@ public class MenuController : MonoBehaviour
 
     public void EntrarAlJuego()
     {
+        if (cargandoEscena) return;
+        cargandoEscena = true;
         Click();
         SceneManager.LoadScene("Demo");
     }
 
     public void Reintentar()
     {
+        if (cargandoEscena) return;
+        cargandoEscena = true;
         Time.timeScale = 1f;
         Click();
         SceneManager.LoadScene("Demo");
@@ -47,6 +59,9 @@ public class MenuController : MonoBehaviour
 
     public void VolverMenu()
     {
+        if (cargandoEscena) return;
+        cargandoEscena = true;
+        Time.timeScale = 1f;
         Click();
         SceneManager.LoadScene("MenuPrincipal");
     }

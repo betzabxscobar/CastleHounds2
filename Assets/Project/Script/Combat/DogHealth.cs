@@ -15,6 +15,8 @@ public sealed class DogHealth : MonoBehaviour
     public float MaxHealth => maxHealth;
     public bool IsDead { get; private set; }
 
+    private bool isLoadingDefeatScene;
+
     private void Awake()
     {
         ResetHealth();
@@ -81,6 +83,13 @@ public sealed class DogHealth : MonoBehaviour
 
     private void CargarEscenaDerrota()
     {
+        if (isLoadingDefeatScene)
+        {
+            return;
+        }
+
+        isLoadingDefeatScene = true;
+        Time.timeScale = 1f;
         SceneManager.LoadScene(nombreEscenaDerrota);
     }
 

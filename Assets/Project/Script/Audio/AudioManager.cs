@@ -66,4 +66,12 @@ public class AudioManager : MonoBehaviour
     {
         sonidosActivos = !sonidosActivos;
     }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
 }

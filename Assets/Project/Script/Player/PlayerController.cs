@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 lastGroundedPosition;
     private bool hasSafetyPosition;
     private bool hasSpeedParam;
+    private bool inputEnabled = true;
 
 
 
@@ -90,7 +91,10 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
-        controls.Enable();
+        if (inputEnabled)
+        {
+            controls.Enable();
+        }
     }
 
 
@@ -106,6 +110,21 @@ public class PlayerController : MonoBehaviour
         if (Time.deltaTime <= 0f)
         {
             return;
+        }
+
+        if (cameraTransform == null)
+        {
+            Camera mainCamera = Camera.main;
+            if (mainCamera != null)
+            {
+                cameraTransform = mainCamera.transform;
+            }
+            else
+            {
+                Debug.LogError("PlayerController no tiene cameraTransform ni existe Camera.main.", this);
+                enabled = false;
+                return;
+            }
         }
 
         // La primera vez que corre Update (ya reposicionado por PlayerRespawn),
@@ -302,5 +321,24 @@ public class PlayerController : MonoBehaviour
             currentVelocity *
             Time.deltaTime
         );
+    }
+
+    public void SetInputEnabled(bool enabledInput)
+    {
+        inputEnabled = enabledInput;
+
+        if (!enabledInput)
+        {
+            moveInput = Vector2.zero;
+            sprinting = false;
+            currentVelocity = Vector3.zero;
+            controls.Disable();
+            return;
+        }
+
+        if (isActiveAndEnabled)
+        {
+            controls.Enable();
+        }
     }
 }

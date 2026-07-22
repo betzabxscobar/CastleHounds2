@@ -15,11 +15,19 @@ public class TypewriterEffect : MonoBehaviour
     public float esperarAntesDeEscribir = 2.8f;
 
     private bool escribiendo = false;
+    private Coroutine escribirCoroutine;
 
     void Start()
     {
+        if (texto == null)
+        {
+            Debug.LogError("TypewriterEffect necesita una referencia de texto.", this);
+            enabled = false;
+            return;
+        }
+
         texto.text = "";
-        StartCoroutine(Escribir());
+        escribirCoroutine = StartCoroutine(Escribir());
     }
 
     IEnumerator Escribir()
@@ -36,10 +44,37 @@ public class TypewriterEffect : MonoBehaviour
         }
 
         escribiendo = false;
+        escribirCoroutine = null;
     }
 
     public bool Terminado()
     {
         return !escribiendo;
+    }
+
+    public void StopTyping()
+    {
+        if (escribirCoroutine != null)
+        {
+            StopCoroutine(escribirCoroutine);
+            escribirCoroutine = null;
+        }
+
+        escribiendo = false;
+    }
+
+    public void CompleteImmediately()
+    {
+        StopTyping();
+
+        if (texto != null)
+        {
+            texto.text = mensaje;
+        }
+    }
+
+    private void OnDisable()
+    {
+        StopTyping();
     }
 }

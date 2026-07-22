@@ -33,4 +33,9 @@ public class MusicManager : MonoBehaviour
             audioSource.Stop();
         }
     }
+
+    private void OnDisable()
+    {
+        DetenerMusica();
+    }
 }

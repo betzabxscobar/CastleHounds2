@@ -29,6 +29,7 @@ public class ZoneTrigger : MonoBehaviour
 
     private Collider _collider;
     private bool _yaActivado;
+    private bool _cargandoEscena;
 
     private void Awake()
     {
@@ -60,12 +61,19 @@ public class ZoneTrigger : MonoBehaviour
                 GameEvents.RaiseZoneChanged(zoneId);
                 break;
             case TipoTrigger.CargarEscena:
+                if (_cargandoEscena)
+                {
+                    return;
+                }
+
                 if (string.IsNullOrEmpty(nombreEscena))
                 {
                     Debug.LogWarning($"[ZoneTrigger] {gameObject.name}: tipo CargarEscena pero nombreEscena esta vacio.");
                 }
                 else
                 {
+                    _cargandoEscena = true;
+                    Time.timeScale = 1f;
                     SceneManager.LoadScene(nombreEscena);
                 }
                 break;
@@ -82,6 +90,7 @@ public class ZoneTrigger : MonoBehaviour
     public void Resetear()
     {
         _yaActivado = false;
+        _cargandoEscena = false;
 
         if (_collider == null)
         {

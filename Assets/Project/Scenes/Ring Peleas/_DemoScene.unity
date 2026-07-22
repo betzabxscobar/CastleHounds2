@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 900500102}
   - component: {fileID: 900500103}
   - component: {fileID: 900500104}
+  - component: {fileID: 900500105}
   m_Layer: 0
   m_Name: Player_Dog_Model
   m_TagString: Player
@@ -1297,6 +1298,21 @@ MonoBehaviour:
   attackDistance: 0.45
   anticipationDistance: 0.08
   hitDuration: 0.16
+--- !u!114 &900500105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 31427767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dc12e6e77364c8aa31734daab0ca3a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AvatarSelectionApplier
+  avatarRoots:
+  - {fileID: 31427767}
+  defaultAvatarIndex: 0
 --- !u!114 &900500111
 MonoBehaviour:
   m_ObjectHideFlags: 0
