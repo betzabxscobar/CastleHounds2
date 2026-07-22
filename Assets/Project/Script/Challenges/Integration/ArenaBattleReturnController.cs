@@ -14,6 +14,8 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
     private const string PortalBlockerName = "Portal_Bloqueo";
     private const string PortalDoorId = "portal_arena";
     private const int ReturnTeleportFrameCount = 5;
+    private const float GroundProbeHeight = 30f;
+    private const float GroundProbeDistance = 80f;
 
     private static readonly Vector3 ReturnPosition = new Vector3(-0.105f, 0f, 0.7049999f);
     private static ArenaBattleReturnController runner;
@@ -113,7 +115,7 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
 
     private static void DisableVictorySceneLoaders()
     {
-        foreach (VictoriaCargarEscena victoryLoader in Object.FindObjectsByType<VictoriaCargarEscena>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (VictoriaCargarEscena victoryLoader in Object.FindObjectsByType<VictoriaCargarEscena>(FindObjectsInactive.Include))
         {
             victoryLoader.enabled = false;
         }
@@ -147,7 +149,7 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
     {
         int redirectedTriggers = 0;
 
-        foreach (ZoneTrigger trigger in Object.FindObjectsByType<ZoneTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (ZoneTrigger trigger in Object.FindObjectsByType<ZoneTrigger>(FindObjectsInactive.Include))
         {
             if (!trigger.IsSceneLoadTarget(PreviousVictorySceneName))
             {
@@ -232,6 +234,7 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
         }
 
         Time.timeScale = 1f;
+        RestorePlayerControl(player);
 
         PlayerControlLock controlLock = player.GetComponent<PlayerControlLock>();
         if (controlLock != null)
@@ -241,27 +244,68 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
 
         CharacterController characterController = player.GetComponent<CharacterController>();
         bool restoreCharacterController = characterController != null && characterController.enabled;
-        if (restoreCharacterController)
+        if (characterController != null)
         {
             characterController.enabled = false;
         }
+
+        Vector3 groundedReturnPosition = ResolveGroundedReturnPosition(ReturnPosition, characterController);
 
         Rigidbody rigidbody = player.GetComponent<Rigidbody>();
         if (rigidbody != null)
         {
             rigidbody.linearVelocity = Vector3.zero;
             rigidbody.angularVelocity = Vector3.zero;
-            rigidbody.position = ReturnPosition;
+            rigidbody.position = groundedReturnPosition;
         }
 
-        player.transform.position = ReturnPosition;
+        player.transform.position = groundedReturnPosition;
 
-        if (restoreCharacterController)
+        if (characterController != null)
+        {
+            characterController.enabled = restoreCharacterController;
+        }
+
+        Debug.Log($"ArenaBattleReturnController: jugador teletransportado a {groundedReturnPosition} al volver de {BattleSceneName}.");
+    }
+
+    private static void RestorePlayerControl(GameObject player)
+    {
+        CharacterController characterController = player.GetComponent<CharacterController>();
+        if (characterController != null)
         {
             characterController.enabled = true;
         }
 
-        Debug.Log($"ArenaBattleReturnController: jugador teletransportado a {ReturnPosition} al volver de {BattleSceneName}.");
+        PlayerController playerController = player.GetComponent<PlayerController>();
+        if (playerController != null)
+        {
+            playerController.enabled = true;
+            playerController.SetInputEnabled(true);
+        }
+
+        MouseBasicAttack mouseBasicAttack = player.GetComponent<MouseBasicAttack>();
+        if (mouseBasicAttack != null)
+        {
+            mouseBasicAttack.enabled = true;
+        }
+    }
+
+    private static Vector3 ResolveGroundedReturnPosition(Vector3 desiredPosition, CharacterController characterController)
+    {
+        Vector3 probeOrigin = desiredPosition + Vector3.up * GroundProbeHeight;
+        if (!Physics.Raycast(probeOrigin, Vector3.down, out RaycastHit hit, GroundProbeDistance, ~0, QueryTriggerInteraction.Ignore))
+        {
+            return desiredPosition;
+        }
+
+        float groundedY = hit.point.y;
+        if (characterController != null)
+        {
+            groundedY += characterController.height * 0.5f - characterController.center.y;
+        }
+
+        return new Vector3(desiredPosition.x, groundedY, desiredPosition.z);
     }
 
     private static GameObject FindSceneGameObject(string objectName)
