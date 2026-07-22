@@ -2,7 +2,7 @@
 
 ## Flujo final
 
-`MenuPrincipal -> SeleccionAvatar -> Historia -> Cinematica -> exploracion de siete casas -> Castle desbloqueado -> _DemoScene -> combate contra lobo -> Ganaste/Perdiste`.
+`MenuPrincipal -> SeleccionAvatar -> Historia -> Cinematica -> exploracion de siete casas -> Castle desbloqueado -> _DemoScene -> combate contra lobo -> volver a Demo`.
 
 ## Arquitectura
 
@@ -15,6 +15,7 @@
 - `FinalCastleTrigger` carga `_DemoScene` solo si todos los retos estan completos.
 - `EnemyRole` separa `InitialWolf`, `RegularEnemy` y `FinalBoss`.
 - `SevenChallengesSceneBootstrap` apaga el lobo de `Demo`; el lobo aparece al cargar `_DemoScene` desde la puerta del castillo.
+- `ArenaBattleReturnController` evita que `_DemoScene` cargue `Ganaste` y devuelve al jugador a `Demo` en `(-0.105, 0, 0.7049999)`.
 
 ## Scripts creados
 
@@ -27,6 +28,7 @@
 - `Assets/Project/Script/Challenges/HouseTriggers/FinalCastleTrigger.cs`
 - `Assets/Project/Script/Challenges/Integration/PlayerControlLock.cs`
 - `Assets/Project/Script/Challenges/Integration/InitialWolfVictoryTransition.cs`
+- `Assets/Project/Script/Challenges/Integration/ArenaBattleReturnController.cs`
 - `Assets/Project/Script/Challenges/Integration/SevenChallengesSceneBootstrap.cs`
 - `Assets/Project/Script/Challenges/Testing/ChallengeTestPanel.cs`
 - `Assets/Project/Script/Challenges/UI/ChallengeProgressHUD.cs`
@@ -37,7 +39,7 @@
 ## Scripts modificados
 
 - `GameEvents`: agrega `OnEnemyDefeatedWithRole`.
-- `EnemyHealth`: emite muerte con rol y solo dispara victoria final para `FinalBoss`.
+- `EnemyHealth`: emite muerte con rol, permite configurar rol por codigo y solo dispara victoria final para `FinalBoss`.
 - `ChallengeGameController`: emite evento de inicio.
 - `IChallengeGame`: expone evento de inicio.
 
@@ -79,13 +81,21 @@ El progreso se puede reiniciar manualmente con la llamada anterior. El flujo act
 
 `SevenChallengesSceneBootstrap` desactiva `Enemy_Wolf_Model` en `Demo`. El lobo debe estar activo en `_DemoScene`, que es la escena cargada por el trigger final del castillo.
 
+Al cargar `_DemoScene`, `ArenaBattleReturnController` marca ese lobo como `RegularEnemy`, desactiva los cargadores directos a `Ganaste` y redirige el trigger de salida hacia `Demo`.
+
 ## Configuracion del jefe final
 
 El jefe final debe tener `EnemyHealth` con rol `FinalBoss` o un `EnemyRoleMarker` configurado como `FinalBoss`. Solo ese rol dispara `Ganaste`.
 
-## Escena final utilizada
+## Retorno desde la batalla
 
-`_DemoScene`, confirmada en Build Settings.
+El trigger de salida de `_DemoScene` vuelve a `Demo` y teletransporta al jugador a:
+
+```text
+x = -0.105
+y = 0
+z = 0.7049999
+```
 
 ## Referencias necesarias en Inspector
 
@@ -95,7 +105,7 @@ La implementacion runtime reduce configuracion manual. Para el flujo actual no h
 
 - Hay cambios sin commitear previos en `Assets/Project/Scenes/Castillo/Scenes/Demo.unity` y `Assets/TextMesh Pro/Fonts/Cinzel-Regular SDF.asset`; no se incluyeron en estos commits.
 - No se ejecuto Play Mode desde este entorno.
-- Validar en Play Mode que `Enemy_Wolf_Model` no aparezca en `Demo` y si aparezca al cargar `_DemoScene` desde la puerta del castillo.
+- Validar en Play Mode que `Enemy_Wolf_Model` no aparezca en `Demo`, si aparezca al cargar `_DemoScene` desde la puerta del castillo y que el trigger de salida vuelva a `Demo` en `(-0.105, 0, 0.7049999)`.
 
 ## Commits creados
 

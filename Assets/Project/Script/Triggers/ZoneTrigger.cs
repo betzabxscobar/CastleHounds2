@@ -1,10 +1,13 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using System;
 
 [RequireComponent(typeof(Collider))]
 public class ZoneTrigger : MonoBehaviour
 {
+    public static event Action<string> OnBeforeSceneLoadRequested;
+
     public enum TipoTrigger
     {
         EntradaCastillo,
@@ -74,6 +77,7 @@ public class ZoneTrigger : MonoBehaviour
                 {
                     _cargandoEscena = true;
                     Time.timeScale = 1f;
+                    OnBeforeSceneLoadRequested?.Invoke(nombreEscena);
                     SceneManager.LoadScene(nombreEscena);
                 }
                 break;
@@ -98,5 +102,28 @@ public class ZoneTrigger : MonoBehaviour
         }
 
         _collider.enabled = true;
+    }
+
+    public bool IsSceneLoadTarget(string sceneName)
+    {
+        return tipo == TipoTrigger.CargarEscena && nombreEscena == sceneName;
+    }
+
+    public void ConfigureSceneLoadTarget(string sceneName)
+    {
+        tipo = TipoTrigger.CargarEscena;
+        nombreEscena = sceneName;
+        _yaActivado = false;
+        _cargandoEscena = false;
+
+        if (_collider == null)
+        {
+            _collider = GetComponent<Collider>();
+        }
+
+        if (_collider != null)
+        {
+            _collider.enabled = true;
+        }
     }
 }

@@ -51,6 +51,21 @@ public sealed class EnemyHealth : MonoBehaviour
         Debug.Log($"Vida de {name} reiniciada a {CurrentHealth}.", this);
     }
 
+    public void ConfigureRole(EnemyRole configuredRole)
+    {
+        enemyRole = configuredRole;
+
+        if (roleMarker == null)
+        {
+            roleMarker = GetComponent<EnemyRoleMarker>();
+        }
+
+        if (roleMarker != null)
+        {
+            roleMarker.Configure(configuredRole);
+        }
+    }
+
     private void DefeatEnemy()
     {
         // Esta bandera impide procesar la derrota mas de una vez.

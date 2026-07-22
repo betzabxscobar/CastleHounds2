@@ -38,6 +38,7 @@
   - `EnemyRole`
   - `EnemyRoleMarker`
   - `InitialWolfVictoryTransition`
+  - `ArenaBattleReturnController`
 
 ## Componentes existentes que se modificaran
 
@@ -86,6 +87,7 @@
   - `FinalBoss`
 - El lobo de `Demo` permanecera desactivado durante la exploracion.
 - El lobo aparecera cuando el trigger final cargue `_DemoScene`.
+- Al salir de `_DemoScene`, se vuelve a `Demo` y se teletransporta al jugador a `(-0.105, 0, 0.7049999)`.
 - `FinalBoss` sera el unico rol que puede cargar `Ganaste`.
 
 ## Transforms registrados antes de tocar triggers
