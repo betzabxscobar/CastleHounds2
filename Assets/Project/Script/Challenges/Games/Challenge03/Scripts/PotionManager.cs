@@ -3,16 +3,23 @@ using UnityEngine;
 
 public class PotionManager : MonoBehaviour
 {
-
     public static PotionManager Instance;
 
+    [Header("Ingredientes de la escena")]
+    public List<IngredientDrag> ingredients;
 
+    [Header("Receta")]
     public List<string> recipe;
 
-    private List<string> currentMix = new List<string>();
+    [Header("Victoria")]
+    public GameObject victoryCanvas;
 
 
-    void Awake()
+    private List<string> current = new List<string>();
+
+
+
+    private void Awake()
     {
         Instance = this;
     }
@@ -21,14 +28,12 @@ public class PotionManager : MonoBehaviour
 
     public void AddIngredient(string ingredient)
     {
-
-        currentMix.Add(ingredient);
+        current.Add(ingredient);
 
         Debug.Log("Añadido: " + ingredient);
 
 
         CheckRecipe();
-
     }
 
 
@@ -36,15 +41,17 @@ public class PotionManager : MonoBehaviour
     void CheckRecipe()
     {
 
-        if (currentMix.Count != recipe.Count)
+        // Todavía faltan ingredientes
+        if (current.Count < recipe.Count)
             return;
 
 
 
+        // Revisar orden
         for (int i = 0; i < recipe.Count; i++)
         {
 
-            if (currentMix[i] != recipe[i])
+            if (current[i] != recipe[i])
             {
                 WrongRecipe();
                 return;
@@ -53,19 +60,23 @@ public class PotionManager : MonoBehaviour
         }
 
 
-        CompletePotion();
+        CompleteRecipe();
 
     }
 
 
 
-    void CompletePotion()
+    void CompleteRecipe()
     {
         Debug.Log("POCIÓN COMPLETADA");
 
-        // activar animación
-        // sonido
-        // UI victoria
+
+        if (victoryCanvas != null)
+            victoryCanvas.SetActive(true);
+
+
+        // Por ahora dejamos solo el mensaje
+        // luego conectamos regreso de escena
 
     }
 
@@ -73,14 +84,43 @@ public class PotionManager : MonoBehaviour
 
     void WrongRecipe()
     {
-        Debug.Log("Receta incorrecta");
+        Debug.Log("RECETA INCORRECTA");
 
-        currentMix.Clear();
 
-        // reiniciar caldero
+        ResetPotion();
 
     }
 
 
 
+    void ResetPotion()
+    {
+
+        // Vaciar mezcla actual
+        current.Clear();
+
+
+
+        // Mostrar ingredientes otra vez
+        foreach (IngredientDrag ingredient in ingredients)
+        {
+
+            if (ingredient != null)
+            {
+                ingredient.ResetIngredient();
+            }
+
+        }
+
+
+        Debug.Log("Ingredientes reiniciados");
+
+    }
+
+
+
+    public void ClearPotion()
+    {
+        current.Clear();
+    }
 }

@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "PotionInput",
+    "maps": [
+        {
+            "name": "Potion",
+            "id": "44b8871c-d88d-458b-93c7-dc2b0c70d82f",
+            "actions": [
+                {
+                    "name": "Click",
+                    "type": "Button",
+                    "id": "bea6704a-78b5-41e5-9a27-f7a927be89f7",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f1c5c898-ad6c-4b86-96f2-9ec220d18f01",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
