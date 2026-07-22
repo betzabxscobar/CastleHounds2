@@ -37,6 +37,26 @@ public sealed class InitialWolfVictoryTransition : MonoBehaviour
         GameEvents.OnEnemyDefeatedWithRole -= HandleEnemyDefeated;
     }
 
+    public void Configure(
+        EnemyHealth configuredInitialWolf,
+        Transform configuredPlayerRoot,
+        CharacterController configuredCharacterController,
+        Rigidbody configuredPlayerRigidbody,
+        PlayerControlLock configuredPlayerControlLock,
+        Transform configuredCityEntryPoint,
+        ChallengeProgressHUD configuredChallengeHUD,
+        GameObject configuredChallengeHudRoot)
+    {
+        initialWolf = configuredInitialWolf;
+        playerRoot = configuredPlayerRoot;
+        characterController = configuredCharacterController;
+        playerRigidbody = configuredPlayerRigidbody;
+        playerControlLock = configuredPlayerControlLock;
+        cityEntryPoint = configuredCityEntryPoint;
+        challengeHUD = configuredChallengeHUD;
+        challengeHudRoot = configuredChallengeHudRoot;
+    }
+
     private void HandleEnemyDefeated(EnemyHealth enemyHealth, EnemyRole role)
     {
         if (transitionStarted || role != EnemyRole.InitialWolf)

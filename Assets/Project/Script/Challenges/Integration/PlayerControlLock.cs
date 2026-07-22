@@ -60,6 +60,13 @@ public sealed class PlayerControlLock : MonoBehaviour
         ApplyLockedState(false);
     }
 
+    public void Configure(PlayerController controller, Behaviour[] behaviours, bool shouldManageCursor)
+    {
+        playerController = controller;
+        behavioursToDisable = behaviours;
+        manageCursor = shouldManageCursor;
+    }
+
     private void ApplyLockedState(bool locked)
     {
         if (playerController != null)

@@ -101,6 +101,14 @@ public sealed class HouseChallengeTrigger : MonoBehaviour
         state = TriggerState.Active;
     }
 
+    public void Configure(string configuredChallengeId, MonoBehaviour configuredChallengeGame, PlayerControlLock configuredPlayerControlLock)
+    {
+        challengeId = configuredChallengeId;
+        challengeGameBehaviour = configuredChallengeGame;
+        playerControlLock = configuredPlayerControlLock;
+        ResolveChallengeGame();
+    }
+
     private bool ValidateStart(ChallengeProgressManager progressManager)
     {
         if (state == TriggerState.Starting || state == TriggerState.Active || state == TriggerState.Cooldown)

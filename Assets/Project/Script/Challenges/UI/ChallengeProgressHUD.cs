@@ -50,6 +50,14 @@ public sealed class ChallengeProgressHUD : MonoBehaviour
         }
     }
 
+    public void Configure(TMP_Text configuredProgressText, GameObject configuredRoot, bool configuredVisibleOnEnable)
+    {
+        progressText = configuredProgressText;
+        root = configuredRoot != null ? configuredRoot : gameObject;
+        visibleOnEnable = configuredVisibleOnEnable;
+        Refresh();
+    }
+
     public void Refresh()
     {
         if (progressManager == null)

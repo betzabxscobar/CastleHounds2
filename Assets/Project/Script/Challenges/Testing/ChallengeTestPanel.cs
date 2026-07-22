@@ -43,6 +43,16 @@ public sealed class ChallengeTestPanel : MonoBehaviour
         SubmitResult(ChallengeResult.Cancelled);
     }
 
+    public void Configure(GameObject configuredPanelRoot, TMP_Text configuredChallengeIdText, MonoBehaviour[] configuredObservedChallengeBehaviours)
+    {
+        UnsubscribeFromObservedChallenges();
+        panelRoot = configuredPanelRoot;
+        challengeIdText = configuredChallengeIdText;
+        observedChallengeBehaviours = configuredObservedChallengeBehaviours;
+        SubscribeToObservedChallenges();
+        HidePanel();
+    }
+
     private void SubscribeToObservedChallenges()
     {
         if (observedChallengeBehaviours == null)

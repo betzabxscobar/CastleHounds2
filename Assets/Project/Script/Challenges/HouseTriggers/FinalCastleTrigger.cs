@@ -78,6 +78,13 @@ public sealed class FinalCastleTrigger : MonoBehaviour
         SceneManager.LoadScene(finalBattleSceneName);
     }
 
+    public void Configure(string configuredFinalBattleSceneName, PlayerControlLock configuredPlayerControlLock, CastleUnlockController configuredCastleUnlockController)
+    {
+        finalBattleSceneName = configuredFinalBattleSceneName;
+        playerControlLock = configuredPlayerControlLock;
+        castleUnlockController = configuredCastleUnlockController;
+    }
+
     private bool IsPlayer(Collider other)
     {
         if (other == null)
