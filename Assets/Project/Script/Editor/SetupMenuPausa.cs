@@ -71,10 +71,13 @@ public class SetupMenuPausa
         CrearTextoControles(panelControles.transform);
         CrearBoton("Btn_Volver_Cont", panelControles.transform, "UI/Botones/Btn_Volver", -220, pauseMenu, "VolverMenu");
 
+        GameObject btnPausa = CrearBtnPausa(canvasPausa.transform, pauseMenu);
+
         pauseMenu.panelPausa = panelPausa;
         pauseMenu.panelMenu = panelMenu;
         pauseMenu.panelOpciones = panelOpciones;
         pauseMenu.panelControles = panelControles;
+        pauseMenu.btnPausa = btnPausa.GetComponent<Button>();
 
         panelPausa.SetActive(false);
         panelMenu.SetActive(false);
@@ -89,7 +92,7 @@ public class SetupMenuPausa
         }
 
         Debug.Log("[CastleHounds] Menu de Pausa instalado correctamente.");
-        EditorUtility.DisplayDialog("Listo", "Menu de Pausa instalado en la escena.\n\nRecuerda:\n1. Asignar PlayerController al PlayerControlLock\n2. Asignar los sprites en los botones si no se cargaron", "OK");
+        EditorUtility.DisplayDialog("Listo", "Menu de Pausa instalado en la escena.\n\nSe creo:\n- Canvas con 4 paneles\n- Btn_Pausa (esquina superior derecha)\n- EventSystem\n\nRecuerda asignar PlayerController al PlayerControlLock.", "OK");
     }
 
     private static GameObject CrearPanel(string nombre, Transform padre, bool activo)
@@ -201,6 +204,31 @@ public class SetupMenuPausa
             legacyText.alignment = TextAnchor.MiddleCenter;
             legacyText.color = Color.white;
         }
+    }
+
+    private static GameObject CrearBtnPausa(Transform padre, PauseMenu pauseMenu)
+    {
+        GameObject btn = new GameObject("Btn_Pausa");
+        btn.layer = 5;
+        btn.transform.SetParent(padre, false);
+        RectTransform rt = btn.AddComponent<RectTransform>();
+        rt.anchorMin = new Vector2(1, 1);
+        rt.anchorMax = new Vector2(1, 1);
+        rt.anchoredPosition = new Vector2(-80, -80);
+        rt.sizeDelta = new Vector2(80, 80);
+        btn.AddComponent<CanvasRenderer>();
+        Image img = btn.AddComponent<Image>();
+        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Project/UI/Botones/Btn_Pausa.png");
+        if (sprite != null)
+        {
+            img.sprite = sprite;
+            img.preserveAspect = true;
+        }
+        Button button = btn.AddComponent<Button>();
+        button.targetGraphic = img;
+        ConfigurarOnClick(button, pauseMenu, "PausarJuego");
+        btn.AddComponent<AlphaButtonClick>();
+        return btn;
     }
 
     private static void AnclarFill(RectTransform rt)

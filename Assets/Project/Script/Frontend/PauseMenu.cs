@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
@@ -11,6 +12,9 @@ public class PauseMenu : MonoBehaviour
     public GameObject panelOpciones;
     public GameObject panelControles;
 
+    [Header("Botones")]
+    public UnityEngine.UI.Button btnPausa;
+
     private bool juegoPausado = false;
     private PlayerControlLock controlLock;
     private bool cursorAnteriorVisible;
@@ -22,6 +26,9 @@ public class PauseMenu : MonoBehaviour
 
         controlLock = GetComponent<PlayerControlLock>();
 
+        if (btnPausa != null)
+            btnPausa.onClick.AddListener(PausarJuego);
+
         SetPanelActive(panelPausa, false);
         SetPanelActive(panelMenu, true);
         SetPanelActive(panelOpciones, false);
@@ -32,7 +39,7 @@ public class PauseMenu : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             if (juegoPausado)
                 ContinuarJuego();
