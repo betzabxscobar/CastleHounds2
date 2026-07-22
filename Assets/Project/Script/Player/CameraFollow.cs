@@ -7,11 +7,11 @@ public class CameraFollow : MonoBehaviour
     public Transform target;
 
     [Header("Posición")]
-    public Vector3 offset = new Vector3(0, 2.2f, 5f);
+    public Vector3 offset = new Vector3(0, 1.5f, -5f);
 
     [Header("Suavizado")]
-    public float positionSmooth = 5f;
-    public float rotationSmooth = 5f;
+    public float positionSmooth = 3f;
+    public float rotationSmooth = 3f;
 
     [Header("Altura de mirada")]
     public float lookHeight = 0.8f;

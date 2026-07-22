@@ -280,10 +280,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
   target: {fileID: 31427771}
-  offset: {x: 0, y: 2.2, z: 5}
+  offset: {x: 0, y: 2.2, z: -5}
   positionSmooth: 5
   rotationSmooth: 5
   lookHeight: 0.8
+  zoomSpeed: 0.5
+  minDistance: 3
+  maxDistance: 10
 --- !u!1 &198733988
 GameObject:
   m_ObjectHideFlags: 0
@@ -505,7 +508,7 @@ Transform:
   m_GameObject: {fileID: 900002000}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -1.48, y: 0.03, z: -3.78}
+  m_LocalPosition: {x: -1.01, y: 0.03, z: -3.78}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -575,15 +578,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2a9979b14acae404f8d4cd863daf1b34, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.7
+      value: 0.63
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2a9979b14acae404f8d4cd863daf1b34, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.18
+      value: 0.19
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2a9979b14acae404f8d4cd863daf1b34, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.57
+      value: 0.97
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2a9979b14acae404f8d4cd863daf1b34, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1524,8 +1527,8 @@ Transform:
   m_GameObject: {fileID: 1722105690}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.08234, y: 0.2, z: 0.0741}
-  m_LocalScale: {x: 1, y: 1, z: 1.2321912}
+  m_LocalPosition: {x: -0.7946, y: 0.2, z: 0.8355}
+  m_LocalScale: {x: 0.8245953, y: 1, z: 1.1314992}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
