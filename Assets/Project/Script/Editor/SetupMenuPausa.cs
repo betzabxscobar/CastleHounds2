@@ -3,19 +3,119 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 using UnityEditor;
+using System.Collections.Generic;
 
 public class SetupMenuPausa
 {
     [MenuItem("CastleHounds/Instalar Menu Pausa")]
     public static void Instalar()
     {
-        if (EditorUtility.DisplayDialog(
-            "Instalar Menu de Pausa",
-            "Esto creara un Canvas_Pausa en la escena actual con todos los paneles y botones configurados.\n\nContinuar?",
-            "Si", "Cancelar"))
+        GameObject existente = GameObject.Find("Canvas_Pausa");
+        if (existente != null)
         {
-            CrearCanvasPausa();
+            if (!EditorUtility.DisplayDialog(
+                "Canvas_Pausa ya existe",
+                "Ya hay un Canvas_Pausa en la escena.\n\nDeseas reemplazarlo?",
+                "Si", "Cancelar"))
+                return;
+
+            Undo.DestroyObjectImmediate(existente);
         }
+
+        CrearCanvasPausa();
+        EditorUtility.DisplayDialog("Listo", "Menu de Pausa instalado en la escena.", "OK");
+    }
+
+    [MenuItem("CastleHounds/Reparar Canvas_Pausa")]
+    public static void Reparar()
+    {
+        GameObject canvas = GameObject.Find("Canvas_Pausa");
+        if (canvas == null)
+        {
+            EditorUtility.DisplayDialog("Error", "No se encontro Canvas_Pausa en la escena.", "OK");
+            return;
+        }
+
+        if (PrefabUtility.IsPartOfPrefabAsset(canvas))
+        {
+            EditorUtility.DisplayDialog("Error", "Canvas_Pausa es un asset de prefab.\nDesempaquetalo primero (Prefab > Unpack Completely).", "OK");
+            return;
+        }
+
+        if (PrefabUtility.IsPartOfPrefabInstance(canvas))
+        {
+            PrefabUtility.UnpackPrefabInstance(
+                PrefabUtility.GetNearestPrefabInstanceRoot(canvas),
+                PrefabUnpackMode.Completely,
+                InteractionMode.UserAction);
+        }
+
+        RepararRectTransforms(canvas.transform);
+        EditorUtility.DisplayDialog("Listo", "Escala de Canvas_Pausa reparada.", "OK");
+    }
+
+    private static void RepararRectTransforms(Transform t)
+    {
+        string nombre = t.name;
+        RectTransform rt = t.GetComponent<RectTransform>();
+
+        if (rt != null)
+        {
+            if (nombre == "Canvas_Pausa")
+            {
+                rt.localScale = Vector3.one;
+                rt.anchorMin = Vector2.zero;
+                rt.anchorMax = Vector2.one;
+                rt.sizeDelta = Vector2.zero;
+                rt.anchoredPosition = Vector2.zero;
+            }
+            else if (nombre == "PanelMenu")
+            {
+                rt.localScale = Vector3.one;
+                rt.anchorMin = new Vector2(0.5f, 0.5f);
+                rt.anchorMax = new Vector2(0.5f, 0.5f);
+                rt.sizeDelta = new Vector2(600, 900);
+            }
+            else if (nombre == "PanelOpciones")
+            {
+                rt.localScale = Vector3.one;
+                rt.anchorMin = new Vector2(0.5f, 0.5f);
+                rt.anchorMax = new Vector2(0.5f, 0.5f);
+                rt.sizeDelta = new Vector2(600, 800);
+            }
+            else if (nombre == "PanelControles")
+            {
+                rt.localScale = Vector3.one;
+                rt.anchorMin = new Vector2(0.5f, 0.5f);
+                rt.anchorMax = new Vector2(0.5f, 0.5f);
+                rt.sizeDelta = new Vector2(600, 700);
+            }
+            else if (nombre == "Btn_Pausa")
+            {
+                rt.localScale = Vector3.one;
+                rt.anchorMin = new Vector2(1, 1);
+                rt.anchorMax = new Vector2(1, 1);
+                rt.anchoredPosition = new Vector2(-100, -80);
+                rt.sizeDelta = new Vector2(120, 65);
+            }
+            else if (nombre.StartsWith("Btn_") || nombre.StartsWith("Btn"))
+            {
+                rt.localScale = Vector3.one;
+                rt.sizeDelta = new Vector2(400, 218);
+            }
+            else if (nombre.StartsWith("Img_Titulo"))
+            {
+                rt.localScale = Vector3.one;
+                rt.sizeDelta = new Vector2(500, 273);
+            }
+            else
+            {
+                rt.localScale = Vector3.one;
+            }
+        }
+
+        foreach (Transform child in t)
+            RepararRectTransforms(child);
     }
 
     private static void CrearCanvasPausa()
