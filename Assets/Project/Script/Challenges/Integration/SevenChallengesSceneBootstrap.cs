@@ -172,10 +172,10 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
 
         roleMarker.Configure(EnemyRole.InitialWolf);
 
-        GameObject cityEntryPointObject = GameObject.Find("CityEntryPoint");
-        if (cityEntryPointObject == null)
+        Transform cityEntryPoint = ResolveCityEntryPoint(runtimeRoot.transform, player.transform);
+        if (cityEntryPoint == null)
         {
-            Debug.LogError("SevenChallengesSceneBootstrap: falta CityEntryPoint en Demo. La transicion del lobo inicial no podra teletransportar.");
+            Debug.LogError("SevenChallengesSceneBootstrap: no se pudo resolver CityEntryPoint. La transicion del lobo inicial no podra teletransportar.");
             return;
         }
 
@@ -191,9 +191,73 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
             player.GetComponent<CharacterController>(),
             player.GetComponent<Rigidbody>(),
             controlLock,
-            cityEntryPointObject.transform,
+            cityEntryPoint,
             hud,
             hud != null ? hud.gameObject : null);
+    }
+
+    private static Transform ResolveCityEntryPoint(Transform runtimeRoot, Transform player)
+    {
+        GameObject existingPoint = GameObject.Find("CityEntryPoint");
+        if (existingPoint != null)
+        {
+            return existingPoint.transform;
+        }
+
+        if (!TryCalculateCityEntryPose(player, out Vector3 position, out Quaternion rotation))
+        {
+            return null;
+        }
+
+        GameObject generatedPoint = new GameObject("CityEntryPoint");
+        generatedPoint.transform.SetParent(runtimeRoot, false);
+        generatedPoint.transform.SetPositionAndRotation(position, rotation);
+
+        Debug.LogWarning("SevenChallengesSceneBootstrap: no habia CityEntryPoint en Demo; se creo uno temporal en runtime usando el centro de las casas.");
+        return generatedPoint.transform;
+    }
+
+    private static bool TryCalculateCityEntryPose(Transform player, out Vector3 position, out Quaternion rotation)
+    {
+        Vector3 accumulatedPosition = Vector3.zero;
+        int foundHouses = 0;
+
+        foreach (var binding in HouseBindings)
+        {
+            GameObject house = GameObject.Find(binding.HouseName);
+            if (house == null)
+            {
+                continue;
+            }
+
+            accumulatedPosition += house.transform.position;
+            foundHouses++;
+        }
+
+        if (foundHouses == 0)
+        {
+            position = Vector3.zero;
+            rotation = Quaternion.identity;
+            return false;
+        }
+
+        position = accumulatedPosition / foundHouses;
+        if (player != null)
+        {
+            position.y = player.position.y;
+        }
+
+        GameObject castle = GameObject.Find("Castle");
+        Vector3 forward = castle != null ? castle.transform.position - position : Vector3.forward;
+        forward.y = 0f;
+
+        if (forward.sqrMagnitude <= 0.0001f)
+        {
+            forward = player != null ? player.forward : Vector3.forward;
+        }
+
+        rotation = Quaternion.LookRotation(forward.normalized, Vector3.up);
+        return true;
     }
 
     private static ChallengeProgressHUD ConfigureHud(Transform runtimeRoot)
