@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,13 +13,17 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
     private const string PortalTriggerName = "Portal_Trigger";
     private const string PortalBlockerName = "Portal_Bloqueo";
     private const string PortalDoorId = "portal_arena";
+    private const int ReturnTeleportFrameCount = 5;
 
     private static readonly Vector3 ReturnPosition = new Vector3(-0.105f, 0f, 0.7049999f);
+    private static ArenaBattleReturnController runner;
     private static bool pendingReturnTeleport;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void RegisterSceneHandlers()
     {
+        EnsureRunner();
+
         SceneManager.sceneLoaded -= HandleSceneLoaded;
         SceneManager.sceneLoaded += HandleSceneLoaded;
 
@@ -50,7 +55,41 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
         if (scene.name == ReturnSceneName && pendingReturnTeleport)
         {
             pendingReturnTeleport = false;
+            EnsureRunner();
+            runner.StartCoroutine(ApplyReturnTeleportAfterDemoStartup());
+        }
+    }
+
+    private static void EnsureRunner()
+    {
+        if (runner != null)
+        {
+            return;
+        }
+
+        GameObject runnerObject = new GameObject(nameof(ArenaBattleReturnController));
+        runner = runnerObject.AddComponent<ArenaBattleReturnController>();
+        DontDestroyOnLoad(runnerObject);
+    }
+
+    private static IEnumerator ApplyReturnTeleportAfterDemoStartup()
+    {
+        for (int frame = 0; frame < ReturnTeleportFrameCount; frame++)
+        {
+            yield return null;
+            SkipDemoIntroIfPresent();
+
+            yield return new WaitForEndOfFrame();
             TeleportPlayerToReturnPosition();
+        }
+    }
+
+    private static void SkipDemoIntroIfPresent()
+    {
+        CinematicIntroController introController = Object.FindAnyObjectByType<CinematicIntroController>();
+        if (introController != null)
+        {
+            introController.SkipIntro();
         }
     }
 

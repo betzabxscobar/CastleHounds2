@@ -89,7 +89,7 @@ El jefe final debe tener `EnemyHealth` con rol `FinalBoss` o un `EnemyRoleMarker
 
 ## Retorno desde la batalla
 
-El trigger `Portal/Portal_Trigger` de `_DemoScene` se habilita al derrotar al lobo, vuelve a `Demo` y teletransporta al jugador a:
+El trigger `Portal/Portal_Trigger` de `_DemoScene` se habilita al derrotar al lobo, vuelve a `Demo`, salta la cinematica inicial de retorno y teletransporta al jugador a:
 
 ```text
 x = -0.105
