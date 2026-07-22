@@ -184,6 +184,14 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
             return;
         }
 
+        EnemyHealth wolfHealth = wolf.GetComponent<EnemyHealth>();
+        GameObject player = GameObject.Find("Player_Dog_Model");
+        MouseBasicAttack mouseAttack = player != null ? player.GetComponent<MouseBasicAttack>() : null;
+        if (mouseAttack != null)
+        {
+            mouseAttack.ClearEnemyTargetIfMatches(wolfHealth);
+        }
+
         wolf.SetActive(false);
         Debug.Log("SevenChallengesSceneBootstrap: Enemy_Wolf_Model desactivado en Demo. El lobo aparecera al cargar la escena de batalla desde la puerta.");
     }

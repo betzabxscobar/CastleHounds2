@@ -10,6 +10,7 @@ public sealed class MouseBasicAttack : MonoBehaviour
     [SerializeField] private EnemyHealth enemyTarget;
 
     private bool missingReferencesReported;
+    private bool invalidTargetReported;
 
     private void Update()
     {
@@ -35,6 +36,45 @@ public sealed class MouseBasicAttack : MonoBehaviour
             return;
         }
 
+        if (!CanUseTarget(enemyTarget))
+        {
+            enemyTarget = null;
+            return;
+        }
+
+        invalidTargetReported = false;
         dogAttack.AttackEnemy(enemyTarget);
+    }
+
+    public void ClearEnemyTargetIfMatches(EnemyHealth target)
+    {
+        if (target != null && enemyTarget == target)
+        {
+            enemyTarget = null;
+            invalidTargetReported = false;
+        }
+    }
+
+    private bool CanUseTarget(EnemyHealth target)
+    {
+        if (target == null || target.IsDefeated)
+        {
+            return false;
+        }
+
+        if (!target.gameObject.activeInHierarchy || !target.enabled)
+        {
+            if (!invalidTargetReported)
+            {
+                Debug.LogWarning(
+                    "MouseBasicAttack ignora el ataque porque el enemigo objetivo esta inactivo.",
+                    this);
+                invalidTargetReported = true;
+            }
+
+            return false;
+        }
+
+        return true;
     }
 }
