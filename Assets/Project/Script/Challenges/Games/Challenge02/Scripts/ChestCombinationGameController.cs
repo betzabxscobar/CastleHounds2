@@ -220,6 +220,9 @@ public class ChestCombinationGameController : ChallengeGameController
         enteredDigits.Clear();
 
         panel.Show();
+        panel.EnsureAudioSourcesReady();
+        sfxSource = panel.SfxSource;
+        ambienceSource = panel.AmbienceSource;
         panel.ResetForNewAttempt(clueText);
         RefreshDigits();
         PlayAmbience();

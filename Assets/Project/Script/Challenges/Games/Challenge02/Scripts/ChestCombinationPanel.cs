@@ -57,6 +57,7 @@ public sealed class ChestCombinationPanel : MonoBehaviour
     private Action clearHandler;
     private Action retryHandler;
     private Action exitHandler;
+    private bool showRequested;
 
     public AudioSource SfxSource => sfxSource;
     public AudioSource AmbienceSource => ambienceSource;
@@ -71,7 +72,15 @@ public sealed class ChestCombinationPanel : MonoBehaviour
     {
         EnsureBuilt();
         RegisterButtonListeners();
-        Hide();
+
+        if (showRequested)
+        {
+            ApplyVisibleState();
+        }
+        else
+        {
+            Hide();
+        }
     }
 
     private void OnDestroy()
@@ -154,33 +163,47 @@ public sealed class ChestCombinationPanel : MonoBehaviour
 
     public void Show()
     {
+        showRequested = true;
+        ActivateSelfAndParents(root != null ? root.transform : transform);
         EnsureBuilt();
+        RegisterButtonListeners();
 
-        if (root != null)
-        {
-            root.SetActive(true);
-        }
-
-        if (canvasGroup != null)
-        {
-            canvasGroup.alpha = 1f;
-            canvasGroup.interactable = true;
-            canvasGroup.blocksRaycasts = true;
-        }
+        ApplyVisibleState();
     }
 
     public void Hide()
     {
+        showRequested = false;
+
         if (canvasGroup != null)
         {
             canvasGroup.interactable = false;
             canvasGroup.blocksRaycasts = false;
+            canvasGroup.alpha = 0f;
         }
 
         if (root != null)
         {
             root.SetActive(false);
         }
+    }
+
+    public void EnsureAudioSourcesReady()
+    {
+        EnsureBuilt();
+
+        if (sfxSource == null || !sfxSource.gameObject.activeInHierarchy)
+        {
+            sfxSource = root.AddComponent<AudioSource>();
+        }
+
+        if (ambienceSource == null || !ambienceSource.gameObject.activeInHierarchy)
+        {
+            ambienceSource = root.AddComponent<AudioSource>();
+        }
+
+        ConfigureAudioSource(sfxSource, false);
+        ConfigureAudioSource(ambienceSource, true);
     }
 
     public void ResetForNewAttempt(string configuredClueText)
@@ -445,6 +468,39 @@ public sealed class ChestCombinationPanel : MonoBehaviour
         BuildDefaultLayout();
         RegisterButtonListeners();
         SetCallbacks(numberHandler, confirmHandler, clearHandler, retryHandler, exitHandler);
+    }
+
+    private void ApplyVisibleState()
+    {
+        if (root != null && !root.activeSelf)
+        {
+            root.SetActive(true);
+        }
+
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 1f;
+            canvasGroup.interactable = true;
+            canvasGroup.blocksRaycasts = true;
+        }
+    }
+
+    private static void ActivateSelfAndParents(Transform target)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        if (target.parent != null)
+        {
+            ActivateSelfAndParents(target.parent);
+        }
+
+        if (!target.gameObject.activeSelf)
+        {
+            target.gameObject.SetActive(true);
+        }
     }
 
     private void BuildDefaultLayout()
