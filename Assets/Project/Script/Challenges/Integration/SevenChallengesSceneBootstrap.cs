@@ -198,7 +198,7 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
 
     private static ChallengeProgressHUD ConfigureHud(Transform runtimeRoot)
     {
-        Canvas canvas = Object.FindFirstObjectByType<Canvas>();
+        Canvas canvas = Object.FindAnyObjectByType<Canvas>();
         if (canvas == null)
         {
             Debug.LogWarning("SevenChallengesSceneBootstrap: no hay Canvas para crear HUD de retos.");
@@ -235,7 +235,7 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
 
     private static void ConfigureTestPanel(List<MonoBehaviour> challengeBridges)
     {
-        Canvas canvas = Object.FindFirstObjectByType<Canvas>();
+        Canvas canvas = Object.FindAnyObjectByType<Canvas>();
         if (canvas == null)
         {
             return;
