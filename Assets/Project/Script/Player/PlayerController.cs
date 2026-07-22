@@ -1,9 +1,20 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
+    // En la arena de combate la camara (CameraFollow) es cinematica: no gira
+    // con el perro, solo lo sigue en posicion. Por eso el movimiento ahi no
+    // puede basarse en hacia donde mira la camara (crearia un bucle o
+    // controles invertidos segun donde se ubique la camara); en su lugar usa
+    // ejes fijos del mundo alineados con el pasillo spawn -> Portal (eje Z).
+    // En las demas escenas (Cinemachine u otra camara) se sigue usando el
+    // movimiento relativo a la camara de siempre.
+    private const string ArenaSceneName = "_DemoScene";
+    private static readonly Vector3 ArenaForward = Vector3.back;
+    private static readonly Vector3 ArenaRight = Vector3.right;
     [Header("Movimiento")]
     [SerializeField] private float walkSpeed = 4f;
     [SerializeField] private float runSpeed = 7f;
@@ -40,6 +51,7 @@ public class PlayerController : MonoBehaviour
     private bool hasSafetyPosition;
     private bool hasSpeedParam;
     private bool inputEnabled = true;
+    private bool useFixedArenaAxes;
 
 
 
@@ -47,6 +59,7 @@ public class PlayerController : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         respawn = GetComponent<PlayerRespawn>();
+        useFixedArenaAxes = SceneManager.GetActiveScene().name == ArenaSceneName;
 
         if (animator != null)
         {
@@ -234,26 +247,34 @@ public class PlayerController : MonoBehaviour
 
 
         // =========================
-        // MOVIMIENTO SEGÚN CÁMARA
+        // MOVIMIENTO
         // =========================
 
+        Vector3 moveForward;
+        Vector3 moveRight;
 
-        Vector3 camForward = cameraTransform.forward;
-        Vector3 camRight = cameraTransform.right;
+        if (useFixedArenaAxes)
+        {
+            // Ejes fijos del mundo: la camara de la arena es cinematica y no
+            // gira con el jugador, asi que no sirve como referencia direccional.
+            moveForward = ArenaForward;
+            moveRight = ArenaRight;
+        }
+        else
+        {
+            moveForward = cameraTransform.forward;
+            moveRight = cameraTransform.right;
 
+            moveForward.y = 0;
+            moveRight.y = 0;
 
-        camForward.y = 0;
-        camRight.y = 0;
-
-
-        camForward.Normalize();
-        camRight.Normalize();
-
-
+            moveForward.Normalize();
+            moveRight.Normalize();
+        }
 
         Vector3 movement =
-            camForward * vertical +
-            camRight * horizontal;
+            moveForward * vertical +
+            moveRight * horizontal;
 
 
 

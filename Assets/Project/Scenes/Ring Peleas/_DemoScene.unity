@@ -311,13 +311,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 198733988}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.075, z: -2.645}
+  m_LocalRotation: {x: -0, y: -0.99417466, z: -0, w: -0.10778137}
+  m_LocalPosition: {x: 2.18, y: -0.07500002, z: 4.44}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 31427771}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -192.375, z: 0}
 --- !u!1 &810000001
 GameObject:
   m_ObjectHideFlags: 0
@@ -720,6 +720,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MouseBasicAttack
   dogAttack: {fileID: 900500102}
   enemyTarget: {fileID: 900500111}
+  attackRange: 2
 --- !u!114 &900500104
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -775,8 +776,8 @@ MonoBehaviour:
   combatGameManager: {fileID: 910100002}
   enemyRole: 2
   roleMarker: {fileID: 0}
-  destroyWhenDefeated: 0
-  destroyDelay: 0
+  destroyWhenDefeated: 1
+  destroyDelay: 1.5
 --- !u!114 &900500112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -859,7 +860,7 @@ Transform:
   m_GameObject: {fileID: 900500200}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.44, y: 0.5, z: -6.02}
+  m_LocalPosition: {x: -0.01, y: 0.5, z: -6.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1090,6 +1091,7 @@ GameObject:
   - component: {fileID: 975698013}
   - component: {fileID: 975698011}
   - component: {fileID: 88300300}
+  - component: {fileID: 975698015}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1171,6 +1173,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 36.87, y: 0, z: 0}
+--- !u!114 &975698015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 975698010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1001 &1314059454
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1286,13 +1332,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1383498341}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.72, y: 1.1, z: 4.83}
+  m_LocalRotation: {x: -0, y: -0.9899365, z: -0, w: -0.14151259}
+  m_LocalPosition: {x: -0.012, y: 1.1, z: 6.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 31427771}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -196.271, z: 0}
 --- !u!1 &1592059504
 GameObject:
   m_ObjectHideFlags: 0
@@ -1558,7 +1604,7 @@ Transform:
   m_GameObject: {fileID: 1729145570}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.115, y: 0.248, z: 5.16}
+  m_LocalPosition: {x: 0.15, y: 0.02, z: 4.914}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

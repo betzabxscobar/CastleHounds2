@@ -8,6 +8,7 @@ public sealed class MouseBasicAttack : MonoBehaviour
 {
     [SerializeField] private BasicAttack dogAttack;
     [SerializeField] private EnemyHealth enemyTarget;
+    [SerializeField, Min(0f)] private float attackRange = 2f;
 
     private bool missingReferencesReported;
 
@@ -32,6 +33,13 @@ public sealed class MouseBasicAttack : MonoBehaviour
                 missingReferencesReported = true;
             }
 
+            return;
+        }
+
+        float distance = Vector3.Distance(transform.position, enemyTarget.transform.position);
+        if (distance > attackRange)
+        {
+            Debug.Log($"{name}: {enemyTarget.name} esta demasiado lejos para atacar (distancia {distance:F1}, rango {attackRange}).", this);
             return;
         }
 

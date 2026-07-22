@@ -26,6 +26,14 @@ public class CameraFollow : MonoBehaviour
     private void Awake()
     {
         currentDistance = Mathf.Clamp(Mathf.Abs(offset.z), minDistance, maxDistance);
+
+        // Deja la camara ya ubicada en su posicion final desde el primer frame,
+        // en vez de arrancar desde donde haya quedado en el editor y hacer un
+        // barrido visible mientras el Lerp/Slerp la alcanza.
+        if (target != null)
+        {
+            SnapToTarget();
+        }
     }
 
     private void LateUpdate()
@@ -34,10 +42,7 @@ public class CameraFollow : MonoBehaviour
 
         HandleZoomInput();
 
-        Vector3 adjustedOffset = new Vector3(offset.x, offset.y, Mathf.Sign(offset.z) * currentDistance);
-        Vector3 desiredPosition =
-            target.position + target.rotation * adjustedOffset;
-
+        Vector3 desiredPosition = ComputeDesiredPosition();
 
         transform.position = Vector3.Lerp(
             transform.position,
@@ -61,6 +66,23 @@ public class CameraFollow : MonoBehaviour
             targetRotation,
             rotationSmooth * Time.deltaTime
         );
+    }
+
+    private Vector3 ComputeDesiredPosition()
+    {
+        // Offset en espacio del mundo (no rotado por target.rotation): la camara
+        // no gira con el jugador, solo lo sigue en posicion. Con offset.z
+        // negativo la camara queda mas cerca del Portal que el jugador, es
+        // decir "adelante" de el, mirando hacia su frente.
+        Vector3 adjustedOffset = new Vector3(offset.x, offset.y, Mathf.Sign(offset.z) * currentDistance);
+        return target.position + adjustedOffset;
+    }
+
+    private void SnapToTarget()
+    {
+        transform.position = ComputeDesiredPosition();
+        Vector3 lookPoint = target.position + Vector3.up * lookHeight;
+        transform.rotation = Quaternion.LookRotation(lookPoint - transform.position);
     }
 
     private void HandleZoomInput()
