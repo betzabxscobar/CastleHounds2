@@ -90,6 +90,7 @@ public sealed class DogHealth : MonoBehaviour
 
         isLoadingDefeatScene = true;
         Time.timeScale = 1f;
+        ChallengeProgressManager.ResetStoredProgress();
         SceneManager.LoadScene(nombreEscenaDerrota);
     }
 

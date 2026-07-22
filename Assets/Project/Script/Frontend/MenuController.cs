@@ -19,6 +19,7 @@ public class MenuController : MonoBehaviour
         cargandoEscena = true;
         Debug.Log("PRESIONASTE JUGAR");
         Click();
+        ChallengeProgressManager.ResetStoredProgress();
         SceneManager.LoadScene("SeleccionAvatar");
     }
 
@@ -54,6 +55,7 @@ public class MenuController : MonoBehaviour
         cargandoEscena = true;
         Time.timeScale = 1f;
         Click();
+        ChallengeProgressManager.ResetStoredProgress();
         SceneManager.LoadScene("Demo");
     }
 

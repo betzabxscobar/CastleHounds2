@@ -20,6 +20,7 @@ public sealed class CastleUnlockController : MonoBehaviour
         }
 
         progressManager.OnAllChallengesCompleted += HandleAllChallengesCompleted;
+        progressManager.OnProgressChanged += HandleProgressChanged;
         ApplyCurrentState(false);
     }
 
@@ -28,6 +29,7 @@ public sealed class CastleUnlockController : MonoBehaviour
         if (progressManager != null)
         {
             progressManager.OnAllChallengesCompleted -= HandleAllChallengesCompleted;
+            progressManager.OnProgressChanged -= HandleProgressChanged;
         }
     }
 
@@ -49,6 +51,11 @@ public sealed class CastleUnlockController : MonoBehaviour
     private void HandleAllChallengesCompleted()
     {
         ApplyCurrentState(showUnlockMessage);
+    }
+
+    private void HandleProgressChanged(int completed, int total)
+    {
+        ApplyCurrentState(false);
     }
 
     private void ApplyCurrentState(bool notify)
@@ -73,6 +80,10 @@ public sealed class CastleUnlockController : MonoBehaviour
             {
                 GameEvents.RaiseMessageRequested("El castillo central ha sido desbloqueado.");
             }
+        }
+        else if (!unlocked)
+        {
+            unlockProcessed = false;
         }
     }
 }

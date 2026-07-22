@@ -52,6 +52,14 @@ public sealed class ChallengeProgressManager : MonoBehaviour
         managerObject.AddComponent<ChallengeProgressManager>();
     }
 
+#if UNITY_EDITOR
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void ResetEditorChallengeProgress()
+    {
+        ResetStoredProgress();
+    }
+#endif
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -111,16 +119,22 @@ public sealed class ChallengeProgressManager : MonoBehaviour
 
     public void ResetProgress()
     {
-        completedChallenges.Clear();
-        allChallengesEventRaised = false;
-
-        foreach (string challengeId in ValidChallengeIds)
-        {
-            SaveChallenge(challengeId, false);
-        }
-
+        ClearRuntimeProgress();
+        ClearPersistedProgress();
         PlayerPrefs.Save();
         OnProgressChanged?.Invoke(CompletedCount, TotalChallenges);
+    }
+
+    public static void ResetStoredProgress()
+    {
+        ClearPersistedProgress();
+        PlayerPrefs.Save();
+
+        if (Instance != null)
+        {
+            Instance.ClearRuntimeProgress();
+            Instance.OnProgressChanged?.Invoke(Instance.CompletedCount, Instance.TotalChallenges);
+        }
     }
 
     public static IReadOnlyList<string> GetValidChallengeIds()
@@ -145,6 +159,20 @@ public sealed class ChallengeProgressManager : MonoBehaviour
     {
         PlayerPrefs.SetInt(GetPlayerPrefsKey(challengeId), completed ? 1 : 0);
         PlayerPrefs.Save();
+    }
+
+    private void ClearRuntimeProgress()
+    {
+        completedChallenges.Clear();
+        allChallengesEventRaised = false;
+    }
+
+    private static void ClearPersistedProgress()
+    {
+        foreach (string challengeId in ValidChallengeIds)
+        {
+            PlayerPrefs.DeleteKey(GetPlayerPrefsKey(challengeId));
+        }
     }
 
     private static string GetPlayerPrefsKey(string challengeId)
