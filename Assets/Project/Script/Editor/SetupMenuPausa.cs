@@ -44,32 +44,32 @@ public class SetupMenuPausa
         GameObject panelMenu = CrearPanel("PanelMenu", canvasPausa.transform, true);
         panelMenu.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
         panelMenu.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
-        panelMenu.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 700);
+        panelMenu.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 900);
 
         GameObject panelOpciones = CrearPanel("PanelOpciones", canvasPausa.transform, false);
         panelOpciones.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
         panelOpciones.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
-        panelOpciones.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 600);
+        panelOpciones.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 800);
 
         GameObject panelControles = CrearPanel("PanelControles", canvasPausa.transform, false);
         panelControles.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
         panelControles.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
-        panelControles.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 600);
+        panelControles.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 700);
 
         CrearTitulo("Img_Titulo", panelMenu.transform, "UI/Titulos/Titulo_Pausa");
-        CrearBoton("Btn_Continuar", panelMenu.transform, "UI/Botones/Btn_Continuar", 120, pauseMenu, "ContinuarJuego");
-        CrearBoton("Btn_Opciones", panelMenu.transform, "UI/Botones/Btn_Opciones", 20, pauseMenu, "AbrirOpciones");
-        CrearBoton("Btn_Controles", panelMenu.transform, "UI/Botones/Btn_Volver", -80, pauseMenu, "AbrirControles");
-        CrearBoton("Btn_MenuPrincipal", panelMenu.transform, "UI/Botones/Btn_MenuPrincipal", -180, pauseMenu, "IrMenuPrincipal");
+        CrearBoton("Btn_Continuar", panelMenu.transform, "UI/Botones/Btn_Continuar", 170, pauseMenu, "ContinuarJuego");
+        CrearBoton("Btn_Opciones", panelMenu.transform, "UI/Botones/Btn_Opciones", -10, pauseMenu, "AbrirOpciones");
+        CrearBoton("Btn_Controles", panelMenu.transform, "UI/Botones/Btn_controles", -190, pauseMenu, "AbrirControles");
+        CrearBoton("Btn_MenuPrincipal", panelMenu.transform, "UI/Botones/Btn_MenuPrincipal", -370, pauseMenu, "IrMenuPrincipal");
 
         CrearTitulo("Img_Titulo_Op", panelOpciones.transform, "UI/Titulos/Titulo_Opciones");
-        CrearBoton("BtnMusica", panelOpciones.transform, "UI/Botones/BtnMusica", 80, pauseMenu, "CambiarMusica");
-        CrearBoton("BtnSonidos", panelOpciones.transform, "UI/Botones/BtnSonidos", 0, pauseMenu, "CambiarSonidos");
-        CrearBoton("BtnPantallaCompleta", panelOpciones.transform, "UI/Botones/BtnPantallaCompleta", -80, pauseMenu, "CambiarPantallaCompleta");
-        CrearBoton("Btn_Volver_Op", panelOpciones.transform, "UI/Botones/Btn_Volver", -180, pauseMenu, "VolverMenu");
+        CrearBoton("BtnMusica", panelOpciones.transform, "UI/Botones/BtnMusica", 130, pauseMenu, "CambiarMusica");
+        CrearBoton("BtnSonidos", panelOpciones.transform, "UI/Botones/BtnSonidos", -50, pauseMenu, "CambiarSonidos");
+        CrearBoton("BtnPantallaCompleta", panelOpciones.transform, "UI/Botones/BtnPantallaCompleta", -230, pauseMenu, "CambiarPantallaCompleta");
+        CrearBoton("Btn_Volver_Op", panelOpciones.transform, "UI/Botones/Btn_Volver", -410, pauseMenu, "VolverMenu");
 
         CrearTextoControles(panelControles.transform);
-        CrearBoton("Btn_Volver_Cont", panelControles.transform, "UI/Botones/Btn_Volver", -220, pauseMenu, "VolverMenu");
+        CrearBoton("Btn_Volver_Cont", panelControles.transform, "UI/Botones/Btn_Volver", -250, pauseMenu, "VolverMenu");
 
         GameObject btnPausa = CrearBtnPausa(canvasPausa.transform, pauseMenu);
 
@@ -118,7 +118,7 @@ public class SetupMenuPausa
         rt.anchorMin = new Vector2(0.5f, 1);
         rt.anchorMax = new Vector2(0.5f, 1);
         rt.anchoredPosition = new Vector2(0, -80);
-        rt.sizeDelta = new Vector2(500, 150);
+        rt.sizeDelta = new Vector2(500, 273);
         titulo.AddComponent<CanvasRenderer>();
         Image img = titulo.AddComponent<Image>();
         Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Project/" + spritePath + ".png");
@@ -139,7 +139,7 @@ public class SetupMenuPausa
         rt.anchorMin = new Vector2(0.5f, 0.5f);
         rt.anchorMax = new Vector2(0.5f, 0.5f);
         rt.anchoredPosition = new Vector2(0, yOffset);
-        rt.sizeDelta = new Vector2(400, 80);
+        rt.sizeDelta = new Vector2(400, 218);
         btn.AddComponent<CanvasRenderer>();
         Image img = btn.AddComponent<Image>();
         Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Project/" + spritePath + ".png");
@@ -214,8 +214,8 @@ public class SetupMenuPausa
         RectTransform rt = btn.AddComponent<RectTransform>();
         rt.anchorMin = new Vector2(1, 1);
         rt.anchorMax = new Vector2(1, 1);
-        rt.anchoredPosition = new Vector2(-80, -80);
-        rt.sizeDelta = new Vector2(80, 80);
+        rt.anchoredPosition = new Vector2(-100, -80);
+        rt.sizeDelta = new Vector2(120, 65);
         btn.AddComponent<CanvasRenderer>();
         Image img = btn.AddComponent<Image>();
         Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Project/UI/Botones/Btn_Pausa.png");
