@@ -132,6 +132,10 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
             {
                 ConfigureChestCombinationGame(chestCombinationGame, uiRoot);
             }
+            else if (bridge is Challenge07GameBridge challenge07Game)
+            {
+                ConfigureChallenge07Game(challenge07Game, uiRoot);
+            }
             else
             {
                 challengeBridges.Add(bridge);
@@ -445,6 +449,52 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
         if (panel.AmbienceClip == null || panel.NumberPressClip == null || panel.CorrectClip == null || panel.IncorrectClip == null || panel.ChestOpeningClip == null || panel.VictoryClip == null)
         {
             Debug.LogError("SevenChallengesSceneBootstrap: ChestCombinationPanel no tiene todos los AudioClip serializados.");
+        }
+    }
+
+    private static void ConfigureChallenge07Game(Challenge07GameBridge gameController, Transform uiRoot)
+    {
+        if (uiRoot == null)
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: falta uiRoot para Challenge 07.");
+            return;
+        }
+
+        Transform existingPanel = uiRoot.Find("Challenge07UI");
+        Challenge07PuzzleController panel = null;
+        if (existingPanel != null)
+        {
+            panel = existingPanel.GetComponent<Challenge07PuzzleController>();
+        }
+
+        if (panel == null)
+        {
+            panel = Object.FindAnyObjectByType<Challenge07PuzzleController>(FindObjectsInactive.Include);
+        }
+
+        if (panel == null)
+        {
+            string prefabPath = "Assets/Project/Script/Challenges/Games/Challenge07/Prefabs/Challenge07UI.prefab";
+#if UNITY_EDITOR
+            GameObject prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            if (prefab != null)
+            {
+                GameObject panelObject = Object.Instantiate(prefab, uiRoot);
+                panelObject.name = "Challenge07UI";
+                panel = panelObject.GetComponent<Challenge07PuzzleController>();
+            }
+#endif
+        }
+
+        if (panel != null)
+        {
+            panel.SetGameBridge(gameController);
+            panel.ConfigureStandaloneDemo(false);
+            panel.gameObject.SetActive(false);
+        }
+        else
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: no se pudo encontrar o instanciar Challenge07UI.");
         }
     }
 

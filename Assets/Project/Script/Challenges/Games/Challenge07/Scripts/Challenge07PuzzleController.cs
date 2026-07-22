@@ -41,6 +41,7 @@ public sealed class Challenge07PuzzleController : MonoBehaviour
     [SerializeField] private Image completedMapImage;
     [SerializeField] private GameObject castleReveal;
     [SerializeField] private CanvasGroup backgroundDarkener;
+    [SerializeField] private TMP_Text piecesCountText;
 
     [Header("Presentación")]
     [SerializeField] private Animator puzzleAnimator;
@@ -410,6 +411,45 @@ public sealed class Challenge07PuzzleController : MonoBehaviour
         if (targets9Root != null) targets9Root.SetActive(!useSix);
         puzzlePieces = useSix ? sixPieces : ninePieces;
         initialized = false;
+        UpdateModeButtonVisuals();
+    }
+
+    private void UpdateModeButtonVisuals()
+    {
+        bool useSix = puzzleMode == PuzzleMode.SixPieces;
+        if (piecesCountText != null)
+        {
+            piecesCountText.text = useSix ? "6" : "9";
+        }
+
+        Color selectedBg = new Color(0.48f, 0.25f, 0.05f, 1f);
+        Color selectedOutline = new Color(1f, 0.85f, 0.2f, 1f);
+        Color unselectedBg = new Color(0.12f, 0.05f, 0.02f, 1f);
+        Color unselectedOutline = new Color(0.38f, 0.22f, 0.08f, 1f);
+
+        if (sixPiecesButton != null)
+        {
+            Image img = sixPiecesButton.GetComponent<Image>();
+            if (img != null) img.color = useSix ? selectedBg : unselectedBg;
+            Outline outline = sixPiecesButton.GetComponent<Outline>();
+            if (outline != null)
+            {
+                outline.effectColor = useSix ? selectedOutline : unselectedOutline;
+                outline.effectDistance = useSix ? new Vector2(4f, -4f) : new Vector2(1.5f, -1.5f);
+            }
+        }
+
+        if (ninePiecesButton != null)
+        {
+            Image img = ninePiecesButton.GetComponent<Image>();
+            if (img != null) img.color = !useSix ? selectedBg : unselectedBg;
+            Outline outline = ninePiecesButton.GetComponent<Outline>();
+            if (outline != null)
+            {
+                outline.effectColor = !useSix ? selectedOutline : unselectedOutline;
+                outline.effectDistance = !useSix ? new Vector2(4f, -4f) : new Vector2(1.5f, -1.5f);
+            }
+        }
     }
 
     private int CountValidPieces()
