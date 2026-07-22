@@ -60,7 +60,7 @@ public sealed class CinematicIntroController : MonoBehaviour
     [SerializeField] private bool allowSkip = true;
     [SerializeField] private bool moveDogToStartOnIntro = true;
     [SerializeField] private float skipInputDelay = 0.35f;
-    [SerializeField] private KeyCode legacySkipKey = KeyCode.Escape;
+    [SerializeField] private KeyCode legacySkipKey = KeyCode.Return;
     [SerializeField] private int inactivePriority = 0;
     [SerializeField] private int activePriority = 20;
 
@@ -663,14 +663,14 @@ public sealed class CinematicIntroController : MonoBehaviour
 
 #if ENABLE_INPUT_SYSTEM
         Keyboard keyboard = Keyboard.current;
-        if (keyboard != null && (keyboard.escapeKey.wasPressedThisFrame || keyboard.spaceKey.wasPressedThisFrame))
+        if (keyboard != null && (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame))
         {
             return true;
         }
 #endif
 
 #if ENABLE_LEGACY_INPUT_MANAGER
-        return Input.GetKeyDown(legacySkipKey) || Input.GetKeyDown(KeyCode.Space);
+        return Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter);
 #else
         return false;
 #endif
