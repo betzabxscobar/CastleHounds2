@@ -75,3 +75,6 @@ crashlytics-build.properties
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Temporary rune memory source assets
+/Juego_1/
