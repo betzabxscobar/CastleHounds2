@@ -26,6 +26,13 @@ public class PauseMenu : MonoBehaviour
 
         controlLock = GetComponent<PlayerControlLock>();
 
+        if (btnPausa == null)
+        {
+            GameObject btn = GameObject.Find("Btn_Pausa");
+            if (btn != null)
+                btnPausa = btn.GetComponent<UnityEngine.UI.Button>();
+        }
+
         if (btnPausa != null)
             btnPausa.onClick.AddListener(PausarJuego);
 
