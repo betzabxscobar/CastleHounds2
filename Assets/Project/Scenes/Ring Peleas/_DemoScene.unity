@@ -721,7 +721,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MouseBasicAttack
   dogAttack: {fileID: 900500102}
   enemyTarget: {fileID: 900500111}
-  attackRange: 3.5
 --- !u!114 &900500104
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -861,7 +860,7 @@ Transform:
   m_GameObject: {fileID: 900500200}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.01, y: 0.5, z: 2.23}
+  m_LocalPosition: {x: -0.01, y: 0.5, z: 6.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
