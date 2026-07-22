@@ -9,6 +9,11 @@ public sealed class ChestCombinationPanel : MonoBehaviour
     [SerializeField] private GameObject root;
     [SerializeField] private CanvasGroup canvasGroup;
 
+    [Header("Typography")]
+    [Tooltip("Fuente TMP medieval. Si queda vacía, se intentará cargar desde Resources/Challenges/Challenge02/Fonts/MedievalFont.")]
+    [SerializeField] private TMP_FontAsset medievalFont;
+    [SerializeField] private string medievalFontResourcesPath = "Challenges/Challenge02/Fonts/MedievalFont";
+
     [Header("Text")]
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private TMP_Text clueText;
@@ -52,11 +57,21 @@ public sealed class ChestCombinationPanel : MonoBehaviour
     [SerializeField] private AudioClip chestOpeningClip;
     [SerializeField] private AudioClip victoryClip;
 
+    private const float FrameWidth = 1070f;
+    private const float FrameHeight = 756f;
+
+    private static readonly Color TitleColor = new Color(0.95f, 0.78f, 0.35f, 1f);
+    private static readonly Color ParchmentTextColor = new Color(0.17f, 0.09f, 0.025f, 1f);
+    private static readonly Color StatusColor = new Color(1f, 0.88f, 0.58f, 1f);
+    private static readonly Color OverlayColor = new Color(0f, 0f, 0f, 0.78f);
+
     private Action<int> numberHandler;
     private Action confirmHandler;
     private Action clearHandler;
     private Action retryHandler;
     private Action exitHandler;
+
+    private RectTransform mainFrameRect;
     private bool showRequested;
 
     public AudioSource SfxSource => sfxSource;
@@ -87,6 +102,11 @@ public sealed class ChestCombinationPanel : MonoBehaviour
     {
         UnregisterButtonListeners();
         ClearNumberHandlers();
+    }
+
+    private void OnRectTransformDimensionsChange()
+    {
+        UpdateResponsiveScale();
     }
 
     public void ConfigureSprites(
@@ -135,6 +155,7 @@ public sealed class ChestCombinationPanel : MonoBehaviour
         incorrectClip = configuredIncorrectClip;
         chestOpeningClip = configuredChestOpeningClip;
         victoryClip = configuredVictoryClip;
+
         ConfigureAudioSource(sfxSource, false);
         ConfigureAudioSource(ambienceSource, true);
     }
@@ -167,8 +188,8 @@ public sealed class ChestCombinationPanel : MonoBehaviour
         ActivateSelfAndParents(root != null ? root.transform : transform);
         EnsureBuilt();
         RegisterButtonListeners();
-
         ApplyVisibleState();
+        UpdateResponsiveScale();
     }
 
     public void Hide()
@@ -192,25 +213,31 @@ public sealed class ChestCombinationPanel : MonoBehaviour
     {
         EnsureBuilt();
 
-        if (sfxSource == null || !sfxSource.gameObject.activeInHierarchy)
+        if (root == null)
         {
-            sfxSource = root.AddComponent<AudioSource>();
+            return;
         }
 
-        if (ambienceSource == null || !ambienceSource.gameObject.activeInHierarchy)
+        FindOrCreateAudioSources();
+
+        if (sfxSource != null)
         {
-            ambienceSource = root.AddComponent<AudioSource>();
+            sfxSource.enabled = true;
+            ConfigureAudioSource(sfxSource, false);
         }
 
-        ConfigureAudioSource(sfxSource, false);
-        ConfigureAudioSource(ambienceSource, true);
+        if (ambienceSource != null)
+        {
+            ambienceSource.enabled = true;
+            ConfigureAudioSource(ambienceSource, true);
+        }
     }
 
     public void ResetForNewAttempt(string configuredClueText)
     {
-        SetTitle("COFRE CON COMBINACION");
+        SetTitle("COFRE CON COMBINACIÓN");
         SetClue(configuredClueText);
-        SetStatus("Introduce tres numeros.");
+        SetStatus("Introduce tres números.");
         SetChestOpen(false);
         SetRewardsVisible(false);
         SetRetryVisible(false);
@@ -254,18 +281,19 @@ public sealed class ChestCombinationPanel : MonoBehaviour
 
         for (int i = 0; i < combinationSlots.Length; i++)
         {
-            if (combinationSlots[i] == null)
+            CombinationSlot slot = combinationSlots[i];
+            if (slot == null)
             {
                 continue;
             }
 
             if (digits != null && i < count)
             {
-                combinationSlots[i].SetValue(digits[i]);
+                slot.SetValue(digits[i]);
             }
             else
             {
-                combinationSlots[i].Clear();
+                slot.Clear();
             }
         }
     }
@@ -288,16 +316,14 @@ public sealed class ChestCombinationPanel : MonoBehaviour
 
     public void ResetSlotsVisual()
     {
-        if (combinationSlots == null)
+        if (combinationSlots != null)
         {
-            return;
-        }
-
-        foreach (CombinationSlot slot in combinationSlots)
-        {
-            if (slot != null)
+            foreach (CombinationSlot slot in combinationSlots)
             {
-                slot.ResetVisual();
+                if (slot != null)
+                {
+                    slot.ResetVisual();
+                }
             }
         }
 
@@ -323,21 +349,23 @@ public sealed class ChestCombinationPanel : MonoBehaviour
 
         if (lockImage != null)
         {
-            lockImage.color = new Color(1f, 0.32f, 0.32f, 1f);
+            lockImage.color = new Color(1f, 0.38f, 0.32f, 1f);
             lockImage.transform.localScale = Vector3.one * 1.08f;
         }
     }
 
     public void SetCorrectFeedback()
     {
-        if (combinationSlots != null)
+        if (combinationSlots == null)
         {
-            foreach (CombinationSlot slot in combinationSlots)
+            return;
+        }
+
+        foreach (CombinationSlot slot in combinationSlots)
+        {
+            if (slot != null)
             {
-                if (slot != null)
-                {
-                    slot.SetCorrectFeedback();
-                }
+                slot.SetCorrectFeedback();
             }
         }
     }
@@ -421,16 +449,16 @@ public sealed class ChestCombinationPanel : MonoBehaviour
             root = gameObject;
         }
 
-        RectTransform rectTransform = root.GetComponent<RectTransform>();
-        if (rectTransform == null)
+        RectTransform rootRect = root.GetComponent<RectTransform>();
+        if (rootRect == null)
         {
-            rectTransform = root.AddComponent<RectTransform>();
+            rootRect = root.AddComponent<RectTransform>();
         }
 
-        rectTransform.anchorMin = Vector2.zero;
-        rectTransform.anchorMax = Vector2.one;
-        rectTransform.offsetMin = Vector2.zero;
-        rectTransform.offsetMax = Vector2.zero;
+        rootRect.anchorMin = Vector2.zero;
+        rootRect.anchorMax = Vector2.one;
+        rootRect.offsetMin = Vector2.zero;
+        rootRect.offsetMax = Vector2.zero;
 
         if (canvasGroup == null)
         {
@@ -442,25 +470,21 @@ public sealed class ChestCombinationPanel : MonoBehaviour
             canvasGroup = root.AddComponent<CanvasGroup>();
         }
 
-        if (sfxSource == null)
-        {
-            sfxSource = root.GetComponent<AudioSource>();
-        }
-
-        if (sfxSource == null)
-        {
-            sfxSource = root.AddComponent<AudioSource>();
-        }
-
-        if (ambienceSource == null)
-        {
-            ambienceSource = root.AddComponent<AudioSource>();
-        }
-
+        ResolveMedievalFont();
+        FindOrCreateAudioSources();
         ConfigureAudioSource(sfxSource, false);
         ConfigureAudioSource(ambienceSource, true);
 
-        if (titleText != null && combinationSlots != null && combinationSlots.Length == 3 && numberButtons != null && numberButtons.Length == 10)
+        bool layoutAlreadyBuilt =
+            titleText != null &&
+            clueText != null &&
+            statusText != null &&
+            combinationSlots != null &&
+            combinationSlots.Length == 3 &&
+            numberButtons != null &&
+            numberButtons.Length == 10;
+
+        if (layoutAlreadyBuilt)
         {
             return;
         }
@@ -485,155 +509,200 @@ public sealed class ChestCombinationPanel : MonoBehaviour
         }
     }
 
-    private static void ActivateSelfAndParents(Transform target)
-    {
-        if (target == null)
-        {
-            return;
-        }
-
-        if (target.parent != null)
-        {
-            ActivateSelfAndParents(target.parent);
-        }
-
-        if (!target.gameObject.activeSelf)
-        {
-            target.gameObject.SetActive(true);
-        }
-    }
-
     private void BuildDefaultLayout()
     {
         Transform rootTransform = root.transform;
         ClearRuntimeChildren(rootTransform);
 
         GameObject overlay = CreateUIObject("BackgroundOverlay", rootTransform);
-        RectTransform overlayRect = Stretch(overlay);
+        Stretch(overlay);
         Image overlayImage = overlay.AddComponent<Image>();
-        overlayImage.color = new Color(0f, 0f, 0f, 0.72f);
+        overlayImage.color = OverlayColor;
+        overlayImage.raycastTarget = true;
 
         GameObject frame = CreateUIObject("MainFrame", rootTransform);
-        RectTransform frameRect = frame.GetComponent<RectTransform>();
-        frameRect.anchorMin = new Vector2(0.5f, 0.5f);
-        frameRect.anchorMax = new Vector2(0.5f, 0.5f);
-        frameRect.pivot = new Vector2(0.5f, 0.5f);
-        frameRect.sizeDelta = new Vector2(1040f, 760f);
-        frameRect.anchoredPosition = Vector2.zero;
+        mainFrameRect = frame.GetComponent<RectTransform>();
+        SetCenteredRect(mainFrameRect, Vector2.zero, new Vector2(FrameWidth, FrameHeight));
+
         Image frameImage = frame.AddComponent<Image>();
         frameImage.sprite = mainFrameSprite;
-        frameImage.color = mainFrameSprite != null ? Color.white : new Color(0.08f, 0.07f, 0.05f, 0.96f);
+        frameImage.color = mainFrameSprite != null
+            ? Color.white
+            : new Color(0.12f, 0.085f, 0.045f, 0.98f);
+        frameImage.preserveAspect = true;
+        frameImage.raycastTarget = true;
 
-        titleText = CreateText(frame.transform, "TitleText", "COFRE CON COMBINACION", new Vector2(0f, 310f), new Vector2(860f, 58f), 42f, Color.white);
+        titleText = CreateText(
+            frame.transform,
+            "TitleText",
+            "COFRE CON COMBINACIÓN",
+            new Vector2(0f, 314f),
+            new Vector2(820f, 62f),
+            46f,
+            30f,
+            TitleColor,
+            FontStyles.Bold | FontStyles.SmallCaps,
+            true,
+            new Color32(45, 20, 5, 255),
+            0.22f);
+        titleText.characterSpacing = 2.5f;
 
         GameObject clueScroll = CreateUIObject("ClueScroll", frame.transform);
         RectTransform clueRect = clueScroll.GetComponent<RectTransform>();
-        clueRect.anchorMin = new Vector2(0.5f, 0.5f);
-        clueRect.anchorMax = new Vector2(0.5f, 0.5f);
-        clueRect.pivot = new Vector2(0.5f, 0.5f);
-        clueRect.sizeDelta = new Vector2(420f, 190f);
-        clueRect.anchoredPosition = new Vector2(-260f, 165f);
+        SetCenteredRect(clueRect, new Vector2(-270f, 142f), new Vector2(318f, 318f));
+
         Image clueImage = clueScroll.AddComponent<Image>();
         clueImage.sprite = clueScrollSprite;
-        clueImage.color = clueScrollSprite != null ? Color.white : new Color(0.72f, 0.58f, 0.36f, 1f);
+        clueImage.color = clueScrollSprite != null
+            ? Color.white
+            : new Color(0.78f, 0.63f, 0.39f, 1f);
+        clueImage.preserveAspect = true;
+        clueImage.raycastTarget = false;
 
-        clueText = CreateText(clueScroll.transform, "ClueText", string.Empty, Vector2.zero, new Vector2(330f, 126f), 24f, new Color(0.18f, 0.11f, 0.04f, 1f));
+        clueText = CreateText(
+            clueScroll.transform,
+            "ClueText",
+            string.Empty,
+            new Vector2(0f, -2f),
+            new Vector2(220f, 190f),
+            27f,
+            18f,
+            ParchmentTextColor,
+            FontStyles.Bold,
+            true,
+            new Color32(255, 240, 190, 80),
+            0.08f);
+        clueText.margin = new Vector4(8f, 8f, 8f, 8f);
+        clueText.lineSpacing = 5f;
 
         GameObject chest = CreateUIObject("ChestImage", frame.transform);
         RectTransform chestRect = chest.GetComponent<RectTransform>();
-        chestRect.anchorMin = new Vector2(0.5f, 0.5f);
-        chestRect.anchorMax = new Vector2(0.5f, 0.5f);
-        chestRect.pivot = new Vector2(0.5f, 0.5f);
-        chestRect.sizeDelta = new Vector2(280f, 280f);
-        chestRect.anchoredPosition = new Vector2(255f, 120f);
+        SetCenteredRect(chestRect, new Vector2(250f, 155f), new Vector2(292f, 292f));
+
         chestImage = chest.AddComponent<Image>();
         chestImage.sprite = closedChestSprite;
         chestImage.preserveAspect = true;
+        chestImage.raycastTarget = false;
 
         GameObject lockObject = CreateUIObject("LockImage", chest.transform);
         RectTransform lockRect = lockObject.GetComponent<RectTransform>();
-        lockRect.anchorMin = new Vector2(0.5f, 0.5f);
-        lockRect.anchorMax = new Vector2(0.5f, 0.5f);
-        lockRect.pivot = new Vector2(0.5f, 0.5f);
-        lockRect.sizeDelta = new Vector2(92f, 92f);
-        lockRect.anchoredPosition = new Vector2(0f, -18f);
+        SetCenteredRect(lockRect, new Vector2(0f, -17f), new Vector2(88f, 88f));
+
         lockImage = lockObject.AddComponent<Image>();
         lockImage.sprite = lockSprite;
         lockImage.preserveAspect = true;
+        lockImage.raycastTarget = false;
 
         GameObject display = CreateUIObject("CombinationDisplay", frame.transform);
         RectTransform displayRect = display.GetComponent<RectTransform>();
-        displayRect.anchorMin = new Vector2(0.5f, 0.5f);
-        displayRect.anchorMax = new Vector2(0.5f, 0.5f);
-        displayRect.pivot = new Vector2(0.5f, 0.5f);
-        displayRect.sizeDelta = new Vector2(360f, 110f);
-        displayRect.anchoredPosition = new Vector2(0f, -70f);
+        SetCenteredRect(displayRect, new Vector2(250f, -28f), new Vector2(310f, 92f));
 
         combinationSlots = new CombinationSlot[3];
         for (int i = 0; i < combinationSlots.Length; i++)
         {
-            combinationSlots[i] = CreateSlot(display.transform, "Slot" + (i + 1), new Vector2(-120f + i * 120f, 0f));
+            combinationSlots[i] = CreateSlot(
+                display.transform,
+                "Slot" + (i + 1),
+                new Vector2(-102f + i * 102f, 0f));
         }
+
+        statusText = CreateText(
+            frame.transform,
+            "StatusText",
+            "Introduce tres números.",
+            new Vector2(250f, -91f),
+            new Vector2(460f, 42f),
+            25f,
+            17f,
+            StatusColor,
+            FontStyles.Bold,
+            true,
+            new Color32(35, 15, 3, 255),
+            0.18f);
 
         GameObject numberPad = CreateUIObject("NumberPad", frame.transform);
         RectTransform padRect = numberPad.GetComponent<RectTransform>();
-        padRect.anchorMin = new Vector2(0.5f, 0.5f);
-        padRect.anchorMax = new Vector2(0.5f, 0.5f);
-        padRect.pivot = new Vector2(0.5f, 0.5f);
-        padRect.sizeDelta = new Vector2(360f, 290f);
-        padRect.anchoredPosition = new Vector2(-250f, -200f);
+        SetCenteredRect(padRect, new Vector2(-270f, -205f), new Vector2(240f, 300f));
+
         GridLayoutGroup grid = numberPad.AddComponent<GridLayoutGroup>();
-        grid.cellSize = new Vector2(78f, 60f);
-        grid.spacing = new Vector2(14f, 12f);
+        grid.cellSize = new Vector2(64f, 64f);
+        grid.spacing = new Vector2(12f, 12f);
         grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         grid.constraintCount = 3;
         grid.childAlignment = TextAnchor.MiddleCenter;
+        grid.startAxis = GridLayoutGroup.Axis.Horizontal;
 
-        int[] orderedNumbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
         numberButtons = new ChestNumberButton[10];
-        foreach (int number in orderedNumbers)
+        for (int number = 1; number <= 9; number++)
         {
             numberButtons[number] = CreateNumberButton(numberPad.transform, number);
         }
 
-        confirmButton = CreateCommandButton(frame.transform, "ConfirmButton", "CONFIRMAR", confirmButtonSprite, new Vector2(250f, -150f));
-        clearButton = CreateCommandButton(frame.transform, "ClearButton", "BORRAR", clearButtonSprite, new Vector2(250f, -220f));
-        retryButton = CreateCommandButton(frame.transform, "RetryButton", "REINTENTAR", retryButtonSprite, new Vector2(250f, -290f));
-        exitButton = CreateCommandButton(frame.transform, "ExitButton", "SALIR", exitButtonSprite, new Vector2(430f, -290f));
+        CreateGridSpacer(numberPad.transform, "SpacerLeft");
+        numberButtons[0] = CreateNumberButton(numberPad.transform, 0);
+        CreateGridSpacer(numberPad.transform, "SpacerRight");
 
-        statusText = CreateText(frame.transform, "StatusText", "Introduce tres numeros.", new Vector2(0f, -315f), new Vector2(560f, 44f), 26f, Color.white);
+        confirmButton = CreateCommandButton(
+            frame.transform,
+            "ConfirmButton",
+            "CONFIRMAR",
+            confirmButtonSprite,
+            new Vector2(152f, -176f));
 
-        keyImage = CreateReward(frame.transform, "RewardKey", keySprite, new Vector2(350f, 20f));
-        coinImage = CreateReward(frame.transform, "RewardCoin", coinSprite, new Vector2(430f, 40f));
+        clearButton = CreateCommandButton(
+            frame.transform,
+            "ClearButton",
+            "BORRAR",
+            clearButtonSprite,
+            new Vector2(378f, -176f));
 
-        _ = overlayRect;
+        retryButton = CreateCommandButton(
+            frame.transform,
+            "RetryButton",
+            "REINTENTAR",
+            retryButtonSprite,
+            new Vector2(152f, -258f));
+
+        exitButton = CreateCommandButton(
+            frame.transform,
+            "ExitButton",
+            "SALIR",
+            exitButtonSprite,
+            new Vector2(378f, -258f));
+
+        keyImage = CreateReward(frame.transform, "RewardKey", keySprite, new Vector2(390f, 86f), new Vector2(92f, 128f));
+        coinImage = CreateReward(frame.transform, "RewardCoin", coinSprite, new Vector2(420f, 178f), new Vector2(92f, 92f));
+
         SetRewardsVisible(false);
         SetRetryVisible(false);
-    }
-
-    private static void ClearRuntimeChildren(Transform parent)
-    {
-        for (int i = parent.childCount - 1; i >= 0; i--)
-        {
-            Destroy(parent.GetChild(i).gameObject);
-        }
+        UpdateResponsiveScale();
     }
 
     private CombinationSlot CreateSlot(Transform parent, string objectName, Vector2 anchoredPosition)
     {
         GameObject slotObject = CreateUIObject(objectName, parent);
         RectTransform slotRect = slotObject.GetComponent<RectTransform>();
-        slotRect.anchorMin = new Vector2(0.5f, 0.5f);
-        slotRect.anchorMax = new Vector2(0.5f, 0.5f);
-        slotRect.pivot = new Vector2(0.5f, 0.5f);
-        slotRect.sizeDelta = new Vector2(92f, 92f);
-        slotRect.anchoredPosition = anchoredPosition;
+        SetCenteredRect(slotRect, anchoredPosition, new Vector2(82f, 82f));
 
         Image image = slotObject.AddComponent<Image>();
         image.sprite = numberSlotSprite;
         image.color = Color.white;
+        image.preserveAspect = true;
 
-        TMP_Text text = CreateText(slotObject.transform, "ValueText", string.Empty, Vector2.zero, new Vector2(78f, 60f), 42f, new Color(0.1f, 0.06f, 0.02f, 1f));
+        TMP_Text text = CreateText(
+            slotObject.transform,
+            "ValueText",
+            string.Empty,
+            Vector2.zero,
+            new Vector2(56f, 56f),
+            43f,
+            28f,
+            ParchmentTextColor,
+            FontStyles.Bold,
+            false,
+            new Color32(255, 235, 175, 70),
+            0.08f);
+
         CombinationSlot slot = slotObject.AddComponent<CombinationSlot>();
         slot.Configure(image, text);
         return slot;
@@ -642,99 +711,236 @@ public sealed class ChestCombinationPanel : MonoBehaviour
     private ChestNumberButton CreateNumberButton(Transform parent, int value)
     {
         GameObject buttonObject = CreateUIObject("Button" + value, parent);
+
         Image image = buttonObject.AddComponent<Image>();
         image.sprite = numberSlotSprite;
         image.color = Color.white;
+        image.preserveAspect = true;
 
         Button button = buttonObject.AddComponent<Button>();
-        TMP_Text text = CreateText(buttonObject.transform, "Text", value.ToString(), Vector2.zero, new Vector2(64f, 46f), 30f, new Color(0.1f, 0.06f, 0.02f, 1f));
+        ConfigureButtonColors(button);
+
+        TMP_Text text = CreateText(
+            buttonObject.transform,
+            "Text",
+            value.ToString(),
+            Vector2.zero,
+            new Vector2(46f, 46f),
+            35f,
+            24f,
+            ParchmentTextColor,
+            FontStyles.Bold,
+            false,
+            new Color32(255, 235, 175, 60),
+            0.07f);
+
         ChestNumberButton numberButton = buttonObject.AddComponent<ChestNumberButton>();
         numberButton.Configure(value, button, text, numberHandler);
         return numberButton;
     }
 
-    private Button CreateCommandButton(Transform parent, string objectName, string label, Sprite sprite, Vector2 anchoredPosition)
+    private Button CreateCommandButton(
+        Transform parent,
+        string objectName,
+        string fallbackLabel,
+        Sprite sprite,
+        Vector2 anchoredPosition)
     {
         GameObject buttonObject = CreateUIObject(objectName, parent);
         RectTransform rectTransform = buttonObject.GetComponent<RectTransform>();
-        rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-        rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-        rectTransform.pivot = new Vector2(0.5f, 0.5f);
-        rectTransform.sizeDelta = new Vector2(168f, 56f);
-        rectTransform.anchoredPosition = anchoredPosition;
+        SetCenteredRect(rectTransform, anchoredPosition, new Vector2(210f, 70f));
 
         Image image = buttonObject.AddComponent<Image>();
         image.sprite = sprite;
-        image.color = sprite != null ? Color.white : new Color(0.22f, 0.16f, 0.1f, 1f);
+        image.color = sprite != null
+            ? Color.white
+            : new Color(0.56f, 0.39f, 0.18f, 1f);
+        image.preserveAspect = true;
 
         Button button = buttonObject.AddComponent<Button>();
-        TMP_Text text = CreateText(buttonObject.transform, "Text", label, Vector2.zero, new Vector2(142f, 36f), 18f, new Color(0.12f, 0.08f, 0.03f, 1f));
-        text.fontStyle = FontStyles.Bold;
+        ConfigureButtonColors(button);
+
+        // Los PNG de CONFIRMAR, BORRAR, REINTENTAR y SALIR ya incluyen sus letras.
+        // Solo se crea texto cuando el sprite no existe, evitando letras duplicadas.
+        if (sprite == null)
+        {
+            TMP_Text fallbackText = CreateText(
+                buttonObject.transform,
+                "FallbackText",
+                fallbackLabel,
+                Vector2.zero,
+                new Vector2(174f, 42f),
+                24f,
+                16f,
+                ParchmentTextColor,
+                FontStyles.Bold | FontStyles.SmallCaps,
+                false,
+                new Color32(255, 235, 175, 70),
+                0.08f);
+            fallbackText.characterSpacing = 1.5f;
+        }
+
         return button;
     }
 
-    private Image CreateReward(Transform parent, string objectName, Sprite sprite, Vector2 anchoredPosition)
+    private Image CreateReward(
+        Transform parent,
+        string objectName,
+        Sprite sprite,
+        Vector2 anchoredPosition,
+        Vector2 size)
     {
         GameObject rewardObject = CreateUIObject(objectName, parent);
         RectTransform rewardRect = rewardObject.GetComponent<RectTransform>();
-        rewardRect.anchorMin = new Vector2(0.5f, 0.5f);
-        rewardRect.anchorMax = new Vector2(0.5f, 0.5f);
-        rewardRect.pivot = new Vector2(0.5f, 0.5f);
-        rewardRect.sizeDelta = new Vector2(96f, 96f);
-        rewardRect.anchoredPosition = anchoredPosition;
+        SetCenteredRect(rewardRect, anchoredPosition, size);
+
         Image image = rewardObject.AddComponent<Image>();
         image.sprite = sprite;
         image.preserveAspect = true;
+        image.raycastTarget = false;
         return image;
+    }
+
+    private TMP_Text CreateText(
+        Transform parent,
+        string objectName,
+        string text,
+        Vector2 anchoredPosition,
+        Vector2 size,
+        float maximumFontSize,
+        float minimumFontSize,
+        Color color,
+        FontStyles style,
+        bool wordWrap,
+        Color32 outlineColor,
+        float outlineWidth)
+    {
+        GameObject textObject = CreateUIObject(objectName, parent);
+        RectTransform rectTransform = textObject.GetComponent<RectTransform>();
+        SetCenteredRect(rectTransform, anchoredPosition, size);
+
+        TextMeshProUGUI tmpText = textObject.AddComponent<TextMeshProUGUI>();
+        tmpText.text = text;
+        tmpText.font = ResolveMedievalFont();
+        tmpText.fontSize = maximumFontSize;
+        tmpText.enableAutoSizing = true;
+        tmpText.fontSizeMax = maximumFontSize;
+        tmpText.fontSizeMin = minimumFontSize;
+        tmpText.alignment = TextAlignmentOptions.Center;
+        tmpText.color = color;
+        tmpText.fontStyle = style;
+        tmpText.enableWordWrapping = wordWrap;
+        tmpText.overflowMode = TextOverflowModes.Ellipsis;
+        tmpText.raycastTarget = false;
+        tmpText.outlineColor = outlineColor;
+        tmpText.outlineWidth = outlineWidth;
+        return tmpText;
+    }
+
+    private TMP_FontAsset ResolveMedievalFont()
+    {
+        if (medievalFont != null)
+        {
+            return medievalFont;
+        }
+
+        if (!string.IsNullOrWhiteSpace(medievalFontResourcesPath))
+        {
+            medievalFont = Resources.Load<TMP_FontAsset>(medievalFontResourcesPath);
+        }
+
+        if (medievalFont == null)
+        {
+            medievalFont = Resources.Load<TMP_FontAsset>("Fonts/MedievalFont");
+        }
+
+        if (medievalFont == null)
+        {
+            medievalFont = TMP_Settings.defaultFontAsset;
+        }
+
+        return medievalFont;
+    }
+
+    private void FindOrCreateAudioSources()
+    {
+        if (root == null)
+        {
+            return;
+        }
+
+        AudioSource[] sources = root.GetComponents<AudioSource>();
+
+        if (sfxSource == null)
+        {
+            sfxSource = sources.Length > 0 ? sources[0] : root.AddComponent<AudioSource>();
+        }
+
+        if (ambienceSource == null || ambienceSource == sfxSource)
+        {
+            if (sources.Length > 1 && sources[1] != sfxSource)
+            {
+                ambienceSource = sources[1];
+            }
+            else
+            {
+                ambienceSource = root.AddComponent<AudioSource>();
+            }
+        }
+    }
+
+    private void UpdateResponsiveScale()
+    {
+        if (mainFrameRect == null || root == null)
+        {
+            return;
+        }
+
+        RectTransform rootRect = root.GetComponent<RectTransform>();
+        if (rootRect == null)
+        {
+            return;
+        }
+
+        float availableWidth = Mathf.Max(1f, rootRect.rect.width - 32f);
+        float availableHeight = Mathf.Max(1f, rootRect.rect.height - 32f);
+        float scale = Mathf.Min(availableWidth / FrameWidth, availableHeight / FrameHeight);
+        scale = Mathf.Clamp(scale, 0.55f, 1f);
+        mainFrameRect.localScale = Vector3.one * scale;
     }
 
     private void RegisterButtonListeners()
     {
-        if (confirmButton != null)
-        {
-            confirmButton.onClick.RemoveListener(HandleConfirmClicked);
-            confirmButton.onClick.AddListener(HandleConfirmClicked);
-        }
-
-        if (clearButton != null)
-        {
-            clearButton.onClick.RemoveListener(HandleClearClicked);
-            clearButton.onClick.AddListener(HandleClearClicked);
-        }
-
-        if (retryButton != null)
-        {
-            retryButton.onClick.RemoveListener(HandleRetryClicked);
-            retryButton.onClick.AddListener(HandleRetryClicked);
-        }
-
-        if (exitButton != null)
-        {
-            exitButton.onClick.RemoveListener(HandleExitClicked);
-            exitButton.onClick.AddListener(HandleExitClicked);
-        }
+        RegisterButton(confirmButton, HandleConfirmClicked);
+        RegisterButton(clearButton, HandleClearClicked);
+        RegisterButton(retryButton, HandleRetryClicked);
+        RegisterButton(exitButton, HandleExitClicked);
     }
 
     private void UnregisterButtonListeners()
     {
-        if (confirmButton != null)
+        UnregisterButton(confirmButton, HandleConfirmClicked);
+        UnregisterButton(clearButton, HandleClearClicked);
+        UnregisterButton(retryButton, HandleRetryClicked);
+        UnregisterButton(exitButton, HandleExitClicked);
+    }
+
+    private static void RegisterButton(Button button, UnityEngine.Events.UnityAction callback)
+    {
+        if (button == null)
         {
-            confirmButton.onClick.RemoveListener(HandleConfirmClicked);
+            return;
         }
 
-        if (clearButton != null)
-        {
-            clearButton.onClick.RemoveListener(HandleClearClicked);
-        }
+        button.onClick.RemoveListener(callback);
+        button.onClick.AddListener(callback);
+    }
 
-        if (retryButton != null)
+    private static void UnregisterButton(Button button, UnityEngine.Events.UnityAction callback)
+    {
+        if (button != null)
         {
-            retryButton.onClick.RemoveListener(HandleRetryClicked);
-        }
-
-        if (exitButton != null)
-        {
-            exitButton.onClick.RemoveListener(HandleExitClicked);
+            button.onClick.RemoveListener(callback);
         }
     }
 
@@ -774,12 +980,55 @@ public sealed class ChestCombinationPanel : MonoBehaviour
         exitHandler?.Invoke();
     }
 
+    private static void ActivateSelfAndParents(Transform target)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        if (target.parent != null)
+        {
+            ActivateSelfAndParents(target.parent);
+        }
+
+        if (!target.gameObject.activeSelf)
+        {
+            target.gameObject.SetActive(true);
+        }
+    }
+
+    private static void ClearRuntimeChildren(Transform parent)
+    {
+        for (int i = parent.childCount - 1; i >= 0; i--)
+        {
+            GameObject child = parent.GetChild(i).gameObject;
+
+            if (Application.isPlaying)
+            {
+                Destroy(child);
+            }
+            else
+            {
+                DestroyImmediate(child);
+            }
+        }
+    }
+
     private static GameObject CreateUIObject(string objectName, Transform parent)
     {
-        GameObject uiObject = new GameObject(objectName);
+        GameObject uiObject = new GameObject(objectName, typeof(RectTransform));
         uiObject.transform.SetParent(parent, false);
-        uiObject.AddComponent<RectTransform>();
+        uiObject.layer = parent.gameObject.layer;
         return uiObject;
+    }
+
+    private static void CreateGridSpacer(Transform parent, string objectName)
+    {
+        GameObject spacer = CreateUIObject(objectName, parent);
+        Image image = spacer.AddComponent<Image>();
+        image.color = Color.clear;
+        image.raycastTarget = false;
     }
 
     private static RectTransform Stretch(GameObject gameObject)
@@ -792,23 +1041,28 @@ public sealed class ChestCombinationPanel : MonoBehaviour
         return rectTransform;
     }
 
-    private static TMP_Text CreateText(Transform parent, string objectName, string text, Vector2 anchoredPosition, Vector2 size, float fontSize, Color color)
+    private static void SetCenteredRect(RectTransform rectTransform, Vector2 anchoredPosition, Vector2 size)
     {
-        GameObject textObject = CreateUIObject(objectName, parent);
-        RectTransform rectTransform = textObject.GetComponent<RectTransform>();
         rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
         rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         rectTransform.pivot = new Vector2(0.5f, 0.5f);
         rectTransform.anchoredPosition = anchoredPosition;
         rectTransform.sizeDelta = size;
+        rectTransform.localScale = Vector3.one;
+    }
 
-        TMP_Text tmpText = textObject.AddComponent<TextMeshProUGUI>();
-        tmpText.text = text;
-        tmpText.fontSize = fontSize;
-        tmpText.alignment = TextAlignmentOptions.Center;
-        tmpText.color = color;
-        tmpText.raycastTarget = false;
-        return tmpText;
+    private static void ConfigureButtonColors(Button button)
+    {
+        ColorBlock colors = button.colors;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = new Color(1f, 0.92f, 0.70f, 1f);
+        colors.pressedColor = new Color(0.78f, 0.63f, 0.38f, 1f);
+        colors.selectedColor = colors.highlightedColor;
+        colors.disabledColor = new Color(0.45f, 0.45f, 0.45f, 0.72f);
+        colors.colorMultiplier = 1f;
+        colors.fadeDuration = 0.08f;
+        button.colors = colors;
+        button.transition = Selectable.Transition.ColorTint;
     }
 
     private static void ConfigureAudioSource(AudioSource audioSource, bool loop)
