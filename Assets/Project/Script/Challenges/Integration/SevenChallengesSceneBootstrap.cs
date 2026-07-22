@@ -16,6 +16,8 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
     private const string RuneMemoryPanelResourcePath = "Challenges/Challenge01/RuneMemoryPanel";
     private const string ChestCombinationPanelName = "ChestCombinationPanel";
     private const string ChestCombinationPanelResourcePath = "Challenges/Challenge02/ChestCombinationPanel";
+    private const string AcertijoPanelName = "AcertijoPanel";
+    private const string AcertijoPanelResourcePath = "Challenges/Challenge03/AcertijoPanel";
 
     private static readonly (string HouseName, string ChallengeId, System.Type BridgeType)[] HouseBindings =
     {
@@ -131,6 +133,10 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
             else if (bridge is ChestCombinationGameController chestCombinationGame)
             {
                 ConfigureChestCombinationGame(chestCombinationGame, uiRoot);
+            }
+            else if (bridge is Challenge03GameBridge acertijoGame)
+            {
+                ConfigureAcertijoGame(acertijoGame, uiRoot);
             }
             else
             {
@@ -445,6 +451,63 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
         if (panel.AmbienceClip == null || panel.NumberPressClip == null || panel.CorrectClip == null || panel.IncorrectClip == null || panel.ChestOpeningClip == null || panel.VictoryClip == null)
         {
             Debug.LogError("SevenChallengesSceneBootstrap: ChestCombinationPanel no tiene todos los AudioClip serializados.");
+        }
+    }
+
+    private static void ConfigureAcertijoGame(Challenge03GameBridge gameBridge, Transform uiRoot)
+    {
+        if (uiRoot == null)
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: falta uiRoot para el Acertijo.");
+            return;
+        }
+
+        AcertijoManager acertijoManager = FindOrCreateAcertijoPanel(uiRoot);
+        if (acertijoManager == null)
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: no se pudo cargar AcertijoPanel desde Resources. El reto 3 no se iniciara para evitar bloquear al jugador.");
+            return;
+        }
+
+        ValidateAcertijoPanelAssets(acertijoManager);
+        gameBridge.ConfigureRuntime(acertijoManager);
+    }
+
+    private static AcertijoManager FindOrCreateAcertijoPanel(Transform uiRoot)
+    {
+        Transform existingPanel = uiRoot.Find(AcertijoPanelName);
+        if (existingPanel != null)
+        {
+            return existingPanel.GetComponent<AcertijoManager>();
+        }
+
+        GameObject panelPrefab = Resources.Load<GameObject>(AcertijoPanelResourcePath);
+        if (panelPrefab == null)
+        {
+            Debug.LogError($"SevenChallengesSceneBootstrap: Resources.Load fallo para '{AcertijoPanelResourcePath}'.");
+            return null;
+        }
+
+        GameObject panelObject = Object.Instantiate(panelPrefab, uiRoot);
+        panelObject.name = AcertijoPanelName;
+        return panelObject.GetComponentInChildren<AcertijoManager>(true);
+    }
+
+    private static void ValidateAcertijoPanelAssets(AcertijoManager manager)
+    {
+        if (manager.botonesRespuesta == null || manager.botonesRespuesta.Length != 4)
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: AcertijoPanel no tiene los cuatro botones de respuesta serializados.");
+        }
+
+        if (manager.preguntas == null || manager.preguntas.Count == 0)
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: AcertijoPanel no tiene preguntas configuradas.");
+        }
+
+        if (manager.audioSource == null)
+        {
+            Debug.LogError("SevenChallengesSceneBootstrap: AcertijoPanel no tiene AudioSource serializado.");
         }
     }
 
