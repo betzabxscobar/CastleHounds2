@@ -11,6 +11,11 @@ Esta carpeta contiene un punto de integracion por cada reto futuro. Los minijueg
 5. Cuando el jugador pierda, terminar con `ChallengeResult.Lost`.
 6. Si el jugador cierra o cancela, terminar con `ChallengeResult.Cancelled`.
 
+## Juegos implementados
+
+- `Challenge01`: Memoria de Runas, integrado con `House`.
+- `Challenge02`: Cofre con combinacion, integrado con `House (1)`.
+
 ## Archivos que no deben modificarse para agregar un juego
 
 - `HouseChallengeTrigger`
