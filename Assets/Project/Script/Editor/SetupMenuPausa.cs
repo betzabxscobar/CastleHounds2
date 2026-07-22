@@ -26,19 +26,38 @@ public class SetupMenuPausa
         EditorUtility.DisplayDialog("Listo", "Menu de Pausa instalado en la escena.", "OK");
     }
 
+    private const string PREFAB_GUID = "db6971273a7f6da4488c1d8b2387e34f";
+    private const string PREFAB_PATH = "Assets/Project/Prefabs/UI/Canvas_Pausa.prefab";
+
     [MenuItem("CastleHounds/Reparar Canvas_Pausa")]
     public static void Reparar()
     {
+        string prefabAssetPath = AssetDatabase.GUIDToAssetPath(PREFAB_GUID);
+        bool prefabExists = !string.IsNullOrEmpty(prefabAssetPath) && AssetDatabase.LoadAssetAtPath<GameObject>(prefabAssetPath) != null;
+
+        if (!prefabExists)
+        {
+            if (!EditorUtility.DisplayDialog(
+                "Prefab faltante",
+                "El prefab Canvas_Pausa fue eliminado del disco.\n\n" +
+                "Se creara uno nuevo con la estructura correcta.\n" +
+                "Despues tendras que re-asignar el PlayerController en PauseMenu.\n\nContinuar?",
+                "Si", "Cancelar"))
+                return;
+
+            CrearCanvasPausa();
+            GuardarPrefabConGUID();
+            EditorUtility.DisplayDialog("Listo",
+                "Prefab recreado y escena actualizada.\n\n" +
+                "IMPORTANTE: Asigna el PlayerController en el componente PauseMenu del Canvas_Pausa.",
+                "OK");
+            return;
+        }
+
         GameObject canvas = GameObject.Find("Canvas_Pausa");
         if (canvas == null)
         {
             EditorUtility.DisplayDialog("Error", "No se encontro Canvas_Pausa en la escena.", "OK");
-            return;
-        }
-
-        if (PrefabUtility.IsPartOfPrefabAsset(canvas))
-        {
-            EditorUtility.DisplayDialog("Error", "Canvas_Pausa es un asset de prefab.\nDesempaquetalo primero (Prefab > Unpack Completely).", "OK");
             return;
         }
 
@@ -47,75 +66,39 @@ public class SetupMenuPausa
             PrefabUtility.UnpackPrefabInstance(
                 PrefabUtility.GetNearestPrefabInstanceRoot(canvas),
                 PrefabUnpackMode.Completely,
-                InteractionMode.UserAction);
+                InteractionMode.AutomatedAction);
         }
 
-        RepararRectTransforms(canvas.transform);
-        EditorUtility.DisplayDialog("Listo", "Escala de Canvas_Pausa reparada.", "OK");
+        RepararEscalas(canvas.transform);
+
+        EditorUtility.DisplayDialog("Listo",
+            "Canvas_Pausa desempaquetado y escalas corregidas.\n\n" +
+            "Todas las posiciones, tamanos y sprites se mantienen como estaban.",
+            "OK");
     }
 
-    private static void RepararRectTransforms(Transform t)
+    private static void GuardarPrefabConGUID()
     {
-        string nombre = t.name;
-        RectTransform rt = t.GetComponent<RectTransform>();
+        GameObject canvas = GameObject.Find("Canvas_Pausa");
+        if (canvas == null) return;
 
-        if (rt != null)
+        string directorio = System.IO.Path.GetDirectoryName(PREFAB_PATH);
+        if (!AssetDatabase.IsValidFolder(directorio))
+            System.IO.Directory.CreateDirectory(directorio);
+
+        GameObject prefab = PrefabUtility.SaveAsPrefabAsset(canvas, PREFAB_PATH);
+        if (prefab == null) return;
+
+        string metaPath = PREFAB_PATH + ".meta";
+        if (System.IO.File.Exists(metaPath))
         {
-            if (nombre == "Canvas_Pausa")
-            {
-                rt.localScale = Vector3.one;
-                rt.anchorMin = Vector2.zero;
-                rt.anchorMax = Vector2.one;
-                rt.sizeDelta = Vector2.zero;
-                rt.anchoredPosition = Vector2.zero;
-            }
-            else if (nombre == "PanelMenu")
-            {
-                rt.localScale = Vector3.one;
-                rt.anchorMin = new Vector2(0.5f, 0.5f);
-                rt.anchorMax = new Vector2(0.5f, 0.5f);
-                rt.sizeDelta = new Vector2(600, 900);
-            }
-            else if (nombre == "PanelOpciones")
-            {
-                rt.localScale = Vector3.one;
-                rt.anchorMin = new Vector2(0.5f, 0.5f);
-                rt.anchorMax = new Vector2(0.5f, 0.5f);
-                rt.sizeDelta = new Vector2(600, 800);
-            }
-            else if (nombre == "PanelControles")
-            {
-                rt.localScale = Vector3.one;
-                rt.anchorMin = new Vector2(0.5f, 0.5f);
-                rt.anchorMax = new Vector2(0.5f, 0.5f);
-                rt.sizeDelta = new Vector2(600, 700);
-            }
-            else if (nombre == "Btn_Pausa")
-            {
-                rt.localScale = Vector3.one;
-                rt.anchorMin = new Vector2(1, 1);
-                rt.anchorMax = new Vector2(1, 1);
-                rt.anchoredPosition = new Vector2(-100, -80);
-                rt.sizeDelta = new Vector2(120, 65);
-            }
-            else if (nombre.StartsWith("Btn_") || nombre.StartsWith("Btn"))
-            {
-                rt.localScale = Vector3.one;
-                rt.sizeDelta = new Vector2(400, 218);
-            }
-            else if (nombre.StartsWith("Img_Titulo"))
-            {
-                rt.localScale = Vector3.one;
-                rt.sizeDelta = new Vector2(500, 273);
-            }
-            else
-            {
-                rt.localScale = Vector3.one;
-            }
+            string meta = System.IO.File.ReadAllText(metaPath);
+            meta = System.Text.RegularExpressions.Regex.Replace(
+                meta, @"guid: [a-f0-9]{32}", "guid: " + PREFAB_GUID);
+            System.IO.File.WriteAllText(metaPath, meta);
         }
 
-        foreach (Transform child in t)
-            RepararRectTransforms(child);
+        AssetDatabase.Refresh();
     }
 
     private static void CrearCanvasPausa()

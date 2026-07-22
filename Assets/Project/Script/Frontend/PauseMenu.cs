@@ -58,6 +58,8 @@ public class PauseMenu : MonoBehaviour
         SetPanelActive(panelOpciones, false);
         SetPanelActive(panelControles, false);
 
+        MostrarBtnPausa(false);
+
         Time.timeScale = 0f;
         juegoPausado = true;
 
@@ -70,6 +72,8 @@ public class PauseMenu : MonoBehaviour
         SetPanelActive(panelMenu, false);
         SetPanelActive(panelOpciones, false);
         SetPanelActive(panelControles, false);
+
+        MostrarBtnPausa(true);
 
         Time.timeScale = 1f;
         juegoPausado = false;
@@ -176,6 +180,12 @@ public class PauseMenu : MonoBehaviour
         {
             AudioManager.Instance.ReproducirClick();
         }
+    }
+
+    private void MostrarBtnPausa(bool visible)
+    {
+        if (btnPausa != null)
+            btnPausa.gameObject.SetActive(visible);
     }
 
     private void SetPanelActive(GameObject panel, bool active)
