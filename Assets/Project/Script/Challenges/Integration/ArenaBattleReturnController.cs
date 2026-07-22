@@ -99,9 +99,11 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().name != BattleSceneName || role != EnemyRole.RegularEnemy)
         {
+            Debug.Log($"ArenaBattleReturnController: derrota de {enemyHealth?.name} ignorada (escena={SceneManager.GetActiveScene().name}, rol={role}).");
             return;
         }
 
+        Debug.Log($"ArenaBattleReturnController: {enemyHealth.name} derrotado como RegularEnemy, desbloqueando portal.");
         UnlockPortalExit();
     }
 
@@ -204,6 +206,8 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
         }
 
         zoneTrigger.ConfigureSceneLoadTarget(ReturnSceneName);
+
+        Debug.Log($"ArenaBattleReturnController: {PortalTriggerName} configurado -> destino={ReturnSceneName}, colliderEnabled={triggerCollider.enabled}, activo={portalTriggerObject.activeInHierarchy}.");
     }
 
     private static void UnlockPortalExit()
@@ -214,6 +218,7 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
         GameObject blocker = FindSceneGameObject(PortalBlockerName);
         if (blocker == null)
         {
+            Debug.LogWarning($"ArenaBattleReturnController: no se encontro {PortalBlockerName} en {BattleSceneName}, no se puede confirmar el desbloqueo.");
             return;
         }
 
@@ -221,6 +226,7 @@ public sealed class ArenaBattleReturnController : MonoBehaviour
         if (blockerCollider != null)
         {
             blockerCollider.enabled = false;
+            Debug.Log($"ArenaBattleReturnController: {PortalBlockerName} desactivado, paso libre hacia {PortalTriggerName}.");
         }
     }
 

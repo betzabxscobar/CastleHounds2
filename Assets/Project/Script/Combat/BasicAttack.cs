@@ -24,7 +24,7 @@ public sealed class BasicAttack : MonoBehaviour
             return;
         }
 
-        if (target.IsDead)
+        if (target.IsDead || !target.gameObject.activeInHierarchy)
         {
             return;
         }
@@ -42,7 +42,7 @@ public sealed class BasicAttack : MonoBehaviour
             return;
         }
 
-        if (target.IsDefeated)
+        if (target.IsDefeated || !target.gameObject.activeInHierarchy)
         {
             return;
         }

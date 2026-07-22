@@ -41,8 +41,17 @@ public class ZoneTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag(playerTag)) return;
-        if (soloUnaVez && _yaActivado) return;
+        if (!other.CompareTag(playerTag))
+        {
+            Debug.Log($"[ZoneTrigger] {gameObject.name}: ignorado, '{other.name}' tiene tag '{other.tag}' (se esperaba '{playerTag}').");
+            return;
+        }
+
+        if (soloUnaVez && _yaActivado)
+        {
+            Debug.Log($"[ZoneTrigger] {gameObject.name}: ignorado, ya se activo antes (soloUnaVez).");
+            return;
+        }
 
         _yaActivado = true;
 
