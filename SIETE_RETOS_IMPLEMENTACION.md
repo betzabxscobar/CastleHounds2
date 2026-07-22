@@ -114,4 +114,6 @@ La implementacion runtime reduce configuracion manual, pero sigue siendo necesar
 - `feat: classify initial wolf and final boss outcomes`
 - `feat: teleport player after initial wolf victory`
 - `feat: configure seven house challenge triggers`
+- `fix: avoid obsolete bootstrap object lookup`
 - `docs: add challenge game integration guide`
+- `docs: update challenge implementation notes`
