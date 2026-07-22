@@ -69,11 +69,8 @@ public class SetupMenuPausa
                 InteractionMode.AutomatedAction);
         }
 
-        RepararEscalas(canvas.transform);
-
         EditorUtility.DisplayDialog("Listo",
-            "Canvas_Pausa desempaquetado y escalas corregidas.\n\n" +
-            "Todas las posiciones, tamanos y sprites se mantienen como estaban.",
+            "Canvas_Pausa desempaquetado.",
             "OK");
     }
 
