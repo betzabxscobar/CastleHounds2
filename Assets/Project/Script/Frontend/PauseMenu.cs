@@ -98,6 +98,11 @@ public class PauseMenu : MonoBehaviour
 
     public void VolverAlMenu()
     {
+        if (CambiandoDeEscena)
+        {
+            return;
+        }
+
         // Evita que el HUD reaparezca durante el fotograma en el que se
         // restablece el tiempo y se carga el menú principal.
         CambiandoDeEscena = true;
