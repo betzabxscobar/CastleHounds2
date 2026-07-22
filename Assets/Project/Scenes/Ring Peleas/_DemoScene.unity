@@ -194,6 +194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1130bbc6128a5db47ab0169b77c1336f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  invertArenaForward: 0
   walkSpeed: 4
   runSpeed: 7
   acceleration: 5
@@ -280,14 +281,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
   target: {fileID: 31427771}
-  offset: {x: 0, y: 2.2, z: -2}
+  offset: {x: 0, y: 2.6, z: -3}
   positionSmooth: 5
   rotationSmooth: 5
   lookHeight: 0.8
   zoomSpeed: 0.5
   minDistance: 1.5
-  maxDistance: 3.5
-  minWorldZ: -5.6
+  maxDistance: 4.5
+  minWorldZ: -6.5
 --- !u!1 &198733988
 GameObject:
   m_ObjectHideFlags: 0
@@ -721,6 +722,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MouseBasicAttack
   dogAttack: {fileID: 900500102}
   enemyTarget: {fileID: 900500111}
+  attackRange: 3.5
 --- !u!114 &900500104
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -774,7 +776,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHealth: 100
   combatGameManager: {fileID: 910100002}
-  enemyRole: 2
+  enemyRole: 0
   roleMarker: {fileID: 0}
   destroyWhenDefeated: 1
   destroyDelay: 1.5

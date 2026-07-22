@@ -5,16 +5,17 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
-    // En la arena de combate la camara (CameraFollow) es cinematica: no gira
-    // con el perro, solo lo sigue en posicion. Por eso el movimiento ahi no
-    // puede basarse en hacia donde mira la camara (crearia un bucle o
-    // controles invertidos segun donde se ubique la camara); en su lugar usa
-    // ejes fijos del mundo alineados con el pasillo spawn -> Portal (eje Z).
-    // En las demas escenas (Cinemachine u otra camara) se sigue usando el
-    // movimiento relativo a la camara de siempre.
+    // En la arena de combate la camara es cinematica (no gira con el perro),
+    // asi que el movimiento no puede depender de hacia donde mira la camara.
+    // En su lugar se usan controles tipo "tanque": A/D giran al perro y W/S lo
+    // mueven en linea recta segun su orientacion, sin curvarse. En las demas
+    // escenas se mantiene el movimiento relativo a la camara de siempre.
     private const string ArenaSceneName = "_DemoScene";
-    private static readonly Vector3 ArenaForward = Vector3.back;
-    private static readonly Vector3 ArenaRight = Vector3.right;
+
+    [Header("Arena de combate")]
+    [Tooltip("Si en la arena la W mueve al perro hacia atras, activa esto para invertir el sentido de W/S.")]
+    [SerializeField] private bool invertArenaForward;
+
     [Header("Movimiento")]
     [SerializeField] private float walkSpeed = 4f;
     [SerializeField] private float runSpeed = 7f;
@@ -51,7 +52,7 @@ public class PlayerController : MonoBehaviour
     private bool hasSafetyPosition;
     private bool hasSpeedParam;
     private bool inputEnabled = true;
-    private bool useFixedArenaAxes;
+    private bool useFixedArenaAxes; // true en la arena: activa controles tanque
 
 
 
@@ -250,58 +251,46 @@ public class PlayerController : MonoBehaviour
         // MOVIMIENTO
         // =========================
 
-        Vector3 moveForward;
-        Vector3 moveRight;
+        Vector3 movement;
 
         if (useFixedArenaAxes)
         {
-            // Ejes fijos del mundo: la camara de la arena es cinematica y no
-            // gira con el jugador, asi que no sirve como referencia direccional.
-            moveForward = ArenaForward;
-            moveRight = ArenaRight;
+            // Controles tipo "tanque" para la arena de combate:
+            //  - A / D giran al perro (izquierda / derecha).
+            //  - W / S lo mueven en linea recta segun hacia donde mira; la W
+            //    nunca curva por si sola, la direccion solo cambia con A / D.
+            if (Mathf.Abs(horizontal) > 0.01f)
+            {
+                transform.Rotate(0f, horizontal * rotationSpeed * Time.deltaTime, 0f);
+            }
+
+            float forwardSign = invertArenaForward ? -1f : 1f;
+            movement = transform.forward * (vertical * forwardSign);
         }
         else
         {
-            moveForward = cameraTransform.forward;
-            moveRight = cameraTransform.right;
+            Vector3 moveForward = cameraTransform.forward;
+            Vector3 moveRight = cameraTransform.right;
 
             moveForward.y = 0;
             moveRight.y = 0;
 
             moveForward.Normalize();
             moveRight.Normalize();
-        }
 
-        Vector3 movement =
-            moveForward * vertical +
-            moveRight * horizontal;
+            movement = moveForward * vertical + moveRight * horizontal;
 
+            if (movement.sqrMagnitude > 1)
+                movement.Normalize();
 
-
-        if (movement.sqrMagnitude > 1)
-            movement.Normalize();
-
-
-
-
-        // =========================
-        // ROTACIÓN NATURAL
-        // =========================
-
-        if (movement.sqrMagnitude > 0.01f)
-        {
-            // No rota si solamente va hacia atrás
-            if (vertical >= 0)
+            // Rotacion natural: el perro mira hacia donde se desplaza (solo hacia adelante).
+            if (movement.sqrMagnitude > 0.01f && vertical >= 0)
             {
-                Quaternion targetRotation =
-                    Quaternion.LookRotation(movement);
-
-                transform.rotation =
-                    Quaternion.RotateTowards(
-                        transform.rotation,
-                        targetRotation,
-                        rotationSpeed * Time.deltaTime
-                    );
+                Quaternion targetRotation = Quaternion.LookRotation(movement);
+                transform.rotation = Quaternion.RotateTowards(
+                    transform.rotation,
+                    targetRotation,
+                    rotationSpeed * Time.deltaTime);
             }
         }
 
