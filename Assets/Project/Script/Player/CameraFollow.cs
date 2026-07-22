@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraFollow : MonoBehaviour
 {
@@ -6,7 +7,7 @@ public class CameraFollow : MonoBehaviour
     public Transform target;
 
     [Header("Posición")]
-    public Vector3 offset = new Vector3(0, 3.5f, 0f);
+    public Vector3 offset = new Vector3(0, 2.2f, 5f);
 
     [Header("Suavizado")]
     public float positionSmooth = 5f;
@@ -15,14 +16,27 @@ public class CameraFollow : MonoBehaviour
     [Header("Altura de mirada")]
     public float lookHeight = 0.8f;
 
+    [Header("Zoom (scroll del mouse)")]
+    [SerializeField] private float zoomSpeed = 0.5f;
+    [SerializeField] private float minDistance = 3f;
+    [SerializeField] private float maxDistance = 10f;
+
+    private float currentDistance;
+
+    private void Awake()
+    {
+        currentDistance = Mathf.Clamp(Mathf.Abs(offset.z), minDistance, maxDistance);
+    }
 
     private void LateUpdate()
     {
         if (target == null) return;
 
+        HandleZoomInput();
 
+        Vector3 adjustedOffset = new Vector3(offset.x, offset.y, Mathf.Sign(offset.z) * currentDistance);
         Vector3 desiredPosition =
-            target.position + target.rotation * offset;
+            target.position + target.rotation * adjustedOffset;
 
 
         transform.position = Vector3.Lerp(
@@ -47,5 +61,21 @@ public class CameraFollow : MonoBehaviour
             targetRotation,
             rotationSmooth * Time.deltaTime
         );
+    }
+
+    private void HandleZoomInput()
+    {
+        if (Mouse.current == null)
+        {
+            return;
+        }
+
+        float scroll = Mouse.current.scroll.ReadValue().y;
+        if (Mathf.Approximately(scroll, 0f))
+        {
+            return;
+        }
+
+        currentDistance = Mathf.Clamp(currentDistance - scroll * zoomSpeed, minDistance, maxDistance);
     }
 }
