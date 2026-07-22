@@ -7,15 +7,23 @@ public sealed class EnemyHealth : MonoBehaviour
 {
     [SerializeField, Min(1f)] private float maxHealth = 100f;
     [SerializeField] private CombatGameManager combatGameManager;
+    [SerializeField] private EnemyRole enemyRole = EnemyRole.FinalBoss;
+    [SerializeField] private EnemyRoleMarker roleMarker;
     [SerializeField] private bool destroyWhenDefeated;
     [SerializeField, Min(0f)] private float destroyDelay;
 
     public float CurrentHealth { get; private set; }
     public float MaxHealth => maxHealth;
     public bool IsDefeated { get; private set; }
+    public EnemyRole Role => roleMarker != null ? roleMarker.Role : enemyRole;
 
     private void Awake()
     {
+        if (roleMarker == null)
+        {
+            roleMarker = GetComponent<EnemyRoleMarker>();
+        }
+
         ResetHealth();
     }
 
@@ -58,7 +66,12 @@ public sealed class EnemyHealth : MonoBehaviour
             Debug.LogError("EnemyHealth no tiene una referencia a CombatGameManager.", this);
         }
 
-        GameEvents.RaiseEnemyDefeated();
+        GameEvents.RaiseEnemyDefeated(this, Role);
+
+        if (Role == EnemyRole.FinalBoss)
+        {
+            GameEvents.RaiseEnemyDefeated();
+        }
 
         if (destroyWhenDefeated)
         {
