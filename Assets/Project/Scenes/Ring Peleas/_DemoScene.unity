@@ -280,13 +280,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
   target: {fileID: 31427771}
-  offset: {x: 0, y: 2.2, z: -5}
+  offset: {x: 0, y: 2.2, z: -2}
   positionSmooth: 5
   rotationSmooth: 5
   lookHeight: 0.8
   zoomSpeed: 0.5
-  minDistance: 3
-  maxDistance: 10
+  minDistance: 1.5
+  maxDistance: 3.5
+  minWorldZ: -5.6
 --- !u!1 &198733988
 GameObject:
   m_ObjectHideFlags: 0

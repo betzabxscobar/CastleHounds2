@@ -7,7 +7,7 @@ public class CameraFollow : MonoBehaviour
     public Transform target;
 
     [Header("Posición")]
-    public Vector3 offset = new Vector3(0, 1.5f, -5f);
+    public Vector3 offset = new Vector3(0, 1.5f, -2f);
 
     [Header("Suavizado")]
     public float positionSmooth = 3f;
@@ -20,6 +20,10 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] private float zoomSpeed = 0.5f;
     [SerializeField] private float minDistance = 3f;
     [SerializeField] private float maxDistance = 10f;
+
+    [Header("Limite (evita pasar la puerta/pared)")]
+    [Tooltip("La camara nunca queda mas alla de esta Z del mundo. Dejar en un numero muy negativo desactiva el limite.")]
+    [SerializeField] private float minWorldZ = float.NegativeInfinity;
 
     private float currentDistance;
 
@@ -75,7 +79,9 @@ public class CameraFollow : MonoBehaviour
         // negativo la camara queda mas cerca del Portal que el jugador, es
         // decir "adelante" de el, mirando hacia su frente.
         Vector3 adjustedOffset = new Vector3(offset.x, offset.y, Mathf.Sign(offset.z) * currentDistance);
-        return target.position + adjustedOffset;
+        Vector3 desired = target.position + adjustedOffset;
+        desired.z = Mathf.Max(desired.z, minWorldZ);
+        return desired;
     }
 
     private void SnapToTarget()
