@@ -5,6 +5,7 @@ public class ChallengeGameController : MonoBehaviour, IChallengeGame
 {
     [SerializeField] private string challengeId;
 
+    public event Action<IChallengeGame> ChallengeStarted;
     public event Action<IChallengeGame, ChallengeResult> ChallengeFinished;
 
     public string ChallengeId => string.IsNullOrWhiteSpace(challengeId) ? FallbackChallengeId : challengeId;
@@ -27,6 +28,7 @@ public class ChallengeGameController : MonoBehaviour, IChallengeGame
 
         IsActive = true;
         OnChallengeStarted();
+        ChallengeStarted?.Invoke(this);
     }
 
     public virtual void CancelChallenge()
