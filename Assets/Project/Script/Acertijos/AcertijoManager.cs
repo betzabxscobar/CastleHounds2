@@ -26,15 +26,20 @@ public class AcertijoManager : MonoBehaviour
 
     private int preguntaActual = 0;
     private int respuestaSeleccionada = -1;
+
     private int respuestasCorrectas = 0;
+    private int respuestasIncorrectas = 0;
 
     void Start()
     {
-        // Asignar botones de respuesta
         for (int i = 0; i < botonesRespuesta.Length; i++)
         {
             int indice = i;
-            botonesRespuesta[i].onClick.AddListener(() => SeleccionarRespuesta(indice));
+
+            botonesRespuesta[i].onClick.AddListener(() =>
+            {
+                SeleccionarRespuesta(indice);
+            });
         }
 
         botonContinuar.onClick.AddListener(Continuar);
@@ -48,19 +53,6 @@ public class AcertijoManager : MonoBehaviour
         if (preguntas.Count == 0)
         {
             textoPregunta.text = "No existen preguntas.";
-            return;
-        }
-
-        if (preguntaActual >= preguntas.Count)
-        {
-            textoPregunta.text = "Fin del desafío";
-            textoIndicaciones.text = $"Correctas: {respuestasCorrectas}";
-
-            botonContinuar.interactable = false;
-
-            foreach (Button b in botonesRespuesta)
-                b.interactable = false;
-
             return;
         }
 
@@ -80,7 +72,9 @@ public class AcertijoManager : MonoBehaviour
         respuestaSeleccionada = -1;
 
         textoIndicaciones.text = "";
-        textoProgreso.text = $"Pregunta {preguntaActual + 1}/{preguntas.Count}";
+
+        textoProgreso.text =
+            $"Pregunta {preguntaActual + 1}/{preguntas.Count}";
     }
 
     void SeleccionarRespuesta(int indice)
@@ -117,17 +111,60 @@ public class AcertijoManager : MonoBehaviour
         }
         else
         {
+            respuestasIncorrectas++;
             textoIndicaciones.text = "Respuesta incorrecta.";
         }
 
         preguntaActual++;
 
+        if (preguntaActual >= preguntas.Count)
+        {
+            Invoke(nameof(FinalizarAcertijo), 1.5f);
+            return;
+        }
+
         CancelInvoke();
         Invoke(nameof(MostrarPregunta), 1f);
     }
 
+    void FinalizarAcertijo()
+    {
+        Debug.Log("Acertijo terminado.");
+
+        Debug.Log(
+            "Correctas: " + respuestasCorrectas +
+            " | Incorrectas: " + respuestasIncorrectas
+        );
+
+        if (respuestasCorrectas > respuestasIncorrectas)
+        {
+            Debug.Log("RESULTADO: ÉXITO. El jugador puede avanzar.");
+            CerrarJuego();
+        }
+        else
+        {
+            Debug.Log("RESULTADO: FALLÓ. Reiniciando acertijo.");
+            ReiniciarAcertijo();
+        }
+    }
+
+    void ReiniciarAcertijo()
+    {
+        preguntaActual = 0;
+        respuestasCorrectas = 0;
+        respuestasIncorrectas = 0;
+
+        MostrarPregunta();
+    }
+
     public void Salir()
     {
-        panelJuego.SetActive(false);
+        Debug.Log("Jugador salió del acertijo.");
+        CerrarJuego();
+    }
+
+    void CerrarJuego()
+    {
+        Destroy(transform.root.gameObject);
     }
 }
