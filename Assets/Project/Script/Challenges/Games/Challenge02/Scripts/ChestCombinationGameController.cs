@@ -98,7 +98,23 @@ public class ChestCombinationGameController : ChallengeGameController
             return;
         }
 
-        BeginSession();
+        try
+        {
+            BeginSession();
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError($"ChestCombinationGameController: error al abrir el reto. Se cancelara para restaurar el control. {exception}", this);
+            StopActiveRoutine();
+            StopAmbience();
+
+            if (panel != null)
+            {
+                panel.Hide();
+            }
+
+            SubmitFinalResult(ChallengeResult.Cancelled);
+        }
     }
 
     public override void CancelChallenge()
@@ -203,10 +219,10 @@ public class ChestCombinationGameController : ChallengeGameController
         state = ChestCombinationState.Ready;
         enteredDigits.Clear();
 
-        PlayAmbience();
         panel.Show();
         panel.ResetForNewAttempt(clueText);
         RefreshDigits();
+        PlayAmbience();
         state = ChestCombinationState.EnteringCombination;
     }
 
@@ -339,17 +355,34 @@ public class ChestCombinationGameController : ChallengeGameController
     {
         if (ambienceSource == null)
         {
+            Debug.LogWarning("ChestCombinationGameController: no se reproduce ambiente porque falta AmbienceSource.", this);
             return;
         }
 
-        ambienceSource.Stop();
+        if (!ambienceSource.gameObject.activeInHierarchy)
+        {
+            Debug.LogWarning("ChestCombinationGameController: no se reproduce ambiente porque el AudioSource esta en un GameObject inactivo.", ambienceSource);
+            return;
+        }
+
+        if (!ambienceSource.enabled)
+        {
+            ambienceSource.enabled = true;
+        }
+
+        if (ambienceClip == null)
+        {
+            Debug.LogWarning("ChestCombinationGameController: no se reproduce ambiente porque falta AmbienceClip.", this);
+            return;
+        }
+
         ambienceSource.clip = ambienceClip;
         ambienceSource.loop = true;
         ambienceSource.playOnAwake = false;
         ambienceSource.spatialBlend = 0f;
         ambienceSource.volume = ambienceVolume;
 
-        if (ambienceClip != null)
+        if (!ambienceSource.isPlaying)
         {
             ambienceSource.Play();
         }
@@ -357,7 +390,7 @@ public class ChestCombinationGameController : ChallengeGameController
 
     private void StopAmbience()
     {
-        if (ambienceSource != null)
+        if (ambienceSource != null && ambienceSource.enabled)
         {
             ambienceSource.Stop();
         }
