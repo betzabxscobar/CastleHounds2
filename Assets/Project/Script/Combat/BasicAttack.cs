@@ -24,7 +24,7 @@ public sealed class BasicAttack : MonoBehaviour
             return;
         }
 
-        if (target.IsDead)
+        if (target.IsDead || !target.gameObject.activeInHierarchy)
         {
             return;
         }
@@ -42,7 +42,7 @@ public sealed class BasicAttack : MonoBehaviour
             return;
         }
 
-        if (target.IsDefeated)
+        if (target.IsDefeated || !target.gameObject.activeInHierarchy)
         {
             return;
         }
@@ -59,11 +59,17 @@ public sealed class BasicAttack : MonoBehaviour
         nextAttackTime = 0f;
     }
 
-    private bool CanStartAttack(Object target, string targetType)
+    private bool CanStartAttack(Component target, string targetType)
     {
         if (target == null)
         {
             Debug.LogWarning($"{name} no puede atacar: el {targetType} es nulo.", this);
+            return false;
+        }
+
+        if (!target.gameObject.activeInHierarchy || target is Behaviour targetBehaviour && !targetBehaviour.enabled)
+        {
+            Debug.LogWarning($"{name} no puede atacar: el {targetType} esta inactivo.", this);
             return false;
         }
 
@@ -96,12 +102,13 @@ public sealed class BasicAttack : MonoBehaviour
 
     private void PlayCombatAnimations(CombatAnimation targetAnimation, bool targetDefeated)
     {
-        if (combatAnimation != null)
+        if (IsAnimationPlayable(combatAnimation))
         {
-            combatAnimation.PlayAttack(targetAnimation != null ? targetAnimation.transform : null);
+            Transform targetTransform = IsAnimationPlayable(targetAnimation) ? targetAnimation.transform : null;
+            combatAnimation.PlayAttack(targetTransform);
         }
 
-        if (targetAnimation == null)
+        if (!IsAnimationPlayable(targetAnimation))
         {
             return;
         }
@@ -114,6 +121,11 @@ public sealed class BasicAttack : MonoBehaviour
         {
             targetAnimation.PlayHit();
         }
+    }
+
+    private static bool IsAnimationPlayable(CombatAnimation animation)
+    {
+        return animation != null && animation.enabled && animation.gameObject.activeInHierarchy;
     }
 
     private void OnValidate()

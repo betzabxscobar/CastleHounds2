@@ -1,4 +1,4 @@
-public sealed class Challenge02GameBridge : ChallengeGameController
+public sealed class Challenge02GameBridge : ChestCombinationGameController
 {
-    protected override string FallbackChallengeId => "house_challenge_02";
+    protected override string FallbackChallengeId => ChallengeProgressManager.HouseChallenge02;
 }

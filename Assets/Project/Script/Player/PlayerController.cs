@@ -1,9 +1,21 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
+    // En la arena de combate la camara es cinematica (no gira con el perro),
+    // asi que el movimiento no puede depender de hacia donde mira la camara.
+    // En su lugar se usan controles tipo "tanque": A/D giran al perro y W/S lo
+    // mueven en linea recta segun su orientacion, sin curvarse. En las demas
+    // escenas se mantiene el movimiento relativo a la camara de siempre.
+    private const string ArenaSceneName = "_DemoScene";
+
+    [Header("Arena de combate")]
+    [Tooltip("Si en la arena la W mueve al perro hacia atras, activa esto para invertir el sentido de W/S.")]
+    [SerializeField] private bool invertArenaForward;
+
     [Header("Movimiento")]
     [SerializeField] private float walkSpeed = 4f;
     [SerializeField] private float runSpeed = 7f;
@@ -40,6 +52,7 @@ public class PlayerController : MonoBehaviour
     private bool hasSafetyPosition;
     private bool hasSpeedParam;
     private bool inputEnabled = true;
+    private bool useFixedArenaAxes; // true en la arena: activa controles tanque
 
 
 
@@ -47,6 +60,7 @@ public class PlayerController : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         respawn = GetComponent<PlayerRespawn>();
+        useFixedArenaAxes = SceneManager.GetActiveScene().name == ArenaSceneName;
 
         if (animator != null)
         {
@@ -234,53 +248,49 @@ public class PlayerController : MonoBehaviour
 
 
         // =========================
-        // MOVIMIENTO SEGÚN CÁMARA
+        // MOVIMIENTO
         // =========================
 
+        Vector3 movement;
 
-        Vector3 camForward = cameraTransform.forward;
-        Vector3 camRight = cameraTransform.right;
-
-
-        camForward.y = 0;
-        camRight.y = 0;
-
-
-        camForward.Normalize();
-        camRight.Normalize();
-
-
-
-        Vector3 movement =
-            camForward * vertical +
-            camRight * horizontal;
-
-
-
-        if (movement.sqrMagnitude > 1)
-            movement.Normalize();
-
-
-
-
-        // =========================
-        // ROTACIÓN NATURAL
-        // =========================
-
-        if (movement.sqrMagnitude > 0.01f)
+        if (useFixedArenaAxes)
         {
-            // No rota si solamente va hacia atrás
-            if (vertical >= 0)
+            // Controles tipo "tanque" para la arena de combate:
+            //  - A / D giran al perro (izquierda / derecha).
+            //  - W / S lo mueven en linea recta segun hacia donde mira; la W
+            //    nunca curva por si sola, la direccion solo cambia con A / D.
+            if (Mathf.Abs(horizontal) > 0.01f)
             {
-                Quaternion targetRotation =
-                    Quaternion.LookRotation(movement);
+                transform.Rotate(0f, horizontal * rotationSpeed * Time.deltaTime, 0f);
+            }
 
-                transform.rotation =
-                    Quaternion.RotateTowards(
-                        transform.rotation,
-                        targetRotation,
-                        rotationSpeed * Time.deltaTime
-                    );
+            float forwardSign = invertArenaForward ? -1f : 1f;
+            movement = transform.forward * (vertical * forwardSign);
+        }
+        else
+        {
+            Vector3 moveForward = cameraTransform.forward;
+            Vector3 moveRight = cameraTransform.right;
+
+            moveForward.y = 0;
+            moveRight.y = 0;
+
+            moveForward.Normalize();
+            moveRight.Normalize();
+
+            movement = moveForward * vertical + moveRight * horizontal;
+
+            if (movement.sqrMagnitude > 1)
+                movement.Normalize();
+
+            // Rotacion natural: el perro mira hacia donde se desplaza (solo hacia adelante).
+            if (movement.sqrMagnitude > 0.01f && vertical >= 0)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(movement);
+                transform.rotation = Quaternion.RotateTowards(
+                    transform.rotation,
+                    targetRotation,
+                    rotationSpeed * Time.deltaTime);
             }
         }
 

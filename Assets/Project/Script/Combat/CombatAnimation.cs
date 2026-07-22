@@ -84,6 +84,11 @@ public sealed class CombatAnimation : MonoBehaviour
 
     public void PlayAttack(Transform target)
     {
+        if (!CanPlayAnimation())
+        {
+            return;
+        }
+
         if (isDefeated)
         {
             return;
@@ -95,6 +100,11 @@ public sealed class CombatAnimation : MonoBehaviour
 
     public void PlayHit()
     {
+        if (!CanPlayAnimation())
+        {
+            return;
+        }
+
         if (isDefeated)
         {
             return;
@@ -110,6 +120,11 @@ public sealed class CombatAnimation : MonoBehaviour
 
     public void PlayDefeat()
     {
+        if (!CanPlayAnimation())
+        {
+            return;
+        }
+
         if (isDefeated)
         {
             return;
@@ -248,9 +263,19 @@ public sealed class CombatAnimation : MonoBehaviour
 
     private void StartRoutine(IEnumerator routine)
     {
+        if (!CanPlayAnimation())
+        {
+            return;
+        }
+
         StopCurrentRoutine();
         RestoreVisualTransform();
         currentAnimation = StartCoroutine(routine);
+    }
+
+    private bool CanPlayAnimation()
+    {
+        return isActiveAndEnabled && gameObject.activeInHierarchy;
     }
 
     private void StopCurrentRoutine()
