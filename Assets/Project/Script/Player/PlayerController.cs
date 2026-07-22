@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -54,13 +53,16 @@ public class PlayerController : MonoBehaviour
     private bool inputEnabled = true;
     private bool useFixedArenaAxes; // true en la arena: activa controles tanque
 
+    private int cameraRetryFramesRemaining;
+    private bool cameraMissingWarned;
+
 
 
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
         respawn = GetComponent<PlayerRespawn>();
-        useFixedArenaAxes = SceneManager.GetActiveScene().name == ArenaSceneName;
+        RecomputeArenaMode();
 
         if (animator != null)
         {
@@ -105,6 +107,8 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
+        RecomputeArenaMode();
+
         if (inputEnabled)
         {
             controls.Enable();
@@ -115,6 +119,21 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         controls.Disable();
+    }
+
+
+    private void OnDestroy()
+    {
+        controls?.Dispose();
+    }
+
+
+    // gameObject.scene.name es mas confiable que SceneManager.GetActiveScene().name
+    // durante transiciones: al cargar la arena desde un trigger, la escena activa
+    // puede no estar estabilizada todavia en el momento en que corre Awake.
+    private void RecomputeArenaMode()
+    {
+        useFixedArenaAxes = gameObject.scene.name == ArenaSceneName;
     }
 
 
@@ -133,10 +152,31 @@ public class PlayerController : MonoBehaviour
             {
                 cameraTransform = mainCamera.transform;
             }
+            else if (useFixedArenaAxes)
+            {
+                // En la arena el movimiento no depende de la camara (controles tipo
+                // tanque), asi que no hace falta esperarla para poder moverse.
+            }
             else
             {
-                Debug.LogError("PlayerController no tiene cameraTransform ni existe Camera.main.", this);
-                enabled = false;
+                // No desactivar permanentemente: Camera.main puede tardar un frame en
+                // aparecer durante transiciones de escena. Se reintenta unos frames y
+                // solo se avisa una vez si sigue sin aparecer.
+                if (cameraRetryFramesRemaining <= 0 && !cameraMissingWarned)
+                {
+                    cameraRetryFramesRemaining = 120;
+                }
+
+                if (cameraRetryFramesRemaining > 0)
+                {
+                    cameraRetryFramesRemaining--;
+                    if (cameraRetryFramesRemaining == 0 && !cameraMissingWarned)
+                    {
+                        cameraMissingWarned = true;
+                        Debug.LogWarning("PlayerController no tiene cameraTransform ni existe Camera.main tras varios frames.", this);
+                    }
+                }
+
                 return;
             }
         }
@@ -331,6 +371,22 @@ public class PlayerController : MonoBehaviour
             currentVelocity *
             Time.deltaTime
         );
+    }
+
+    // Deja al controlador listo para tomar control en una escena recien cargada
+    // (p.ej. al entrar a la arena): limpia entrada/velocidad residual de la
+    // escena anterior y reactiva la entrada, sin tocar posicion, rotacion,
+    // vida, daño ni animaciones.
+    public void ResetControllerStateForScene()
+    {
+        moveInput = Vector2.zero;
+        sprinting = false;
+        currentVelocity = Vector3.zero;
+        verticalVelocity = 0f;
+        hasSafetyPosition = false;
+
+        RecomputeArenaMode();
+        SetInputEnabled(true);
     }
 
     public void SetInputEnabled(bool enabledInput)
