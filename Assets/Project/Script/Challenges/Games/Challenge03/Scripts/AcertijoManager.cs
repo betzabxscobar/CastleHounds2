@@ -84,6 +84,12 @@ public class AcertijoManager : MonoBehaviour
 
         HabilitarBotonesRespuesta(true);
 
+        // AcertijoManager es hijo directo del root del prefab (AcertijoPanel,
+        // junto a FondoOscuro y PanelAcertijo). Ese root empieza inactivo, y
+        // si no se reactiva, todo el subarbol queda invisible aunque
+        // panelJuego.activeSelf sea true.
+        ActivarRaizDelPrefab(true);
+
         if (panelJuego != null)
         {
             panelJuego.SetActive(true);
@@ -104,6 +110,14 @@ public class AcertijoManager : MonoBehaviour
         {
             panelJuego.SetActive(false);
         }
+
+        ActivarRaizDelPrefab(false);
+    }
+
+    private void ActivarRaizDelPrefab(bool activo)
+    {
+        GameObject raiz = transform.parent != null ? transform.parent.gameObject : gameObject;
+        raiz.SetActive(activo);
     }
 
     private void MostrarPregunta()
