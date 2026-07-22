@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 using UnityEditor;
 
@@ -80,7 +81,7 @@ public class SetupMenuPausa
         panelOpciones.SetActive(false);
         panelControles.SetActive(false);
 
-        if (Object.FindObjectOfType<EventSystem>() == null)
+        if (Object.FindAnyObjectByType<EventSystem>() == null)
         {
             GameObject eventSystem = new GameObject("EventSystem");
             eventSystem.AddComponent<EventSystem>();
@@ -155,16 +156,17 @@ public class SetupMenuPausa
     private static void ConfigurarOnClick(Button button, PauseMenu pauseMenu, string metodo)
     {
         SerializedObject so = new SerializedObject(button);
-        SerializedProperty onClick = so.FindProperty("m_OnClick");
-        SerializedProperty calls = onClick.FindProperty("m_PersistentCalls.m_Calls");
+        SerializedProperty calls = so.FindProperty("m_OnClick.m_PersistentCalls.m_Calls");
         calls.InsertArrayElementAtIndex(0);
         SerializedProperty call = calls.GetArrayElementAtIndex(0);
-        call.FindPropertyRelative("m_Target").objectReferenceValue = pauseMenu;
-        call.FindPropertyRelative("m_TargetAssemblyTypeName").stringValue = "PauseMenu, Assembly-CSharp";
-        call.FindPropertyRelative("m_MethodName").stringValue = metodo;
-        call.FindPropertyRelative("m_Mode").intValue = 1;
-        call.FindPropertyRelative("m_Arguments.m_ObjectArgumentAssemblyTypeName").stringValue = "UnityEngine.Object, UnityEngine";
-        call.FindPropertyRelative("m_CallState").intValue = 2;
+
+        so.FindProperty("m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target").objectReferenceValue = pauseMenu;
+        so.FindProperty("m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName").stringValue = "PauseMenu, Assembly-CSharp";
+        so.FindProperty("m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName").stringValue = metodo;
+        so.FindProperty("m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode").intValue = 1;
+        so.FindProperty("m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName").stringValue = "UnityEngine.Object, UnityEngine";
+        so.FindProperty("m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState").intValue = 2;
+
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 
