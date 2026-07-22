@@ -1,13 +1,29 @@
 using UnityEngine;
 
+
 public class PotionCauldron : MonoBehaviour
 {
 
+    public Transform ingredientPoint;
+
+    public AudioSource audioSource;
+
+    public AudioSource bubblingAudio;
+
+
+
+    private void Start()
+    {
+        if (bubblingAudio != null)
+        {
+            bubblingAudio.Play();
+        }
+    }
+
+
+
     private void OnTriggerEnter(Collider other)
     {
-
-        Debug.Log("Entró algo al caldero: " + other.name);
-
 
         IngredientDrag ingredient =
         other.GetComponent<IngredientDrag>();
@@ -15,8 +31,21 @@ public class PotionCauldron : MonoBehaviour
 
         if (ingredient != null)
         {
-            ingredient.PlaceInCauldron();
+
+            if (audioSource != null)
+            {
+                audioSource.PlayOneShot(
+                    audioSource.clip
+                );
+            }
+
+
+            ingredient.EnterCauldron(
+                ingredientPoint
+            );
+
         }
 
     }
+
 }

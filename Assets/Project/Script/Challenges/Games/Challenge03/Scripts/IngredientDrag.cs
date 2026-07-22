@@ -11,7 +11,10 @@ public class IngredientDrag : MonoBehaviour
     public string ingredientName;
     private Vector3 initialPosition;
     private bool placed;
+    public float enterSpeed = 5f;
 
+    private bool enteringCauldron;
+    private Transform cauldronPoint;
     [Header("Altura al agarrar")]
     public float liftHeight = 2f;
 
@@ -53,6 +56,30 @@ public class IngredientDrag : MonoBehaviour
 
     void Update()
     {
+        if(enteringCauldron)
+        {
+
+            transform.position =
+            Vector3.MoveTowards(
+                transform.position,
+                cauldronPoint.position,
+                enterSpeed * Time.deltaTime
+            );
+
+
+            if (Vector3.Distance(
+                transform.position,
+                cauldronPoint.position) < 0.05f)
+            {
+
+                FinishCauldronEnter();
+
+            }
+
+            return;
+        }
+
+
         if (dragging)
         {
 
@@ -159,5 +186,34 @@ public class IngredientDrag : MonoBehaviour
         gameObject.SetActive(true);
 
         transform.position = initialPosition;
+    }
+    public void EnterCauldron(Transform point)
+    {
+
+        if (placed)
+            return;
+
+
+        placed = true;
+        dragging = false;
+
+
+        cauldronPoint = point;
+        enteringCauldron = true;
+
+    }
+    void FinishCauldronEnter()
+    {
+
+        enteringCauldron = false;
+
+
+        gameObject.SetActive(false);
+
+
+        PotionManager.Instance.AddIngredient(
+            ingredientName
+        );
+
     }
 }
