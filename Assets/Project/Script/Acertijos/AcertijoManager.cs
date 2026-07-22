@@ -13,21 +13,58 @@ public class AcertijoManager : MonoBehaviour
     public TMP_Text textoPregunta;
     public TMP_Text textoProgreso;
 
-    [Header("Botones de respuestas")]
+    [Header("Botones")]
     public Button[] botonesRespuesta;
     public TMP_Text[] textosRespuesta;
 
-    [Header("Botones")]
     public Button botonContinuar;
     public Button botonSalir;
 
     [Header("Preguntas")]
-    public List<Pregunta> preguntas = new List<Pregunta>();
-
-    private List<Pregunta> preguntasSeleccionadas = new List<Pregunta>();
+    public List<Pregunta> preguntas = new();
 
     private int preguntaActual = 0;
-    private int respuestasCorrectas = 0;
-
     private int respuestaSeleccionada = -1;
+
+    void Start()
+    {
+        MostrarPregunta();
+
+        for (int i = 0; i < botonesRespuesta.Length; i++)
+        {
+            int indice = i;
+            botonesRespuesta[i].onClick.AddListener(() => SeleccionarRespuesta(indice));
+        }
+    }
+
+    void MostrarPregunta()
+    {
+        Pregunta p = preguntas[preguntaActual];
+
+        textoPregunta.text = p.acertijo;
+
+        for (int i = 0; i < 4; i++)
+        {
+            textosRespuesta[i].text = p.respuestas[i];
+        }
+
+        textoProgreso.text = $"Pregunta {preguntaActual + 1}/{preguntas.Count}";
+    }
+
+    void SeleccionarRespuesta(int indice)
+    {
+        respuestaSeleccionada = indice;
+
+        for (int i = 0; i < botonesRespuesta.Length; i++)
+        {
+            ColorBlock colores = botonesRespuesta[i].colors;
+
+            if (i == indice)
+                colores.normalColor = Color.yellow;
+            else
+                colores.normalColor = Color.white;
+
+            botonesRespuesta[i].colors = colores;
+        }
+    }
 }
