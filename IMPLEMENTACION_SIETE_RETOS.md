@@ -49,7 +49,7 @@
 
 - `Assets/Project/Scenes/Castillo/Scenes/Demo.unity`
   - Contiene `Player_Dog_Model`.
-  - Contiene el lobo inicial `Enemy_Wolf_Model`.
+  - Contiene `Enemy_Wolf_Model`, que se desactiva en runtime para que no aparezca durante la exploracion.
   - Contiene las casas `House`, `House (1)`, `House (2)`, `House (3)`, `House (4)`, `House (5)`, `House (6)`.
   - Contiene `Castle`.
 
@@ -78,13 +78,14 @@
 - Al completar 7/7 emitira el mensaje de desbloqueo una sola vez.
 - No se desactivara ni movera `Castle`.
 
-## Diferencia entre lobo inicial y jefe final
+## Diferencia entre lobo de batalla y jefe final
 
 - Se agregara `EnemyRoleMarker` con valores:
   - `InitialWolf`
   - `RegularEnemy`
   - `FinalBoss`
-- `InitialWolf` ejecutara `InitialWolfVictoryTransition`.
+- El lobo de `Demo` permanecera desactivado durante la exploracion.
+- El lobo aparecera cuando el trigger final cargue `_DemoScene`.
 - `FinalBoss` sera el unico rol que puede cargar `Ganaste`.
 
 ## Transforms registrados antes de tocar triggers

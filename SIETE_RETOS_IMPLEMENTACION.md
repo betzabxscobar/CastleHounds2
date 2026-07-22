@@ -2,7 +2,7 @@
 
 ## Flujo final
 
-`MenuPrincipal -> SeleccionAvatar -> Historia -> Cinematica -> combate inicial -> exploracion de siete casas -> Castle desbloqueado -> _DemoScene -> Ganaste/Perdiste`.
+`MenuPrincipal -> SeleccionAvatar -> Historia -> Cinematica -> exploracion de siete casas -> Castle desbloqueado -> _DemoScene -> combate contra lobo -> Ganaste/Perdiste`.
 
 ## Arquitectura
 
@@ -14,7 +14,7 @@
 - `CastleUnlockController` consulta el progreso y desbloquea el acceso cuando hay 7/7.
 - `FinalCastleTrigger` carga `_DemoScene` solo si todos los retos estan completos.
 - `EnemyRole` separa `InitialWolf`, `RegularEnemy` y `FinalBoss`.
-- `InitialWolfVictoryTransition` teletransporta al perro tras derrotar al lobo inicial.
+- `SevenChallengesSceneBootstrap` apaga el lobo de `Demo`; el lobo aparece al cargar `_DemoScene` desde la puerta del castillo.
 
 ## Scripts creados
 
@@ -69,7 +69,7 @@ Llamar:
 ChallengeProgressManager.Instance.ResetProgress();
 ```
 
-`InitialWolfVictoryTransition` lo ejecuta automaticamente al iniciar la etapa de casas si `resetChallengeProgressOnTransition` esta activo.
+El progreso se puede reiniciar manualmente con la llamada anterior. El flujo actual ya no reinicia progreso desde el lobo inicial de `Demo`.
 
 ## Configuracion de Castle
 
@@ -77,15 +77,11 @@ ChallengeProgressManager.Instance.ResetProgress();
 
 ## Configuracion del lobo inicial
 
-`SevenChallengesSceneBootstrap` agrega `EnemyRoleMarker` al objeto `Enemy_Wolf_Model` y lo configura como `InitialWolf`.
+`SevenChallengesSceneBootstrap` desactiva `Enemy_Wolf_Model` en `Demo`. El lobo debe estar activo en `_DemoScene`, que es la escena cargada por el trigger final del castillo.
 
 ## Configuracion del jefe final
 
 El jefe final debe tener `EnemyHealth` con rol `FinalBoss` o un `EnemyRoleMarker` configurado como `FinalBoss`. Solo ese rol dispara `Ganaste`.
-
-## Punto de teletransporte
-
-Debe existir un objeto llamado `CityEntryPoint` en `Demo`. El script no usa coordenadas codificadas. Si falta, la transicion lo reporta con `Debug.LogError`.
 
 ## Escena final utilizada
 
@@ -93,13 +89,13 @@ Debe existir un objeto llamado `CityEntryPoint` en `Demo`. El script no usa coor
 
 ## Referencias necesarias en Inspector
 
-La implementacion runtime reduce configuracion manual, pero sigue siendo necesario crear o conservar `CityEntryPoint` en una posicion segura dentro de la ciudad.
+La implementacion runtime reduce configuracion manual. Para el flujo actual no hace falta crear `CityEntryPoint` en `Demo`.
 
 ## Problemas pendientes
 
 - Hay cambios sin commitear previos en `Assets/Project/Scenes/Castillo/Scenes/Demo.unity` y `Assets/TextMesh Pro/Fonts/Cinzel-Regular SDF.asset`; no se incluyeron en estos commits.
 - No se ejecuto Play Mode desde este entorno.
-- El punto `CityEntryPoint` debe validarse visualmente en Unity.
+- Validar en Play Mode que `Enemy_Wolf_Model` no aparezca en `Demo` y si aparezca al cargar `_DemoScene` desde la puerta del castillo.
 
 ## Commits creados
 

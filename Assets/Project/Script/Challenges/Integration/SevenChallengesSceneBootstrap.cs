@@ -53,10 +53,10 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
 
         PlayerControlLock controlLock = EnsurePlayerControlLock(player);
         List<MonoBehaviour> challengeBridges = ConfigureHouseChallenges(controlLock);
-        ChallengeProgressHUD hud = ConfigureHud(runtimeRoot.transform);
+        ConfigureHud(runtimeRoot.transform);
         ConfigureTestPanel(challengeBridges);
         ConfigureCastle(controlLock);
-        ConfigureInitialWolfTransition(runtimeRoot, player, controlLock, hud);
+        DisableInitialSceneWolf();
     }
 
     private static PlayerControlLock EnsurePlayerControlLock(GameObject player)
@@ -155,109 +155,16 @@ public sealed class SevenChallengesSceneBootstrap : MonoBehaviour
         finalTrigger.Configure(FinalBattleSceneName, controlLock, unlockController);
     }
 
-    private static void ConfigureInitialWolfTransition(GameObject runtimeRoot, GameObject player, PlayerControlLock controlLock, ChallengeProgressHUD hud)
+    private static void DisableInitialSceneWolf()
     {
         GameObject wolf = GameObject.Find("Enemy_Wolf_Model");
         if (wolf == null)
         {
-            Debug.LogWarning("SevenChallengesSceneBootstrap: no se encontro Enemy_Wolf_Model.");
             return;
         }
 
-        EnemyRoleMarker roleMarker = wolf.GetComponent<EnemyRoleMarker>();
-        if (roleMarker == null)
-        {
-            roleMarker = wolf.AddComponent<EnemyRoleMarker>();
-        }
-
-        roleMarker.Configure(EnemyRole.InitialWolf);
-
-        Transform cityEntryPoint = ResolveCityEntryPoint(runtimeRoot.transform, player.transform);
-        if (cityEntryPoint == null)
-        {
-            Debug.LogError("SevenChallengesSceneBootstrap: no se pudo resolver CityEntryPoint. La transicion del lobo inicial no podra teletransportar.");
-            return;
-        }
-
-        InitialWolfVictoryTransition transition = runtimeRoot.GetComponent<InitialWolfVictoryTransition>();
-        if (transition == null)
-        {
-            transition = runtimeRoot.AddComponent<InitialWolfVictoryTransition>();
-        }
-
-        transition.Configure(
-            wolf.GetComponent<EnemyHealth>(),
-            player.transform,
-            player.GetComponent<CharacterController>(),
-            player.GetComponent<Rigidbody>(),
-            controlLock,
-            cityEntryPoint,
-            hud,
-            hud != null ? hud.gameObject : null);
-    }
-
-    private static Transform ResolveCityEntryPoint(Transform runtimeRoot, Transform player)
-    {
-        GameObject existingPoint = GameObject.Find("CityEntryPoint");
-        if (existingPoint != null)
-        {
-            return existingPoint.transform;
-        }
-
-        if (!TryCalculateCityEntryPose(player, out Vector3 position, out Quaternion rotation))
-        {
-            return null;
-        }
-
-        GameObject generatedPoint = new GameObject("CityEntryPoint");
-        generatedPoint.transform.SetParent(runtimeRoot, false);
-        generatedPoint.transform.SetPositionAndRotation(position, rotation);
-
-        Debug.LogWarning("SevenChallengesSceneBootstrap: no habia CityEntryPoint en Demo; se creo uno temporal en runtime usando el centro de las casas.");
-        return generatedPoint.transform;
-    }
-
-    private static bool TryCalculateCityEntryPose(Transform player, out Vector3 position, out Quaternion rotation)
-    {
-        Vector3 accumulatedPosition = Vector3.zero;
-        int foundHouses = 0;
-
-        foreach (var binding in HouseBindings)
-        {
-            GameObject house = GameObject.Find(binding.HouseName);
-            if (house == null)
-            {
-                continue;
-            }
-
-            accumulatedPosition += house.transform.position;
-            foundHouses++;
-        }
-
-        if (foundHouses == 0)
-        {
-            position = Vector3.zero;
-            rotation = Quaternion.identity;
-            return false;
-        }
-
-        position = accumulatedPosition / foundHouses;
-        if (player != null)
-        {
-            position.y = player.position.y;
-        }
-
-        GameObject castle = GameObject.Find("Castle");
-        Vector3 forward = castle != null ? castle.transform.position - position : Vector3.forward;
-        forward.y = 0f;
-
-        if (forward.sqrMagnitude <= 0.0001f)
-        {
-            forward = player != null ? player.forward : Vector3.forward;
-        }
-
-        rotation = Quaternion.LookRotation(forward.normalized, Vector3.up);
-        return true;
+        wolf.SetActive(false);
+        Debug.Log("SevenChallengesSceneBootstrap: Enemy_Wolf_Model desactivado en Demo. El lobo aparecera al cargar la escena de batalla desde la puerta.");
     }
 
     private static ChallengeProgressHUD ConfigureHud(Transform runtimeRoot)
