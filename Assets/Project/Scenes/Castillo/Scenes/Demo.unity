@@ -4821,6 +4821,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHealth: 100
   combatGameManager: {fileID: 910000002}
+  enemyRole: 2
+  roleMarker: {fileID: 0}
   destroyWhenDefeated: 0
   destroyDelay: 0
 --- !u!114 &900002009
