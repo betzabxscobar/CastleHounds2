@@ -1,0 +1,23 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+Built from '6000.5/staging' branch; Version is '6000.5.3f1 (c2eb47b3a2a9) revision 12774215'; Using compiler version '194234433'; Build Type 'Release'
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-ACER" at "2026-07-23T16:41:12.5263728Z"
+OS: 'Windows 11  (10.0.26200) Professional' Language: 'es' Physical Memory: 16088 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+System  architecture: x64
+Process architecture: x64
+Date: 2026-07-23T16:41:12Z
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\6000.5.3f1\Editor\Unity.exe
+-batchmode
+-nographics
+-quit
+-projectPath
+C:\Users\ACER\Documents\PROYECTO_3TD\CastleHounds2
+-executeMethod
+AvatarSelectionSceneBuilder.BuildBatch
+-logFile
+C:\Users\ACER\Documents\PROYECTO_3TD\CastleHounds2\avatar-selection-build.log
+Successfully changed project path to: C:\Users\ACER\Documents\PROYECTO_3TD\CastleHounds2
+C:/Users/ACER/Documents/PROYECTO_3TD/CastleHounds2
+Exiting without the bug reporter. Application will terminate with return code 1

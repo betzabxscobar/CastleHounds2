@@ -945,11 +945,11 @@ PlayerSettings:
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
   enableDirectStorage: 0
-  cloudProjectId: ffe164de-2418-4279-92b1-ecc3165d44dd
+  cloudProjectId: 8115851b-81a3-4aa9-b72a-36b6d599d732
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: CastleHounds2 2026-07-20_18-43-52
-  organizationId: betzabxscobar
+  projectName: CastleHounds2
+  organizationId: sudtegnologia
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
