@@ -1,8 +1,7 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Video;
 
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -10,305 +9,124 @@ using UnityEngine.InputSystem;
 
 public class IntroManager : MonoBehaviour
 {
-    public Image imagenHistoria;
-    public TMP_Text textoHistoria;
+    [Header("Video")]
+    public VideoPlayer videoPlayer;
+    public VideoClip[] videos;
 
-    public Sprite[] imagenes;
-
-    [TextArea(3, 10)]
-    public string[] textos;
-
-
-    public float velocidadTexto = 0.03f;
-
-    // Fade entre páginas
+    [Header("Fade")]
+    public CanvasGroup negro;
     public float duracionFade = 1f;
 
-    // Fade inicial separado
-    public float duracionFadeImagenInicio = 2f;
-    public float duracionFadeTextoInicio = 1.5f;
+    [Tooltip("Segundos antes de terminar el video en los que comienza el fade.")]
+    public float empezarFadeAntes = 1f;
 
-
-    // Tiempo de espera antes del salto automático
-    public float tiempoAntesDeCambiarAutomatico = 5f;
-
-
-
-    // ===================== AUDIO =====================
-
-    public AudioSource audioEscritura;
-    public AudioSource audioPagina;
-
-    public AudioSource audioInicio;
-
-
-    public AudioClip typewriter;
-    public AudioClip enterSound;
-
-    public AudioClip sonidoInicio;
-
-
-
-    [Range(0f, 1f)]
-    public float volumenEscritura = 0.35f;
-
-    [Range(0f, 1f)]
-    public float volumenPagina = 0.7f;
-
-    [Range(0f, 1f)]
-    public float volumenInicio = 0.8f;
-
-
-
-    // ===================== ESCENA FINAL =====================
-
+    [Header("Escena")]
     public string siguienteNivel = "Demo";
-
 
     private int indice = 0;
     private bool cambiando = false;
-    private Coroutine escribirCoroutine;
-
-
 
     void Start()
     {
-        // Sonido inicial
-        if (audioInicio != null && sonidoInicio != null)
+        if (videos.Length == 0)
         {
-            audioInicio.volume = volumenInicio;
-            audioInicio.PlayOneShot(sonidoInicio);
+            Debug.LogError("No hay videos asignados.");
+            return;
         }
 
+        negro.alpha = 0;
 
+        videoPlayer.loopPointReached += VideoTerminado;
 
-        // Imagen transparente
-        Color imagenColor = imagenHistoria.color;
-        imagenColor.a = 0;
-        imagenHistoria.color = imagenColor;
-
-
-        // Texto transparente
-        Color textoColor = textoHistoria.color;
-        textoColor.a = 0;
-        textoHistoria.color = textoColor;
-
-
-        imagenHistoria.sprite = imagenes[indice];
-
-
-        StartCoroutine(IniciarHistoria());
+        ReproducirVideo();
     }
-
-
-
-    IEnumerator IniciarHistoria()
-    {
-        StartCoroutine(FadeImagen(0f, 1f, duracionFadeImagenInicio));
-
-
-        yield return new WaitForSeconds(0.3f);
-
-
-        yield return StartCoroutine(FadeTexto(0f, 1f, duracionFadeTextoInicio));
-
-
-        escribirCoroutine = StartCoroutine(EscribirTexto());
-    }
-
-
 
     void Update()
     {
-        if (EnterPresionado())
+        if (EnterPresionado() && !cambiando)
         {
-            if (!cambiando)
+            StartCoroutine(CambiarVideo());
+        }
+
+        if (!cambiando &&
+            videoPlayer.clip != null &&
+            videoPlayer.isPlaying)
+        {
+            double restante = videoPlayer.length - videoPlayer.time;
+
+            if (restante <= empezarFadeAntes)
             {
-                StartCoroutine(CambiarEscena());
+                StartCoroutine(CambiarVideo());
             }
         }
     }
 
-    private bool EnterPresionado()
+    void ReproducirVideo()
     {
-#if ENABLE_INPUT_SYSTEM
-        Keyboard keyboard = Keyboard.current;
-        if (keyboard != null && (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame))
-        {
-            return true;
-        }
-#endif
-
-#if ENABLE_LEGACY_INPUT_MANAGER
-        return Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter);
-#else
-        return false;
-#endif
+        videoPlayer.Stop();
+        videoPlayer.clip = videos[indice];
+        videoPlayer.isLooping = false;
+        videoPlayer.Play();
     }
 
-
-
-    IEnumerator EscribirTexto()
+    void VideoTerminado(VideoPlayer vp)
     {
-        textoHistoria.text = "";
-
-
-        if (audioEscritura != null && typewriter != null)
-        {
-            audioEscritura.clip = typewriter;
-            audioEscritura.loop = true;
-            audioEscritura.volume = volumenEscritura;
-            audioEscritura.Play();
-        }
-
-
-
-        foreach (char letra in textos[indice])
-        {
-            textoHistoria.text += letra;
-            yield return new WaitForSeconds(velocidadTexto);
-        }
-
-
-
-        if (audioEscritura != null)
-        {
-            audioEscritura.Stop();
-        }
-
-
-        // Espera antes de cambiar automáticamente
-        yield return new WaitForSeconds(tiempoAntesDeCambiarAutomatico);
-
-
         if (!cambiando)
-        {
-            StartCoroutine(CambiarEscena());
-        }
+            StartCoroutine(CambiarVideo());
     }
 
-
-
-    IEnumerator CambiarEscena()
+    IEnumerator CambiarVideo()
     {
         cambiando = true;
 
-
-        if (audioEscritura != null)
-            audioEscritura.Stop();
-
-
-        if (escribirCoroutine != null)
-            StopCoroutine(escribirCoroutine);
-
-
-
-        textoHistoria.text = "";
-
-
-
-        // Sonido de pasar página
-        if (audioPagina != null && enterSound != null)
-        {
-            audioPagina.PlayOneShot(enterSound, volumenPagina);
-        }
-
-
-
-        // Fade actual
-        yield return StartCoroutine(FadeImagen(1f, 0f, duracionFade));
-
-
+        yield return StartCoroutine(Fade(0, 1));
 
         indice++;
 
-
-
-        // ================= FIN DE INTRO =================
-
-        if (indice >= imagenes.Length)
+        if (indice >= videos.Length)
         {
-            Debug.Log("Fin de introducción");
-
-
-            yield return StartCoroutine(FadeImagen(1f, 0f, duracionFade));
-
-
             SceneManager.LoadScene(siguienteNivel);
-
             yield break;
         }
 
+        negro.alpha = 1;
 
+        ReproducirVideo();
 
-        imagenHistoria.sprite = imagenes[indice];
-
-
-
-        yield return StartCoroutine(FadeImagen(0f, 1f, duracionFade));
-
-
-
-        yield return StartCoroutine(FadeTexto(0f, 1f, duracionFade));
-
-
-
-        escribirCoroutine = StartCoroutine(EscribirTexto());
-
+        yield return StartCoroutine(Fade(1, 0));
 
         cambiando = false;
     }
 
-
-
-
-
-    IEnumerator FadeImagen(float inicio, float fin, float duracion)
+    IEnumerator Fade(float inicio, float fin)
     {
-        Color color = imagenHistoria.color;
+        float t = 0;
 
-        float tiempo = 0;
-
-
-        while (tiempo < duracion)
+        while (t < duracionFade)
         {
-            tiempo += Time.deltaTime;
-
-            color.a = Mathf.Lerp(inicio, fin, tiempo / duracion);
-
-            imagenHistoria.color = color;
-
+            t += Time.deltaTime;
+            negro.alpha = Mathf.Lerp(inicio, fin, t / duracionFade);
             yield return null;
         }
 
-
-        color.a = fin;
-        imagenHistoria.color = color;
+        negro.alpha = fin;
     }
 
-
-
-
-    IEnumerator FadeTexto(float inicio, float fin, float duracion)
+    bool EnterPresionado()
     {
-        Color color = textoHistoria.color;
+#if ENABLE_INPUT_SYSTEM
+        Keyboard kb = Keyboard.current;
+        if (kb != null &&
+            (kb.enterKey.wasPressedThisFrame ||
+             kb.numpadEnterKey.wasPressedThisFrame))
+            return true;
+#endif
 
-        float tiempo = 0;
-
-
-        while (tiempo < duracion)
-        {
-            tiempo += Time.deltaTime;
-
-            color.a = Mathf.Lerp(inicio, fin, tiempo / duracion);
-
-            textoHistoria.color = color;
-
-            yield return null;
-        }
-
-
-        color.a = fin;
-        textoHistoria.color = color;
+#if ENABLE_LEGACY_INPUT_MANAGER
+        return Input.GetKeyDown(KeyCode.Return) ||
+               Input.GetKeyDown(KeyCode.KeypadEnter);
+#else
+        return false;
+#endif
     }
 }
