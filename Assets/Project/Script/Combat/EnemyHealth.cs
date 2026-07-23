@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -16,6 +17,8 @@ public sealed class EnemyHealth : MonoBehaviour
     public float MaxHealth => maxHealth;
     public bool IsDefeated { get; private set; }
     public EnemyRole Role => roleMarker != null ? roleMarker.Role : enemyRole;
+    public event Action<float> Damaged;
+    public event Action Defeated;
 
     private void Awake()
     {
@@ -36,6 +39,7 @@ public sealed class EnemyHealth : MonoBehaviour
 
         CurrentHealth = Mathf.Max(0f, CurrentHealth - amount);
         Debug.Log($"{name} recibio {amount} de dano. Vida: {CurrentHealth}/{maxHealth}.", this);
+        Damaged?.Invoke(amount);
 
         if (CurrentHealth <= 0f)
         {
@@ -71,6 +75,7 @@ public sealed class EnemyHealth : MonoBehaviour
         // Esta bandera impide procesar la derrota mas de una vez.
         IsDefeated = true;
         Debug.Log($"{name} ha sido derrotado.", this);
+        Defeated?.Invoke();
 
         if (combatGameManager != null)
         {

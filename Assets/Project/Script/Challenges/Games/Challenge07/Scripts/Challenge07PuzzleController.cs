@@ -72,6 +72,7 @@ public sealed class Challenge07PuzzleController : MonoBehaviour
     private bool sessionStarted;
 
     public PuzzleMode Mode => puzzleMode;
+    public Challenge07GameBridge PuzzleBridge => gameBridge;
 
     public void SetGameBridge(Challenge07GameBridge bridge)
     {

@@ -17,7 +17,18 @@ public sealed class BasicAttack : MonoBehaviour
                              combatGameManager.IsCombatActive &&
                              Time.time >= nextAttackTime;
 
+    public void ConfigureAttack(float configuredDamage, float configuredCooldown)
+    {
+        damage = Mathf.Max(0f, configuredDamage);
+        attackCooldown = Mathf.Max(0f, configuredCooldown);
+    }
+
     public void AttackDog(DogHealth target)
+    {
+        AttackDog(target, true);
+    }
+
+    public void AttackDog(DogHealth target, bool playAttackerAnimation)
     {
         if (!CanStartAttack(target, "perro"))
         {
@@ -31,7 +42,7 @@ public sealed class BasicAttack : MonoBehaviour
 
         combatGameManager.BeginCombat();
         target.TakeDamage(damage);
-        PlayCombatAnimations(target.GetComponent<CombatAnimation>(), target.IsDead);
+        PlayCombatAnimations(target.GetComponent<CombatAnimation>(), target.IsDead, playAttackerAnimation);
         RegisterAttack(target.name);
     }
 
@@ -49,7 +60,7 @@ public sealed class BasicAttack : MonoBehaviour
 
         combatGameManager.BeginCombat();
         target.TakeDamage(damage);
-        PlayCombatAnimations(target.GetComponent<CombatAnimation>(), target.IsDefeated);
+        PlayCombatAnimations(target.GetComponent<CombatAnimation>(), target.IsDefeated, true);
         RegisterAttack(target.name);
     }
 
@@ -100,9 +111,9 @@ public sealed class BasicAttack : MonoBehaviour
         Debug.Log($"{name} ataco e hizo {damage} de dano a {targetName}.", this);
     }
 
-    private void PlayCombatAnimations(CombatAnimation targetAnimation, bool targetDefeated)
+    private void PlayCombatAnimations(CombatAnimation targetAnimation, bool targetDefeated, bool playAttackerAnimation)
     {
-        if (IsAnimationPlayable(combatAnimation))
+        if (playAttackerAnimation && IsAnimationPlayable(combatAnimation))
         {
             Transform targetTransform = IsAnimationPlayable(targetAnimation) ? targetAnimation.transform : null;
             combatAnimation.PlayAttack(targetTransform);

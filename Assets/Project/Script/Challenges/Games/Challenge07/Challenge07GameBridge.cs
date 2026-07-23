@@ -8,6 +8,16 @@ public sealed class Challenge07GameBridge : ChallengeGameController
 
     public Challenge07PuzzleController PuzzleController => puzzleController;
 
+    private void Awake()
+    {
+        BindPuzzleController();
+    }
+
+    private void OnValidate()
+    {
+        BindPuzzleController();
+    }
+
     public void ConfigureRuntime(Challenge07PuzzleController controller)
     {
         puzzleController = controller;
@@ -19,6 +29,8 @@ public sealed class Challenge07GameBridge : ChallengeGameController
         {
             return;
         }
+
+        BindPuzzleController();
 
         base.StartChallenge();
 
@@ -41,6 +53,19 @@ public sealed class Challenge07GameBridge : ChallengeGameController
 
     public void ReportPuzzleVictory()
     {
+        if (!IsActive)
+        {
+            return;
+        }
+
         SubmitResult(ChallengeResult.Won);
+    }
+
+    private void BindPuzzleController()
+    {
+        if (puzzleController != null && puzzleController.PuzzleBridge != this)
+        {
+            puzzleController.SetGameBridge(this);
+        }
     }
 }

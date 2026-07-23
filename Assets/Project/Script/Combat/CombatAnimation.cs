@@ -1,4 +1,5 @@
 using System.Collections;
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -6,6 +7,9 @@ using UnityEngine;
 /// </summary>
 public sealed class CombatAnimation : MonoBehaviour
 {
+    public event Action AttackImpact;
+    public event Action AttackFinished;
+
     [Header("Referencias")]
     [SerializeField] private Transform visualTransform;
     [SerializeField] private Animator animator;
@@ -13,6 +17,7 @@ public sealed class CombatAnimation : MonoBehaviour
     [Header("Estados del Animator")]
     [SerializeField] private string attackStateName = "Run";
     [SerializeField] private string idleStateName = "Idle";
+    [SerializeField] private string movementStateName = "Run";
     [SerializeField] private string hitStateName;
     [SerializeField] private string defeatStateName;
 
@@ -22,6 +27,7 @@ public sealed class CombatAnimation : MonoBehaviour
     [SerializeField, Min(0.05f)] private float recoveryDuration = 0.18f;
     [SerializeField, Min(0f)] private float attackDistance = 0.45f;
     [SerializeField, Min(0f)] private float anticipationDistance = 0.08f;
+    [SerializeField, Min(0f)] private float movementBounce = 0.09f;
 
     [Header("Reaccion sin clip")]
     [SerializeField, Min(0.05f)] private float hitDuration = 0.16f;
@@ -38,6 +44,8 @@ public sealed class CombatAnimation : MonoBehaviour
     private float biteWeight;
     private float pawWeight;
     private float attackPhase;
+    private bool isMoving;
+    private float movementPhase;
 
     private void Awake()
     {
@@ -64,6 +72,14 @@ public sealed class CombatAnimation : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (isMoving && currentAnimation == null && !isDefeated)
+        {
+            movementPhase += Time.deltaTime * 9f;
+            float step = Mathf.Sin(movementPhase);
+            visualTransform.localPosition = initialLocalPosition + Vector3.up * (Mathf.Abs(step) * movementBounce);
+            visualTransform.localRotation = initialLocalRotation * Quaternion.Euler(step * 3f, 0f, step * 2.5f);
+        }
+
         if (biteWeight <= 0f && pawWeight <= 0f)
         {
             return;
@@ -96,6 +112,33 @@ public sealed class CombatAnimation : MonoBehaviour
 
         Vector3 direction = GetLocalDirection(target);
         StartRoutine(AttackRoutine(direction));
+    }
+
+    public void SetMoving(bool moving)
+    {
+        if (isMoving == moving || currentAnimation != null) return;
+        isMoving = moving;
+        bool statePlayed = TryPlayState(moving ? movementStateName : idleStateName, 0.12f);
+        if (!moving || !statePlayed)
+        {
+            if (!moving) movementPhase = 0f;
+            RestoreVisualTransform();
+        }
+    }
+
+    public void ConfigureStateNames(string idle, string movement, string attack, string hit, string defeat)
+    {
+        idleStateName = idle;
+        movementStateName = movement;
+        attackStateName = attack;
+        hitStateName = hit;
+        defeatStateName = defeat;
+    }
+
+    public void ConfigurePresentation(float lungeDistance, float bounceAmount)
+    {
+        attackDistance = Mathf.Max(0.1f, lungeDistance);
+        movementBounce = Mathf.Max(0.02f, bounceAmount);
     }
 
     public void PlayHit()
@@ -143,12 +186,14 @@ public sealed class CombatAnimation : MonoBehaviour
     private IEnumerator AttackRoutine(Vector3 direction)
     {
         TryPlayState(attackStateName, 0.05f);
+        isMoving = false;
 
         Vector3 recoil = initialLocalPosition - direction * anticipationDistance;
         yield return MoveVisual(initialLocalPosition, recoil, anticipationDuration, 0f, 0.25f);
 
         Vector3 impact = initialLocalPosition + direction * attackDistance;
         yield return MoveVisual(recoil, impact, lungeDuration, 0.25f, 1f);
+        AttackImpact?.Invoke();
 
         // Pausa breve en el impacto para que el golpe se perciba con claridad.
         float impactElapsed = 0f;
@@ -168,6 +213,7 @@ public sealed class CombatAnimation : MonoBehaviour
         RestoreVisualTransform();
         TryPlayState(idleStateName, 0.1f);
         currentAnimation = null;
+        AttackFinished?.Invoke();
     }
 
     private IEnumerator MoveVisual(Vector3 start, Vector3 end, float duration, float startAction, float endAction)
