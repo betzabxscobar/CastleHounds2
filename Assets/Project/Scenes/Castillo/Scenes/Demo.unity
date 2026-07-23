@@ -2586,6 +2586,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 94.138
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 1a664e4a0dd6de7458a8035c2656e8a7, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: e5f1b5d95f311c94c8aeea8f150d04dc, type: 2}
     - target: {fileID: 919132149155446097, guid: 1a664e4a0dd6de7458a8035c2656e8a7, type: 3}
       propertyPath: m_Name
       value: "bo\u0308ser+ritter+wolfru\u0308stung+3d+modell"
