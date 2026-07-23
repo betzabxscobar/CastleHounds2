@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.Events;
+using TMPro;
 
 
 public class PotionManager : MonoBehaviour
@@ -9,17 +10,10 @@ public class PotionManager : MonoBehaviour
 
     public static PotionManager Instance;
 
-
-    public enum Difficulty
-    {
-        Facil,
-        Medio,
-        Dificil
-    }
+    public UnityEvent<ElementType> OnPotionCompleted;
 
 
-    [Header("Nivel actual")]
-    public Difficulty currentDifficulty = Difficulty.Facil;
+    private RecipeData currentRecipe;
 
 
 
@@ -28,104 +22,123 @@ public class PotionManager : MonoBehaviour
 
 
 
-    [Header("Recetas fáciles")]
-    public List<Recipe> easyRecipes;
-
-
-    [Header("Recetas medias")]
-    public List<Recipe> mediumRecipes;
-
-
-    [Header("Recetas difíciles")]
-    public List<Recipe> hardRecipes;
-
-
-
     [Header("Canvas")]
     public GameObject victoryCanvas;
+
+
+
+    [Header("Texto de victoria")]
+    public TextMeshProUGUI victoryText;
 
 
 
     private List<string> current = new List<string>();
 
 
-    private Recipe currentRecipe;
 
 
 
     private void Awake()
     {
-        Instance = this;
+
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
     }
+
+
 
 
 
     private void Start()
     {
-        GenerateRecipe();
+        LoadRecipe();
     }
 
 
 
+
+
     // -------------------------------
-    // GENERAR RECETA
+    // CARGAR RECETA DE LA CASA
     // -------------------------------
 
-    void GenerateRecipe()
+    void LoadRecipe()
     {
 
-        List<Recipe> selectedList = null;
-
-
-        switch (currentDifficulty)
+        if (PotionDataManager.Instance == null)
         {
+            Debug.LogError(
+                "No existe PotionDataManager"
+            );
 
-            case Difficulty.Facil:
-                selectedList = easyRecipes;
-                break;
-
-
-            case Difficulty.Medio:
-                selectedList = mediumRecipes;
-                break;
-
-
-            case Difficulty.Dificil:
-                selectedList = hardRecipes;
-                break;
-
-        }
-
-
-
-        if (selectedList.Count == 0)
-        {
-            Debug.LogError("No hay recetas para este nivel");
             return;
         }
 
 
 
         currentRecipe =
-        selectedList[
-            Random.Range(0, selectedList.Count)
-        ];
-        recipeUI.ShowRecipe(currentRecipe);
+        PotionDataManager.Instance.GetRecipe();
 
 
-        Debug.Log(
-            "Nueva receta: "
-            + currentRecipe.recipeName
-        );
 
+
+        if (currentRecipe == null)
+        {
+            Debug.LogError(
+                "La casa no envio ninguna receta"
+            );
+
+            return;
+        }
+
+
+
+        ShowRecipe();
 
     }
 
 
 
 
+
     // -------------------------------
-    // INGREDIENTE EN CALDERO
+    // MOSTRAR RECETA
+    // -------------------------------
+
+    void ShowRecipe()
+    {
+
+        if (recipeUI != null)
+        {
+
+            recipeUI.ShowRecipe(
+                currentRecipe
+            );
+
+        }
+
+
+
+        Debug.Log(
+            "Receta cargada: "
+            + currentRecipe.recipeName
+        );
+
+    }
+
+
+
+
+
+    // -------------------------------
+    // INGREDIENTE AL CALDERO
     // -------------------------------
 
     public void AddIngredient(string ingredient)
@@ -134,9 +147,11 @@ public class PotionManager : MonoBehaviour
         current.Add(ingredient);
 
 
+
         Debug.Log(
             "Añadido: " + ingredient
         );
+
 
 
         CheckRecipe();
@@ -154,8 +169,14 @@ public class PotionManager : MonoBehaviour
     void CheckRecipe()
     {
 
+        if (currentRecipe == null)
+            return;
+
+
+
         if (current.Count < currentRecipe.ingredients.Count)
             return;
+
 
 
 
@@ -164,11 +185,15 @@ public class PotionManager : MonoBehaviour
 
             if (current[i] != currentRecipe.ingredients[i])
             {
+
                 WrongRecipe();
+
                 return;
+
             }
 
         }
+
 
 
         CompleteRecipe();
@@ -180,7 +205,7 @@ public class PotionManager : MonoBehaviour
 
 
     // -------------------------------
-    // RECETA CORRECTA
+    // RECETA COMPLETADA
     // -------------------------------
 
     void CompleteRecipe()
@@ -192,40 +217,41 @@ public class PotionManager : MonoBehaviour
         );
 
 
+
+        Debug.Log(
+            "Poder obtenido: "
+            + currentRecipe.rewardPower
+        );
+
+
+
+
+        // Guardar poder para la pelea
+        if (PotionPowerManager.Instance != null)
+        {
+
+            PotionPowerManager.Instance.SetPower(
+                currentRecipe.rewardPower
+            );
+
+        }
+
+
+
+
+        // Avisar a otros sistemas
+        OnPotionCompleted?.Invoke(
+            currentRecipe.rewardPower
+        );
+
+
+
+
         current.Clear();
 
 
 
-        if (currentDifficulty == Difficulty.Facil)
-        {
-
-            currentDifficulty =
-            Difficulty.Medio;
-
-
-            GenerateRecipe();
-
-        }
-
-
-        else if (currentDifficulty == Difficulty.Medio)
-        {
-
-            currentDifficulty =
-            Difficulty.Dificil;
-
-
-            GenerateRecipe();
-
-        }
-
-
-        else
-        {
-
-            Victory();
-
-        }
+        Victory();
 
     }
 
@@ -245,13 +271,11 @@ public class PotionManager : MonoBehaviour
         );
 
 
+
         ResetPotion();
 
-
-        // Nueva receta del mismo nivel
-        GenerateRecipe();
-
     }
+
 
 
 
@@ -272,11 +296,12 @@ public class PotionManager : MonoBehaviour
 
             if (ingredient != null)
             {
+
                 ingredient.ResetIngredient();
+
             }
 
         }
-
 
     }
 
@@ -285,7 +310,7 @@ public class PotionManager : MonoBehaviour
 
 
     // -------------------------------
-    // VICTORIA FINAL
+    // VICTORIA
     // -------------------------------
 
     void Victory()
@@ -296,8 +321,27 @@ public class PotionManager : MonoBehaviour
         );
 
 
+
         if (victoryCanvas != null)
+        {
+
             victoryCanvas.SetActive(true);
+
+        }
+
+
+
+
+        if (victoryText != null)
+        {
+
+            victoryText.text =
+            "¡Poción creada!\n\n" +
+            "Obtuviste el poder:\n" +
+            currentRecipe.rewardPower;
+
+        }
+
 
 
 
@@ -311,13 +355,18 @@ public class PotionManager : MonoBehaviour
 
 
 
+
     void ReturnScene()
     {
 
-        SceneManager.LoadScene("Demo");
+        Debug.Log(
+            "Poder listo para combate"
+        );
+
+
+        // Aquí después se conectará
+        // la carga de la pelea
 
     }
-
-
 
 }

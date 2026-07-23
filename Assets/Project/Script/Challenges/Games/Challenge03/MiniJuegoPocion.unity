@@ -765,6 +765,51 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3416425746491777827, guid: a1a570b1a053877459b2eeba971cbc96, type: 3}
   m_PrefabInstance: {fileID: 1327699055}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &147506391
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 147506393}
+  - component: {fileID: 147506392}
+  m_Layer: 0
+  m_Name: PotionPowerManager.cs
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &147506392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 147506391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 775fb4b3de48b844ab45e2f1f91b4fa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PotionPowerManager
+  currentPower: 0
+--- !u!4 &147506393
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 147506391}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.04237, y: 4.301, z: 4.80468}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &150317802 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 522926820628845222, guid: 2f3f7d4927009b84583c02fcbc509217, type: 3}
@@ -1225,105 +1270,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionManager
   recipeUI: {fileID: 852444271}
-  currentDifficulty: 0
+  OnPotionCompleted:
+    m_PersistentCalls:
+      m_Calls: []
   ingredients:
   - {fileID: 1956402922}
   - {fileID: 1807617638}
   - {fileID: 370414545}
   - {fileID: 974738984}
   - {fileID: 1925029905}
-  easyRecipes:
-  - recipeName: Pocion de salud
-    ingredients:
-    - Agua
-    - Hierba
-    - Hongo
-  - recipeName: "Poci\xF3n de Crecimiento"
-    ingredients:
-    - Hongo
-    - Agua
-  - recipeName: "Poci\xF3n de Claridad"
-    ingredients:
-    - Agua
-    - Hierba
-    - Polvo Magico
-  - recipeName: "Poci\xF3n de Sue\xF1o Ligero"
-    ingredients:
-    - Hongo
-    - Hierba
-  - recipeName: "Poci\xF3n de Brillo M\xE1gico"
-    ingredients:
-    - Polvo Magico
-    - Agua
-    - Hierba
-  mediumRecipes:
-  - recipeName: "Poci\xF3n de Fuerza Natural"
-    ingredients:
-    - Hierba
-    - Raiz
-    - Agua
-    - Hongo
-  - recipeName: "Poci\xF3n de Visi\xF3n M\xEDstica"
-    ingredients:
-    - Polvo Magico
-    - Agua
-    - Hongo
-    - Hierba
-  - recipeName: "Poci\xF3n de Velocidad"
-    ingredients:
-    - Raiz
-    - Hierba
-    - Polvo Magico
-    - Agua
-  - recipeName: "Poci\xF3n de Resistencia"
-    ingredients:
-    - Raiz
-    - Hierba
-    - Hongo
-    - Agua
-  - recipeName: "Poci\xF3n de Invisibilidad Parcial"
-    ingredients:
-    - Polvo Magico
-    - Hong
-    - Agua
-    - Raiz
-  hardRecipes:
-  - recipeName: "Poci\xF3n Legendaria"
-    ingredients:
-    - Polvo Magico
-    - Hierba
-    - Agua
-    - Raiz
-    - Hongo
-  - recipeName: "Poci\xF3n del Guardi\xE1n Antiguo"
-    ingredients:
-    - Raiz
-    - Hongo
-    - Polvo Magico
-    - Agua
-    - Hierba
-  - recipeName: "Poci\xF3n Suprema"
-    ingredients:
-    - Hongo
-    - Agua
-    - Hierba
-    - Polvo Magico
-    - Raiz
-  - recipeName: "Poci\xF3n del Alma Antigua"
-    ingredients:
-    - Hierba
-    - Polvo Magico
-    - Hongo
-    - Raiz
-    - Agua
-  - recipeName: "Poci\xF3n del Hechicero Supremo"
-    ingredients:
-    - Agua
-    - Polvo Magico
-    - Raiz
-    - Hierba
-    - Hongo
   victoryCanvas: {fileID: 95802003}
+  victoryText: {fileID: 1339722270}
 --- !u!4 &339225992 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7321029070664364311, guid: 44b00c7db33473946ad48053b41e081f, type: 3}
@@ -2384,6 +2341,51 @@ PrefabInstance:
       addedObject: {fileID: 1136650870}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c79d59d66358e0f45a098f4b8a82f8be, type: 3}
+--- !u!1 &743174321
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 743174323}
+  - component: {fileID: 743174322}
+  m_Layer: 0
+  m_Name: PotionDataManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &743174322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743174321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 290eed78cdfd16c4f9c5c99c3bf4eb12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PotionDataManager
+  selectedRecipe: {fileID: 11400000, guid: 3a3408d59bdb3c84eba87cf7622305e1, type: 2}
+--- !u!4 &743174323
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743174321}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.14429, y: 4.301, z: 6.14429}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &747027717 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 568653527279986074, guid: c65426a375c90574a95eaaf4840e9481, type: 3}
@@ -7067,3 +7069,5 @@ SceneRoots:
   - {fileID: 201132341}
   - {fileID: 1520706935}
   - {fileID: 95802007}
+  - {fileID: 743174323}
+  - {fileID: 147506393}

@@ -6,19 +6,26 @@ public class PotionCauldron : MonoBehaviour
 
     public Transform ingredientPoint;
 
+
     public AudioSource audioSource;
+
 
     public AudioSource bubblingAudio;
 
 
 
+
     private void Start()
     {
+
         if (bubblingAudio != null)
         {
             bubblingAudio.Play();
         }
+
     }
+
+
 
 
 
@@ -29,20 +36,26 @@ public class PotionCauldron : MonoBehaviour
         other.GetComponent<IngredientDrag>();
 
 
+
         if (ingredient != null)
         {
 
-            if (audioSource != null)
+
+            if (audioSource != null && audioSource.clip != null)
             {
+
                 audioSource.PlayOneShot(
                     audioSource.clip
                 );
+
             }
+
 
 
             ingredient.EnterCauldron(
                 ingredientPoint
             );
+
 
         }
 

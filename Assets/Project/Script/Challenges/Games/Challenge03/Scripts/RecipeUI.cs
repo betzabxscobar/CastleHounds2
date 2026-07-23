@@ -10,25 +10,43 @@ public class RecipeUI : MonoBehaviour
 
 
 
-    public void ShowRecipe(Recipe recipe)
+    public void ShowRecipe(RecipeData recipe)
     {
 
-        // Título de la poción
-        recipeTitle.text = recipe.recipeName;
-
-
-
-        // Ingredientes
-        string text = "";
-
-
-        foreach (string ingredient in recipe.ingredients)
+        if (recipe == null)
         {
-            text += ingredient + "\n";
+            Debug.LogError(
+                "No existe receta para mostrar"
+            );
+
+            return;
         }
 
 
-        recipeText.text = text;
+
+        if (recipeTitle != null)
+        {
+            recipeTitle.text =
+            recipe.recipeName;
+        }
+
+
+
+        if (recipeText != null)
+        {
+
+            string text = "";
+
+
+            foreach (string ingredient in recipe.ingredients)
+            {
+                text += ingredient + "\n";
+            }
+
+
+            recipeText.text = text;
+
+        }
 
     }
 

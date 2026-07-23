@@ -1,35 +1,69 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
 public class IngredientDrag : MonoBehaviour
 {
+
     private PotionInput input;
+
 
     private bool dragging;
 
-    
+
+
+    [Header("Nombre del ingrediente")]
     public string ingredientName;
+
+
+
     private Vector3 initialPosition;
+
+
+
     private bool placed;
+
+
+
+    [Header("Entrada al caldero")]
     public float enterSpeed = 5f;
 
+
+
     private bool enteringCauldron;
+
+
+
     private Transform cauldronPoint;
+
+
+
     [Header("Altura al agarrar")]
     public float liftHeight = 2f;
+
+
 
     private float originalY;
 
 
+
+
+
     void Awake()
     {
+
         input = new PotionInput();
+
 
         input.Potion.Click.performed += ctx =>
         {
             TrySelect();
         };
+
     }
+
+
+
 
 
     void OnEnable()
@@ -38,25 +72,36 @@ public class IngredientDrag : MonoBehaviour
     }
 
 
+
+
+
     void OnDisable()
     {
         input.Disable();
     }
 
 
+
+
+
     void Start()
     {
-        
+
         initialPosition = transform.position;
 
         originalY = transform.position.y;
+
     }
+
+
 
 
 
     void Update()
     {
-        if(enteringCauldron)
+
+
+        if (enteringCauldron)
         {
 
             transform.position =
@@ -65,6 +110,7 @@ public class IngredientDrag : MonoBehaviour
                 cauldronPoint.position,
                 enterSpeed * Time.deltaTime
             );
+
 
 
             if (Vector3.Distance(
@@ -76,31 +122,47 @@ public class IngredientDrag : MonoBehaviour
 
             }
 
+
             return;
+
         }
+
+
+
 
 
         if (dragging)
         {
 
-            Ray ray = Camera.main.ScreenPointToRay(
+
+            Ray ray =
+            Camera.main.ScreenPointToRay(
                 Mouse.current.position.ReadValue()
             );
 
 
-            Plane plane = new Plane(
+
+            Plane plane =
+            new Plane(
                 Vector3.up,
                 Vector3.up * originalY
             );
 
 
-            if (plane.Raycast(ray, out float distance))
+
+            if (plane.Raycast(
+                ray,
+                out float distance))
             {
 
-                Vector3 point = ray.GetPoint(distance);
+
+                Vector3 point =
+                ray.GetPoint(distance);
 
 
-                transform.position = new Vector3(
+
+                transform.position =
+                new Vector3(
                     point.x,
                     originalY + liftHeight,
                     point.z
@@ -109,37 +171,60 @@ public class IngredientDrag : MonoBehaviour
             }
 
 
+
+
+
             if (Mouse.current.leftButton.wasReleasedThisFrame)
             {
                 Drop();
             }
+
+
         }
+
     }
+
+
 
 
 
     void TrySelect()
     {
 
-        Ray ray = Camera.main.ScreenPointToRay(
+        // Si ya fue usado no se puede agarrar
+        if (placed)
+            return;
+
+
+
+        Ray ray =
+        Camera.main.ScreenPointToRay(
             Mouse.current.position.ReadValue()
         );
 
 
-        if (Physics.Raycast(ray, out RaycastHit hit))
+
+        if (Physics.Raycast(
+            ray,
+            out RaycastHit hit))
         {
+
 
             if (hit.transform == transform)
             {
 
+
                 dragging = true;
 
 
-                transform.position = new Vector3(
+
+                transform.position =
+                new Vector3(
                     transform.position.x,
                     originalY + liftHeight,
                     transform.position.z
                 );
+
 
             }
 
@@ -149,12 +234,23 @@ public class IngredientDrag : MonoBehaviour
 
 
 
+
+
     void Drop()
     {
+
         dragging = false;
 
-        transform.position = initialPosition;
+
+        transform.position =
+        initialPosition;
+
     }
+
+
+
+
+
     public void PlaceInCauldron()
     {
 
@@ -162,31 +258,33 @@ public class IngredientDrag : MonoBehaviour
             return;
 
 
+
         placed = true;
+
 
         dragging = false;
 
 
-        // Primero ocultamos
+
         gameObject.SetActive(false);
 
 
-        // Después avisamos al manager
-        PotionManager.Instance.AddIngredient(
-            ingredientName
-        );
+
+        if (PotionManager.Instance != null)
+        {
+
+            PotionManager.Instance.AddIngredient(
+                ingredientName
+            );
+
+        }
 
     }
 
-    public void ResetIngredient()
-    {
-        placed = false;
-        dragging = false;
 
-        gameObject.SetActive(true);
 
-        transform.position = initialPosition;
-    }
+
+
     public void EnterCauldron(Transform point)
     {
 
@@ -194,26 +292,72 @@ public class IngredientDrag : MonoBehaviour
             return;
 
 
+
         placed = true;
+
+
         dragging = false;
 
 
+
         cauldronPoint = point;
+
+
         enteringCauldron = true;
 
+
     }
+
+
+
+
+
     void FinishCauldronEnter()
     {
 
         enteringCauldron = false;
 
 
+
         gameObject.SetActive(false);
 
 
-        PotionManager.Instance.AddIngredient(
-            ingredientName
-        );
+
+        if (PotionManager.Instance != null)
+        {
+
+            PotionManager.Instance.AddIngredient(
+                ingredientName
+            );
+
+        }
 
     }
+
+
+
+
+
+    public void ResetIngredient()
+    {
+
+        placed = false;
+
+
+        dragging = false;
+
+
+        enteringCauldron = false;
+
+
+
+        gameObject.SetActive(true);
+
+
+
+        transform.position =
+        initialPosition;
+
+    }
+
 }
