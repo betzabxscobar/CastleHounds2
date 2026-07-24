@@ -444,6 +444,7 @@ GameObject:
   - component: {fileID: 100051}
   - component: {fileID: 100053}
   - component: {fileID: 100054}
+  - component: {fileID: 100055}
   - component: {fileID: 5495952449086616275}
   m_Layer: 5
   m_Name: Btn_Continuar
@@ -544,7 +545,32 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 100053}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 100006}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: ContinuarJuego
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &100055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96d30ec496d9a9844a67f52690744fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlphaButtonClick
+  minimoAlpha: 0.1
 --- !u!222 &5495952449086616275
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -564,6 +590,7 @@ GameObject:
   - component: {fileID: 100061}
   - component: {fileID: 100063}
   - component: {fileID: 100064}
+  - component: {fileID: 100065}
   - component: {fileID: 7632112892200468768}
   m_Layer: 5
   m_Name: Btn_Opciones
@@ -664,7 +691,32 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 100063}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 100006}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: AbrirOpciones
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &100065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96d30ec496d9a9844a67f52690744fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlphaButtonClick
+  minimoAlpha: 0.1
 --- !u!222 &7632112892200468768
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -684,6 +736,7 @@ GameObject:
   - component: {fileID: 100071}
   - component: {fileID: 100073}
   - component: {fileID: 100074}
+  - component: {fileID: 100075}
   - component: {fileID: 9014916385013126832}
   m_Layer: 5
   m_Name: Btn_Controles
@@ -784,7 +837,32 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 100073}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 100006}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: AbrirControles
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &100075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96d30ec496d9a9844a67f52690744fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlphaButtonClick
+  minimoAlpha: 0.1
 --- !u!222 &9014916385013126832
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -804,6 +882,7 @@ GameObject:
   - component: {fileID: 100081}
   - component: {fileID: 100083}
   - component: {fileID: 100084}
+  - component: {fileID: 100085}
   - component: {fileID: 5112940306802643348}
   m_Layer: 5
   m_Name: Btn_MenuPrincipal
@@ -904,7 +983,32 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 100083}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 100006}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: IrMenuPrincipal
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &100085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96d30ec496d9a9844a67f52690744fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlphaButtonClick
+  minimoAlpha: 0.1
 --- !u!222 &5112940306802643348
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1052,6 +1156,7 @@ GameObject:
   - component: {fileID: 100111}
   - component: {fileID: 100113}
   - component: {fileID: 100114}
+  - component: {fileID: 100115}
   - component: {fileID: 8168595584502023871}
   m_Layer: 5
   m_Name: BtnMusica
@@ -1152,7 +1257,32 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 100113}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 100006}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: CambiarMusica
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &100115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96d30ec496d9a9844a67f52690744fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlphaButtonClick
+  minimoAlpha: 0.1
 --- !u!222 &8168595584502023871
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1172,6 +1302,7 @@ GameObject:
   - component: {fileID: 100121}
   - component: {fileID: 100123}
   - component: {fileID: 100124}
+  - component: {fileID: 100125}
   - component: {fileID: 1257958791146041399}
   m_Layer: 5
   m_Name: BtnSonidos
@@ -1272,7 +1403,32 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 100123}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 100006}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: CambiarSonidos
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &100125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96d30ec496d9a9844a67f52690744fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlphaButtonClick
+  minimoAlpha: 0.1
 --- !u!222 &1257958791146041399
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1292,6 +1448,7 @@ GameObject:
   - component: {fileID: 100131}
   - component: {fileID: 100133}
   - component: {fileID: 100134}
+  - component: {fileID: 100135}
   - component: {fileID: 8103387153986595190}
   m_Layer: 5
   m_Name: BtnPantallaCompleta
@@ -1392,7 +1549,32 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 100133}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 100006}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: CambiarPantallaCompleta
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &100135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96d30ec496d9a9844a67f52690744fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlphaButtonClick
+  minimoAlpha: 0.1
 --- !u!222 &8103387153986595190
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1412,6 +1594,7 @@ GameObject:
   - component: {fileID: 100141}
   - component: {fileID: 100143}
   - component: {fileID: 100144}
+  - component: {fileID: 100145}
   - component: {fileID: 521434653357953490}
   m_Layer: 5
   m_Name: Btn_Volver_Op
@@ -1512,7 +1695,32 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 100143}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 100006}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: VolverMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &100145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96d30ec496d9a9844a67f52690744fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlphaButtonClick
+  minimoAlpha: 0.1
 --- !u!222 &521434653357953490
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1582,6 +1790,7 @@ GameObject:
   - component: {fileID: 100171}
   - component: {fileID: 100173}
   - component: {fileID: 100174}
+  - component: {fileID: 100175}
   - component: {fileID: 8349305256753554594}
   m_Layer: 5
   m_Name: Btn_Volver_Cont
@@ -1682,7 +1891,32 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 100173}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 100006}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: VolverMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &100175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96d30ec496d9a9844a67f52690744fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlphaButtonClick
+  minimoAlpha: 0.1
 --- !u!222 &8349305256753554594
 CanvasRenderer:
   m_ObjectHideFlags: 0
