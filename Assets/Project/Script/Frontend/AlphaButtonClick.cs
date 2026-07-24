@@ -10,6 +10,13 @@ public class AlphaButtonClick : MonoBehaviour
     void Start()
     {
         Image imagen = GetComponent<Image>();
-        imagen.alphaHitTestMinimumThreshold = minimoAlpha;
+        try
+        {
+            imagen.alphaHitTestMinimumThreshold = minimoAlpha;
+        }
+        catch (System.InvalidOperationException)
+        {
+            Debug.LogWarning($"AlphaButtonClick: textura de {gameObject.name} no es readable. Se omite alphaHitTest.", this);
+        }
     }
 }

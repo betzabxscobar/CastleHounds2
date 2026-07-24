@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class PauseMenu : MonoBehaviour
     public GameObject panelControles;
 
     [Header("Botones")]
-    public UnityEngine.UI.Button btnPausa;
+    public Button btnPausa;
 
     private bool juegoPausado = false;
     private PlayerControlLock controlLock;
@@ -26,15 +27,8 @@ public class PauseMenu : MonoBehaviour
 
         controlLock = GetComponent<PlayerControlLock>();
 
-        if (btnPausa == null)
-        {
-            GameObject btn = GameObject.Find("Btn_Pausa");
-            if (btn != null)
-                btnPausa = btn.GetComponent<UnityEngine.UI.Button>();
-        }
-
-        if (btnPausa != null)
-            btnPausa.onClick.AddListener(PausarJuego);
+        ResolvePanelReferences();
+        WireButtons();
 
         SetPanelActive(panelPausa, false);
         SetPanelActive(panelMenu, true);
@@ -154,6 +148,60 @@ public class PauseMenu : MonoBehaviour
         ReproducirClick();
     }
 
+    private void ResolvePanelReferences()
+    {
+        Transform t = transform;
+
+        if (panelPausa == null)
+            panelPausa = FindChild(t, "PanelPausa");
+        if (panelMenu == null)
+            panelMenu = FindChild(t, "PanelMenu");
+        if (panelOpciones == null)
+            panelOpciones = FindChild(t, "PanelOpciones");
+        if (panelControles == null)
+            panelControles = FindChild(t, "PanelControles");
+
+        if (btnPausa == null)
+        {
+            GameObject btn = FindChild(t, "Btn_Pausa");
+            if (btn != null)
+                btnPausa = btn.GetComponent<Button>();
+        }
+    }
+
+    private void WireButtons()
+    {
+        WireButton("Btn_Continuar", ContinuarJuego);
+        WireButton("Btn_Opciones", AbrirOpciones);
+        WireButton("Btn_Controles", AbrirControles);
+        WireButton("Btn_MenuPrincipal", IrMenuPrincipal);
+        WireButton("BtnMusica", CambiarMusica);
+        WireButton("BtnSonidos", CambiarSonidos);
+        WireButton("BtnPantallaCompleta", CambiarPantallaCompleta);
+        WireButton("Btn_Volver_Op", VolverMenu);
+        WireButton("Btn_Volver_Cont", VolverMenu);
+
+        if (btnPausa != null)
+        {
+            btnPausa.onClick.RemoveAllListeners();
+            btnPausa.onClick.AddListener(PausarJuego);
+        }
+    }
+
+    private void WireButton(string name, UnityEngine.Events.UnityAction action)
+    {
+        GameObject btnObj = FindChild(transform, name);
+        if (btnObj == null)
+            return;
+
+        Button btn = btnObj.GetComponent<Button>();
+        if (btn == null)
+            return;
+
+        btn.onClick.RemoveAllListeners();
+        btn.onClick.AddListener(action);
+    }
+
     private void CursorAntesDePausa()
     {
         cursorAnteriorVisible = Cursor.visible;
@@ -199,5 +247,21 @@ public class PauseMenu : MonoBehaviour
         {
             panel.SetActive(active);
         }
+    }
+
+    private static GameObject FindChild(Transform parent, string name)
+    {
+        Transform result = parent.Find(name);
+        if (result != null)
+            return result.gameObject;
+
+        foreach (Transform child in parent)
+        {
+            GameObject found = FindChild(child, name);
+            if (found != null)
+                return found;
+        }
+
+        return null;
     }
 }
