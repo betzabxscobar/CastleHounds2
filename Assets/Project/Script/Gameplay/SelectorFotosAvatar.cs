@@ -30,9 +30,9 @@ public class SelectorFotosAvatar : MonoBehaviour
 
     private void Start()
     {
-        if (avatares == null || avatares.Length == 0)
+        if (!EstaConfigurado())
         {
-            Debug.LogError("No hay fotos configuradas.");
+            enabled = false;
             return;
         }
 
@@ -40,9 +40,14 @@ public class SelectorFotosAvatar : MonoBehaviour
         MostrarAvatar();
     }
 
+    private bool EstaConfigurado()
+    {
+        return imagenCentral != null && avatares != null && avatares.Length > 0;
+    }
+
     public void Siguiente()
     {
-        if (avatares == null || avatares.Length == 0)
+        if (!EstaConfigurado())
             return;
 
         ReproducirClick();
@@ -53,7 +58,7 @@ public class SelectorFotosAvatar : MonoBehaviour
 
     public void Anterior()
     {
-        if (avatares == null || avatares.Length == 0)
+        if (!EstaConfigurado())
             return;
 
         ReproducirClick();
@@ -66,7 +71,7 @@ public class SelectorFotosAvatar : MonoBehaviour
 
     public void Seleccionar()
     {
-        if (cargandoHistoria || avatares == null || avatares.Length == 0)
+        if (cargandoHistoria || !EstaConfigurado())
         {
             return;
         }
@@ -82,7 +87,17 @@ public class SelectorFotosAvatar : MonoBehaviour
 
     private void MostrarAvatar()
     {
+        if (!EstaConfigurado())
+        {
+            return;
+        }
+
+        indiceActual = Mathf.Clamp(indiceActual, 0, avatares.Length - 1);
         AvatarFoto avatar = avatares[indiceActual];
+        if (avatar == null)
+        {
+            return;
+        }
 
         imagenCentral.gameObject.SetActive(true);
         imagenCentral.sprite = avatar.foto;

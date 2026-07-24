@@ -67,6 +67,22 @@ public class AudioManager : MonoBehaviour
         sonidosActivos = !sonidosActivos;
     }
 
+    public void PausarMusica()
+    {
+        if (musicaSource != null && musicaSource.isPlaying)
+        {
+            musicaSource.Pause();
+        }
+    }
+
+    public void ReanudarMusica()
+    {
+        if (musicaSource != null && musicaActiva)
+        {
+            musicaSource.UnPause();
+        }
+    }
+
     private void OnDestroy()
     {
         if (Instance == this)

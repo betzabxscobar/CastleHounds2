@@ -58,6 +58,10 @@ public static class SelectorFotosAvatarSetup
 
         GameObject punto = ConfigurarJerarquiaFoto(spawnPoint, out GameObject canvasGO, out Image fotoImage);
         reporte.AppendLine($"- Jerarquia asegurada: {punto.name}/{canvasGO.name}/{fotoImage.gameObject.name}.");
+        float velocidadGiro = punto.GetComponent<GiroFotoAvatar>() != null
+            ? new SerializedObject(punto.GetComponent<GiroFotoAvatar>()).FindProperty("velocidad").floatValue
+            : 0f;
+        reporte.AppendLine($"- GiroFotoAvatar en '{punto.name}' con velocidad {velocidadGiro} (igual a Giro360 de la plataforma).");
 
         string[] rutas = ObtenerRutasAvatares();
         if (rutas.Length == 0)
@@ -217,8 +221,8 @@ public static class SelectorFotosAvatarSetup
         canvas.sortingOrder = 20;
 
         RectTransform canvasRect = canvasGO.GetComponent<RectTransform>();
-        canvasRect.sizeDelta = new Vector2(400f, 550f);
-        canvasRect.localScale = new Vector3(0.003f, 0.003f, 0.003f);
+        canvasRect.sizeDelta = new Vector2(500f, 700f);
+        canvasRect.localScale = new Vector3(0.0045f, 0.0045f, 0.0045f);
         canvasRect.localPosition = Vector3.zero;
 
         Camera camara = Camera.main;
@@ -255,7 +259,54 @@ public static class SelectorFotosAvatarSetup
             }
         }
 
+        ConfigurarGiroFoto(punto);
+        DesactivarBillboardsEnConflicto(punto);
+
         return punto;
+    }
+
+    private static readonly string[] NombresBillboardConflictivos =
+    {
+        "MirarCamara", "Billboard", "LookAtCamera", "FaceCamera"
+    };
+
+    private static void DesactivarBillboardsEnConflicto(GameObject punto)
+    {
+        foreach (MonoBehaviour comportamiento in punto.GetComponentsInChildren<MonoBehaviour>(true))
+        {
+            if (comportamiento == null)
+            {
+                continue;
+            }
+
+            string nombreTipo = comportamiento.GetType().Name;
+            if (Array.IndexOf(NombresBillboardConflictivos, nombreTipo) >= 0 && comportamiento.enabled)
+            {
+                comportamiento.enabled = false;
+                EditorUtility.SetDirty(comportamiento);
+                Debug.LogWarning($"Se desactivo '{nombreTipo}' en '{comportamiento.gameObject.name}' porque impide el giro en -Y de la fotografia.");
+            }
+        }
+    }
+
+    private static void ConfigurarGiroFoto(GameObject punto)
+    {
+        GiroFotoAvatar giro = punto.GetComponent<GiroFotoAvatar>();
+        if (giro == null)
+        {
+            giro = punto.AddComponent<GiroFotoAvatar>();
+        }
+
+        Giro360 giroPlataforma = UnityEngine.Object.FindFirstObjectByType<Giro360>(FindObjectsInactive.Include);
+        if (giroPlataforma != null)
+        {
+            float velocidadPlataforma = new SerializedObject(giroPlataforma).FindProperty("velocidad").floatValue;
+            SerializedObject serializedGiro = new SerializedObject(giro);
+            serializedGiro.FindProperty("velocidad").floatValue = velocidadPlataforma;
+            serializedGiro.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        EditorUtility.SetDirty(giro);
     }
 
     private static string[] ObtenerRutasAvatares()
@@ -337,7 +388,7 @@ public static class SelectorFotosAvatarSetup
         rect.anchorMin = new Vector2(0.5f, 0.5f);
         rect.anchorMax = new Vector2(0.5f, 0.5f);
         rect.pivot = new Vector2(0.5f, 0.5f);
-        rect.sizeDelta = new Vector2(300f, 450f);
+        rect.sizeDelta = new Vector2(450f, 650f);
         rect.anchoredPosition = Vector2.zero;
         rect.localPosition = Vector3.zero;
         rect.localScale = Vector3.one;
